@@ -1,9 +1,11 @@
 import React from 'react';
+import Login from './Login'
 import './App.css';
 
 function App() {
   return (
-    <h1>Waste Hunter</h1>
+
+      <Login/>
   );
 }
 
