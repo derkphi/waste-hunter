@@ -14,7 +14,7 @@ function App() {
           <Login />
         </Route>
       </Switch>
-      <Link to="/">Login</Link> | <Link to="/catalog">Catalog</Link>
+      <Link to="/">Login</Link> / <Link to="/catalog">Catalog</Link>
     </Router>
   );
 }
