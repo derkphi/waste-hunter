@@ -43,7 +43,7 @@ const theme = createTheme({
 
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
@@ -71,7 +71,7 @@ export default function SignIn() {
     const firebaseInstance=authFirebase;
 
 
-    const SignUpp=async (event)=> {
+    const signUp=async (event:React.FormEvent)=> {
         event.preventDefault();
 
         try {
@@ -95,39 +95,40 @@ export default function SignIn() {
                 <CssBaseline />
 
                 <div className={classes.paper}>
-
+<div>
+    <img src="../android-chrome-512x512.png" alt="Logo" height="200" width="200
+    "/>
+</div>
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign In
+                        Login
+
+
 
 
                     </Typography>
-                    <form className={classes.form} noValidate onSubmit={SignUpp}>
+                    <form className={classes.form} noValidate onSubmit={signUp}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <Input
-                                    variant="outlined"
                                     placeholder='Email'
                                     {...email}
                                     required
                                     fullWidth
                                     id="email"
-                                    label="Email Address"
                                     name="email"
                                     autoComplete="email"
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <Input
-                                    variant="outlined"
                                     placeholder='Password'
                                     {...password}
                                     required
                                     fullWidth
                                     name="password"
-                                    label="Password"
                                     type="password"
                                     id="password"
                                     autoComplete="current-password"
@@ -143,7 +144,7 @@ export default function SignIn() {
                             color="secondary"
                             className={classes.submit}
                         >
-                            Sign In
+                            Login
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
