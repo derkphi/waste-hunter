@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import Login from './components/login';
+import Login from './components/login'
 import Catalog from './components/catalog';
 
 function App() {
