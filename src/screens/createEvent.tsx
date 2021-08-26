@@ -3,6 +3,7 @@ import {TextField, Typography, makeStyles,FormLabel,Button} from "@material-ui/c
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import {Container} from "@material-ui/core";
 import { useHistory } from 'react-router-dom'
+import { Routes } from '../components/customRoute'
 
 const useStyles= makeStyles({
     field: {
@@ -51,7 +52,7 @@ function CreateEvent(){
                 method: 'POST',
                 headers: {"Content-type": "application/json"},
                 body: JSON.stringify({ anlass, ort,datum,zeit })
-            }).then(() => history.push('/Home'))
+            }).then(() => history.push(Routes.calendar))
         }
     }
 
