@@ -2,5 +2,6 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.singleQuote": true,
-  "prettier.endOfLine": "lf"
+  "prettier.endOfLine": "lf",
+  "prettier.printWidth": 120
 }
