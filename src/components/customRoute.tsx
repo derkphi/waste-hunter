@@ -7,7 +7,7 @@ export enum Routes {
   calendar = '/calendar',
   reports = '/reports',
   home = '/',
-  createEvent = '/calendar/new-event'
+  createEvent = '/calendar/new-event',
   cleanup = '/cleanup',
 }
 
