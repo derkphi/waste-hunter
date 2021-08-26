@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Redirect, RouteProps } from 'react-router-dom';
-import {authFirebase} from "../firebase/config";
+import { authFirebase } from '../firebase/config';
 
 export enum Routes {
   login = '/login',
@@ -8,6 +8,7 @@ export enum Routes {
   reports = '/reports',
   home = '/',
   createEvent = '/calendar/new-event'
+  cleanup = '/cleanup',
 }
 
 function isAuthenticated() {
@@ -15,23 +16,21 @@ function isAuthenticated() {
 }
 
 export function PrivateRoute(props: RouteProps): React.ReactElement {
-  let element : React.ReactElement;
+  let element: React.ReactElement;
   if (isAuthenticated()) {
     element = <Route {...props}>{props.children}</Route>;
+  } else {
+    element = <Redirect to={Routes.login} />;
   }
-  else {
-    element = <Redirect to={Routes.login} />
-  }
-return element;
-};
+  return element;
+}
 
-export function RestrictedRoute (props: RouteProps): React.ReactElement {
-  let element : React.ReactElement;
+export function RestrictedRoute(props: RouteProps): React.ReactElement {
+  let element: React.ReactElement;
   if (isAuthenticated()) {
-    element = <Redirect to={Routes.home} />
-  }
-  else {
+    element = <Redirect to={Routes.home} />;
+  } else {
     element = <Route {...props}>{props.children}</Route>;
   }
-return element;
-};
+  return element;
+}

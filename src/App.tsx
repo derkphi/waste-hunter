@@ -6,39 +6,48 @@ import Home from './screens/home';
 import Calendar from './screens/calendar';
 import Reports from './screens/reports';
 import CreateEvent from './screens/createEvent';
+import Cleanup from './screens/cleanup';
 import {PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
 
 const headerData = {
   title: 'WasteHunter',
-  menuItems:[
+  menuItems: [
     {
-      label: "Home",
+      label: 'Home',
       href: Routes.home,
     },
     {
-      label: "Kalender",
+      label: 'Kalender',
       href: Routes.calendar,
     },
     {
-      label: "Berichte",
+      label: 'Berichte',
       href: Routes.reports,
-    }
-]};
+    },
+    {
+      label: 'Cleanup-Test',
+      href: Routes.cleanup,
+    },
+  ],
+};
 
-function App() { 
+function App() {
   return (
     <Router>
       <Switch>
-        <RestrictedRoute path={Routes.login} exact >
+        <RestrictedRoute path={Routes.login} exact>
           <Login />
-          </RestrictedRoute>
-        <PrivateRoute path={Routes.calendar} exact >
+        </RestrictedRoute>
+        <PrivateRoute path={Routes.calendar} exact>
           {withHeader(<Calendar />)}
-          </PrivateRoute>
-        <PrivateRoute path={Routes.reports} exact >
+        </PrivateRoute>
+        <PrivateRoute path={Routes.reports} exact>
           {withHeader(<Reports />)}
-          </PrivateRoute>
-        <PrivateRoute path={Routes.home} exact >
+        </PrivateRoute>
+        <PrivateRoute path={Routes.cleanup} exact>
+          {withHeader(<Cleanup />)}
+        </PrivateRoute>
+        <PrivateRoute path={Routes.home} exact>
           {withHeader(<Home />)}
           </PrivateRoute>
         <PrivateRoute path={Routes.createEvent} exact >
@@ -49,13 +58,13 @@ function App() {
   );
 }
 
-function withHeader(element: React.ReactElement ) : React.ReactElement{
+function withHeader(element: React.ReactElement): React.ReactElement {
   return (
     <>
       <Header title={headerData.title} menuItems={headerData.menuItems} />
       {element}
     </>
-  )
+  );
 }
 
 export default App;
