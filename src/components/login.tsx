@@ -12,6 +12,8 @@ import Container from '@material-ui/core/Container';
 import {authFirebase} from "../firebase/config";
 import useInput from "../hooks/useInput";
 import {createTheme, Input,ThemeProvider} from "@material-ui/core";
+import { Routes } from './customRoute';
+import { useHistory } from 'react-router-dom';
 
 
 function Copyright() {
@@ -68,6 +70,7 @@ export default function SignIn() {
     const classes = useStyles();
     const email=useInput('');
     const password=useInput('');
+    let history = useHistory();
     const firebaseInstance=authFirebase;
 
 
@@ -76,13 +79,12 @@ export default function SignIn() {
 
         try {
             if (firebaseInstance) {
-                const user = await firebaseInstance.signInWithEmailAndPassword(email.value, password.value)
-                console.log('user ', user)
-                alert('Welcome back')
+                await firebaseInstance.signInWithEmailAndPassword(email.value, password.value)
+                history.push(Routes.home);
             }
         } catch (error) {
             console.log('error', error);
-            alert(error.message);
+            //alert(error.message);
         }
 
     };
@@ -120,6 +122,7 @@ export default function SignIn() {
                                     id="email"
                                     name="email"
                                     autoComplete="email"
+                                    autoFocus={true}
                                 />
                             </Grid>
                             <Grid item xs={12}>

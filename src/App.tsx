@@ -1,22 +1,57 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import Login from './components/login'
-import Catalog from './components/catalog';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import Login from './components/login';
+import Header from './components/header';
+import Home from './screens/home';
+import Calendar from './screens/calendar';
+import Reports from './screens/reports';
+import {PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
 
-function App() {
+const headerData = {
+  title: 'WasteHunter',
+  menuItems:[
+    {
+      label: "Home",
+      href: Routes.home,
+    },
+    {
+      label: "Kalender",
+      href: Routes.calendar,
+    },
+    {
+      label: "Berichte",
+      href: Routes.reports,
+    }
+]};
+
+function App() { 
   return (
     <Router>
       <Switch>
-        <Route path="/catalog">
-          <Catalog />
-        </Route>
-        <Route path="/">
+        <RestrictedRoute path={Routes.login} exact >
           <Login />
-        </Route>
+          </RestrictedRoute>
+        <PrivateRoute path={Routes.calendar} exact >
+          {withHeader(<Calendar />)}
+          </PrivateRoute>
+        <PrivateRoute path={Routes.reports} exact >
+          {withHeader(<Reports />)}
+          </PrivateRoute>
+        <PrivateRoute path={Routes.home} exact >
+          {withHeader(<Home />)}
+          </PrivateRoute>
       </Switch>
-      <Link to="/">Login</Link> / <Link to="/catalog">Catalog</Link>
     </Router>
   );
+}
+
+function withHeader(element: React.ReactElement ) : React.ReactElement{
+  return (
+    <>
+      <Header title={headerData.title} menuItems={headerData.menuItems} />
+      {element}
+    </>
+  )
 }
 
 export default App;
