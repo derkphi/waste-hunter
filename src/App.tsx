@@ -1,11 +1,28 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import Login from './components/login';
+import Header from './components/header';
 import Home from './screens/home';
 import Calendar from './screens/calendar';
 import Reports from './screens/reports';
-import { Routes } from './constants';
-import {PrivateRoute, RestrictedRoute} from './components/customRoute'  
+import {PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
+
+const headerData = {
+  title: 'WasteHunter',
+  menuItems:[
+    {
+      label: "Home",
+      href: Routes.home,
+    },
+    {
+      label: "Kalender",
+      href: Routes.calendar,
+    },
+    {
+      label: "Berichte",
+      href: Routes.reports,
+    }
+]};
 
 function App() { 
   return (
@@ -24,21 +41,16 @@ function App() {
           {withHeader(<Home />)}
           </PrivateRoute>
       </Switch>
-      {/*<Link to="/">Login</Link> / <Link to="/catalog">Catalog</Link>*/}
     </Router>
   );
 }
 
 function withHeader(element: React.ReactElement ) : React.ReactElement{
   return (
-    <div>
-      <ul>
-        <li><Link to={Routes.home}>Home</Link></li>
-        <li><Link to={Routes.calendar}>Kalender</Link></li>
-        <li><Link to={Routes.reports}>Berichte</Link></li>
-      </ul>
+    <>
+      <Header title={headerData.title} menuItems={headerData.menuItems} />
       {element}
-    </div>
+    </>
   )
 }
 
