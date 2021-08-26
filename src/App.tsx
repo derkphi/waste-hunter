@@ -5,6 +5,7 @@ import Header from './components/header';
 import Home from './screens/home';
 import Calendar from './screens/calendar';
 import Reports from './screens/reports';
+import CreateEvent from './screens/createEvent';
 import {PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
 
 const headerData = {
@@ -40,6 +41,9 @@ function App() {
         <PrivateRoute path={Routes.home} exact >
           {withHeader(<Home />)}
           </PrivateRoute>
+        <PrivateRoute path={Routes.createEvent} exact >
+          {withHeader(<CreateEvent />)}
+        </PrivateRoute>
       </Switch>
     </Router>
   );

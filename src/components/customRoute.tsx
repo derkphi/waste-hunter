@@ -6,7 +6,8 @@ export enum Routes {
   login = '/login',
   calendar = '/calendar',
   reports = '/reports',
-  home = '/'
+  home = '/',
+  createEvent = '/calendar/new-event'
 }
 
 function isAuthenticated() {
