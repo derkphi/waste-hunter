@@ -74,7 +74,7 @@ export default function Header(props: HeaderProps) {
     const setResponsiveness = () => {
       return window.innerWidth < 900
         ? setState((prevState) => ({ ...prevState, mobileView: true }))
-        : setState((prevState) => ({ ...prevState, mobileView: false }));
+        : setState((prevState) => ({ drawerOpen: false, mobileView: false }));
     };
 
     setResponsiveness();
@@ -115,14 +115,14 @@ export default function Header(props: HeaderProps) {
           <MenuIcon />
         </IconButton>
 
-        <Drawer
+        <Drawer 
           {...{
-            anchor: "left",
+            anchor: "top",
             open: drawerOpen,
             onClose: handleDrawerClose,
           }}
         >
-          <div className={drawerContainer}>{getDrawerChoices()}</div>
+          <div className={drawerContainer}>{getDrawerChoices(handleDrawerClose)}</div>
         </Drawer>
 
         <div>{wasteHunterLogo}</div>
@@ -130,10 +130,10 @@ export default function Header(props: HeaderProps) {
     );
   };
 
-  const getDrawerChoices = () => {
+  const getDrawerChoices = (handleDrawerClose: () => void) => {
     return props.menuItems.map(item => {
       return (
-        <Link
+        <Link tabIndex={0} role="button" onClick={handleDrawerClose} onKeyDown={handleDrawerClose}
           {...{
             component: RouterLink,
             to: item.href,
