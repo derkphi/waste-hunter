@@ -2,8 +2,9 @@ import React,{useState} from 'react';
 import {TextField, Typography, makeStyles,FormLabel,Button} from "@material-ui/core";
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import {Container} from "@material-ui/core";
-import { useHistory } from 'react-router-dom'
-import { Routes } from '../components/customRoute'
+import { useHistory } from 'react-router-dom';
+import { Routes } from '../components/customRoute';
+import EventMap from '../components/eventMap';
 
 const useStyles= makeStyles({
     field: {
@@ -69,6 +70,10 @@ function CreateEvent(){
         >
             Erfasse einen Event
         </Typography>
+
+        <div style={{width: '100%', height: '300px' }}>
+<EventMap />
+</div>
             <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                 <FormLabel>Anlass</FormLabel>
 <TextField
@@ -83,7 +88,6 @@ function CreateEvent(){
 >
 
 </TextField>
-
                 <FormLabel>Ort</FormLabel>
 
                 <TextField
