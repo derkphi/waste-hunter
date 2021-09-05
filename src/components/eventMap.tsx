@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Map from './map';
+import Map, {MapPosition, defaultPosition} from './map';
+
+export const defaultPos = defaultPosition;
 
 const options = {
   enableHighAccuracy: true,
@@ -13,7 +15,11 @@ const fallbackPosition = {
   zoom: 6,
 }
 
-function EventMap () {
+interface EventMapProps {
+  onNewPosition?: (pos: MapPosition) => void;
+}
+
+function EventMap (props: EventMapProps) {
   const [ready, setReady] = useState(false);
   const [position, setPosition] = useState(fallbackPosition);
 
@@ -38,7 +44,11 @@ function EventMap () {
   }
 
   if (ready){
-    return <Map initialPosition={position} enableNavigation={true}/>;
+    return (
+      <Map 
+        initialPosition={position} 
+        enableNavigation={true} 
+        onPositionChange={props.onNewPosition}/>);
   } else {
     return <div>Karte wird geladen...</div>;
   }

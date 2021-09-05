@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactMapGL, { NavigationControl, ViewportProps } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-interface MapPosition {
+export interface MapPosition {
   latitude: number;
   longitude: number;
   zoom: number;
@@ -14,7 +14,7 @@ interface MapProps {
   onPositionChange?: (pos: MapPosition) => void;
 }
 
-const defaultPosition: MapPosition = {
+export const defaultPosition: MapPosition = {
   latitude: 46.82,
   longitude: 8.26,
   zoom: 7,

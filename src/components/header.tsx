@@ -1,27 +1,12 @@
-import { AppBar, Toolbar, Typography, makeStyles, createTheme, Button, IconButton, Drawer, Link, MenuItem } from "@material-ui/core";
+import { AppBar, Toolbar, Typography, makeStyles, Button, IconButton, Drawer, Link, MenuItem } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import React, { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
-const theme = createTheme({
-  palette: {
-      primary: {
-          light:'#528777',
-          main: '#276955',
-          dark:'#1b493b',
-      },
-      secondary: {
-          light:'#67b7a3',
-          main: '#41a58d',
-          dark:'#2d7362',
-      },
-  },
-});
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   header: {
     backgroundColor: theme.palette.primary.main,
-    paddingRight: "79px",
+    paddingRight: "10px",
     paddingLeft: "79px",
     "@media (max-width: 900px)": {
       paddingLeft: 0,
