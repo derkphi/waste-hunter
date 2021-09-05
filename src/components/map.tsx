@@ -55,7 +55,9 @@ const Map: React.FunctionComponent<MapProps> = (props) => {
         {...viewport}
         onViewportChange={enableNavigation ? handleViewport : undefined}
         width="100%"
-        height="100%">
+        height="100%"
+        // onMouseUp={(e) => console.log("Mouse:", e.lngLat)}
+        >
         {enableNavigation && <NavigationControl style={{ left: 10, top: 10 }} /> }
         {props.children}
       </ReactMapGL>

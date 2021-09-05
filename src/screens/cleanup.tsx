@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import ReactMapGL, { GeolocateControl, Marker, NavigationControl, ViewportProps } from 'react-map-gl';
+import { GeolocateControl, Marker } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { ReactComponent as MarkerIcon } from '../assets/mapbox-marker-icon-blue.svg';
 import { authFirebase, database } from '../firebase/config';
 import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+import Map from '../components/map';
 
 interface CleanupUser {
   uid: string;
@@ -16,11 +17,6 @@ interface CleanupUser {
 
 export default function Cleanup() {
   const history = useHistory();
-  const [viewport, setViewport] = useState<ViewportProps>({
-    latitude: 46.82,
-    longitude: 8.26,
-    zoom: 7,
-  });
   const [myPosition, setMyPosition] = useState<GeolocationPosition>();
   const [cleanupUser, setCleanupUser] = useState<CleanupUser[]>([]);
   const [updated, setUpdated] = useState(0);
@@ -40,10 +36,6 @@ export default function Cleanup() {
     const interval = setInterval(loadCleanupUser, 10e3);
     return () => clearInterval(interval);
   }, []);
-
-  const handleViewport = (viewport: ViewportProps) => {
-    setViewport(viewport);
-  };
 
   const handleGeolocate = (position: GeolocationPosition) => {
     setMyPosition(position);
@@ -66,15 +58,7 @@ export default function Cleanup() {
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2000 }}>
-      <ReactMapGL
-        mapboxApiAccessToken="pk.eyJ1IjoiZGVya3NlbnBoaWxpcHAiLCJhIjoiY2tycXV1ejZxMnFzNTJ1cnY5eHZ0ZXp1YSJ9.iWymYhi7VBjE_C6WIt0mOw"
-        mapStyle="https://vectortiles.geo.admin.ch/styles/ch.swisstopo.leichte-basiskarte.vt/style.json"
-        {...viewport}
-        onViewportChange={handleViewport}
-        width="100%"
-        height="100%"
-      >
-        <NavigationControl style={{ left: 10, top: 10 }} />
+      <Map enableNavigation={true}>
 
         <GeolocateControl
           style={{ right: 10, top: 10 }}
@@ -97,7 +81,7 @@ export default function Cleanup() {
             {myPosition.coords.latitude.toFixed(6)} / {myPosition.coords.longitude.toFixed(6)}
           </div>
         )}
-      </ReactMapGL>
+      </Map>
 
       <div style={{ position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' }}>
         <Button color="primary" variant="contained" onClick={() => history.push('/')}>
