@@ -1,17 +1,38 @@
 import React,{useState} from 'react';
-import {TextField, Typography, makeStyles,FormLabel,Button} from "@material-ui/core";
+import {TextField, Typography, makeStyles,FormLabel,Button, Box} from "@material-ui/core";
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import {Container} from "@material-ui/core";
-import { useHistory } from 'react-router-dom'
-import { Routes } from '../components/customRoute'
+import { Grid} from "@material-ui/core";
+import { useHistory } from 'react-router-dom';
+import { Routes } from '../components/customRoute';
+import EventMap, {defaultPos} from '../components/eventMap';
 
-const useStyles= makeStyles({
+const useStyles= makeStyles((theme) => ({
     field: {
         marginTop: 20,
         marginBottom: 20,
-        display: 'block'
+    },
+    map: {
+      marginTop: 20,
+      height: '50vh',
+      width: '100%'
+      // [theme.breakpoints.down('sm')] : {
+      //   height: '75vh',
+      //   width: '100%'
+      // },
+      // [theme.breakpoints.up('md')] : {
+      //   height: '100%',
+      //   width: '100%'
+      // }
+    },
+    mapGridItem: {
+      width: '100%'
+    },
+    button: {
+      marginTop: 20,
+      marginBottom: 20,
+      float: 'right'
     }
-})
+}));
 
 function CreateEvent(){
 
@@ -26,7 +47,7 @@ function CreateEvent(){
     const [orterror, setOrterror] = useState(false)
     const [datumerror, setDatumerror] = useState(false)
         const [zeiterror, setzeiterror] = useState(false)
-
+    const [position, setPosition] = useState(defaultPos);
 
     const handleSubmit = (e:any) => {
         e.preventDefault()
@@ -51,7 +72,7 @@ function CreateEvent(){
             fetch('https://waste-hunter-default-rtdb.europe-west1.firebasedatabase.app/events.json', {
                 method: 'POST',
                 headers: {"Content-type": "application/json"},
-                body: JSON.stringify({ anlass, ort,datum,zeit })
+                body: JSON.stringify({ anlass, ort,datum,zeit, position })
             }).then(() => history.push(Routes.calendar))
         }
     }
@@ -60,7 +81,7 @@ function CreateEvent(){
 
 
     return(
-        <Container maxWidth="sm">
+      <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <Typography
             variant="h4"
             color="textPrimary"
@@ -69,7 +90,8 @@ function CreateEvent(){
         >
             Erfasse einen Event
         </Typography>
-            <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+      <Grid container spacing={3}>
+<Grid item sm={12} md={5}>
                 <FormLabel>Anlass</FormLabel>
 <TextField
     className={classes.field}
@@ -83,7 +105,6 @@ function CreateEvent(){
 >
 
 </TextField>
-
                 <FormLabel>Ort</FormLabel>
 
                 <TextField
@@ -120,16 +141,22 @@ function CreateEvent(){
                     error={zeiterror}>
 
                 </TextField>
-                <Button
+            </Grid>
+            <Grid item sm={12} md={7} className={classes.mapGridItem}>
+            <FormLabel>Suchgebiet</FormLabel>
+<Box className={classes.map}>
+<EventMap onNewPosition={(pos) => setPosition(pos)}/>
+</Box>
+</Grid>
+</Grid>
+<Button className={classes.button}
                     type="submit"
                     color="secondary"
                     variant="contained"
                     endIcon={<KeyboardArrowRightIcon />}>
                     Submit
                 </Button>
-            </form>
-        </Container>
-
+        </form>
     )
 }
 export default CreateEvent;

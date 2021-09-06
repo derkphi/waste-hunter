@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {authFirebase} from "../firebase/config";
 import useInput from "../hooks/useInput";
-import {createTheme, Input,ThemeProvider} from "@material-ui/core";
+import { Input } from "@material-ui/core";
 import { Routes } from './customRoute';
 import { useHistory } from 'react-router-dom';
 
@@ -28,24 +28,8 @@ function Copyright() {
         </Typography>
     );
 }
-const theme = createTheme({
-    palette: {
-        primary: {
-            light:'#528777',
-            main: '#276955',
-            dark:'#1b493b',
-        },
-        secondary: {
-            light:'#67b7a3',
-            main: '#41a58d',
-            dark:'#2d7362',
-        },
-    },
-});
 
-
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
@@ -90,8 +74,6 @@ export default function SignIn() {
     };
 
     return (
-        <ThemeProvider theme={theme}>
-
             <Container component="main" maxWidth="xs">
 
                 <CssBaseline />
@@ -160,7 +142,6 @@ export default function SignIn() {
                     <Copyright />
                 </Box>
             </Container>
-        </ThemeProvider>
     );
 }
 
