@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactMapGL, { NavigationControl, ViewportProps } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { Box } from '@material-ui/core';
 
 export interface MapPosition {
   latitude: number;
@@ -48,7 +49,7 @@ const Map: React.FunctionComponent<MapProps> = (props) => {
   }
 
   return (
-    <div style={{width:"100%", height:"100%"}} onClick={checkPosition} onKeyUp={checkPosition}>
+    <Box width='100%' height='100%' onClick={checkPosition} onKeyUp={checkPosition}>
       <ReactMapGL
         mapboxApiAccessToken="pk.eyJ1IjoiZGVya3NlbnBoaWxpcHAiLCJhIjoiY2tycXV1ejZxMnFzNTJ1cnY5eHZ0ZXp1YSJ9.iWymYhi7VBjE_C6WIt0mOw"
         mapStyle="https://vectortiles.geo.admin.ch/styles/ch.swisstopo.leichte-basiskarte.vt/style.json"
@@ -61,7 +62,7 @@ const Map: React.FunctionComponent<MapProps> = (props) => {
         {enableNavigation && <NavigationControl style={{ left: 10, top: 10 }} /> }
         {props.children}
       </ReactMapGL>
-    </div>
+    </Box>
   )
 }
 
