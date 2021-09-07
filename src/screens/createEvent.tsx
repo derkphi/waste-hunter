@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import EventMap, {defaultPos} from '../components/eventMap';
 
-const useStyles= makeStyles((theme) => ({
+const useStyles= makeStyles(() => ({
     field: {
         marginTop: 20,
         marginBottom: 20,
@@ -38,41 +38,41 @@ function CreateEvent(){
 
     const classes=useStyles();
     const history = useHistory()
-    const [anlass, setAnlass] = useState('')
-    const [ort, setOrt] = useState('')
-    const [datum, setDatum] = useState('')
-   const [zeit, setzeit] = useState('')
-    const [anlasserror, setAnlasserror] = useState(false)
+    const [event, setEvent] = useState('')
+    const [place, setPlace] = useState('')
+    const [date, setDate] = useState('')
+   const [time, setTime] = useState('')
+    const [eventerror, setEventerror] = useState(false)
 
-    const [orterror, setOrterror] = useState(false)
-    const [datumerror, setDatumerror] = useState(false)
-        const [zeiterror, setzeiterror] = useState(false)
+    const [placeerror, setPlaceerror] = useState(false)
+    const [dateerror, setdateerror] = useState(false)
+        const [timeerror, settimeerror] = useState(false)
     const [position, setPosition] = useState(defaultPos);
 
     const handleSubmit = (e:any) => {
         e.preventDefault()
-        setAnlasserror(false)
-        setOrterror(false)
-        setDatumerror(false)
-        setzeiterror(false)
+        setEventerror(false)
+        setPlaceerror(false)
+        setdateerror(false)
+        settimeerror(false)
 
-        if (anlass === '') {
-        setAnlasserror(true)
+        if (event === '') {
+        setEventerror(true)
         }
-       if (ort === '') {
-        setOrterror(true)
+       if (place === '') {
+        setPlaceerror(true)
         }
-       if (datum ===''){
-           setDatumerror(true)
+       if (date ===''){
+           setdateerror(true)
        }
-        if (zeit ===''){
-            setzeiterror(true)
+        if (time ===''){
+            settimeerror(true)
         }
-        if (anlass && ort) {
+        if (event && place) {
             fetch('https://waste-hunter-default-rtdb.europe-west1.firebasedatabase.app/events.json', {
                 method: 'POST',
                 headers: {"Content-type": "application/json"},
-                body: JSON.stringify({ anlass, ort,datum,zeit, position })
+                body: JSON.stringify({ anlass: event, ort: place,datum: date,zeit: time, position })
             }).then(() => history.push(Routes.calendar))
         }
     }
@@ -95,50 +95,50 @@ function CreateEvent(){
                 <FormLabel>Anlass</FormLabel>
 <TextField
     className={classes.field}
-    onChange={(e) => setAnlass(e.target.value)}
+    onChange={(e) => setEvent(e.target.value)}
     autoFocus={true}
     variant="outlined"
     color="secondary"
     fullWidth
     required
-    error={anlasserror}
+    error={eventerror}
 >
 
 </TextField>
-                <FormLabel>Ort</FormLabel>
+                <FormLabel>Treffpunkt</FormLabel>
 
                 <TextField
                     className={classes.field}
-                    onChange={(e) => setOrt(e.target.value)}
+                    onChange={(e) => setPlace(e.target.value)}
                     variant="outlined"
                     color="secondary"
                     fullWidth
                     required
-                    error={orterror}>
+                    error={placeerror}>
                     <FormLabel>Datum</FormLabel>
                 </TextField>
                 <FormLabel>Datum</FormLabel>
             <TextField
                 className={classes.field}
-                onChange={(e) => setDatum(e.target.value)}
+                onChange={(e) => setDate(e.target.value)}
                 type="date"
                 variant="outlined"
                 color="secondary"
                 fullWidth
                 required
-                error={datumerror}>
+                error={dateerror}>
 
             </TextField>
-                <FormLabel>Zeit</FormLabel>
+                <FormLabel>Startzeit Anlass</FormLabel>
                 <TextField
                     className={classes.field}
-                    onChange={(e) => setzeit(e.target.value)}
+                    onChange={(e) => setTime(e.target.value)}
                     type="time"
                     variant="outlined"
                     color="secondary"
                     fullWidth
                     required
-                    error={zeiterror}>
+                    error={timeerror}>
 
                 </TextField>
             </Grid>
@@ -154,7 +154,7 @@ function CreateEvent(){
                     color="secondary"
                     variant="contained"
                     endIcon={<KeyboardArrowRightIcon />}>
-                    Submit
+                    Abschliessen
                 </Button>
         </form>
     )
