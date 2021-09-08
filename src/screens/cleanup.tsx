@@ -23,20 +23,16 @@ export default function Cleanup() {
     database
       .ref(`cleanups/-eventid`)
       .get()
-      .then((data) => {
-        if (data.exists()) setAllCleanups(Object.values(data.val()));
+      .then((ds) => {
+        if (ds.exists()) setAllCleanups(Object.values(ds.val()));
       });
   };
 
   useEffect(() => {
-    const user = authFirebase.currentUser;
-    if (user) {
-      setMyCleanup({ uid: user.uid, email: user.email, route: [] });
-      loadCleanupUser();
-      // momentan, alle 10s aktualisieren...
-      const interval = setInterval(loadCleanupUser, 10e3);
-      return () => clearInterval(interval);
-    }
+    loadCleanupUser();
+    // momentan, alle 10s aktualisieren...
+    const interval = setInterval(loadCleanupUser, 10e3);
+    return () => clearInterval(interval);
   }, []);
 
   const getGeoJsonData = (positions: number[][]): GeoJSON.Feature<GeoJSON.Geometry> => {
@@ -51,13 +47,20 @@ export default function Cleanup() {
   };
 
   const handleGeolocate = ({ coords: { longitude, latitude }, timestamp }: GeolocationPosition) => {
-    if (!myCleanup) return;
+    const user = authFirebase.currentUser;
+    if (!user) return;
+
     // update max. all 10 seconds and 10 meters
-    const [lng, lat, time] = myCleanup.route[0] || [0, 0, 0];
+    const [lng, lat, time] = myCleanup?.route[0] || [0, 0, 0];
     if (time > Date.now() - 10e3 || distance([longitude, latitude], [lng, lat]) * 1e3 < 10) return;
-    myCleanup.route.unshift([longitude, latitude, timestamp]);
-    setMyCleanup({ ...myCleanup, route: myCleanup.route });
-    database.ref(`cleanups/-eventid/${myCleanup.uid}`).set(myCleanup);
+
+    const cleanup: CleanupUser = {
+      uid: user.uid,
+      email: user.email,
+      route: [[longitude, latitude, timestamp], ...(myCleanup?.route || [])],
+    };
+    setMyCleanup(cleanup);
+    database.ref(`cleanups/-eventid/${user.uid}`).set(cleanup);
   };
 
   // https://visgl.github.io/react-map-gl/docs
@@ -89,9 +92,11 @@ export default function Cleanup() {
                   'line-width': 6,
                 }}
               />
-              <Marker longitude={d.route[0][0]} latitude={d.route[0][1]}>
-                <MarkerIcon style={{ opacity: 0.8, transform: 'translate(-50%, -50%)' }} />
-              </Marker>
+              {d.route[0] && (
+                <Marker longitude={d.route[0][0]} latitude={d.route[0][1]}>
+                  <MarkerIcon style={{ opacity: 0.8, transform: 'translate(-50%, -50%)' }} />
+                </Marker>
+              )}
             </div>
           ))}
 
