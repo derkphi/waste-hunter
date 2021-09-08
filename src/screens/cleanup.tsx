@@ -1,65 +1,72 @@
 import React, { useEffect, useState } from 'react';
-import { GeolocateControl, Marker } from 'react-map-gl';
+import { GeolocateControl, Marker, Layer, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { ReactComponent as MarkerIcon } from '../assets/mapbox-marker-icon-blue.svg';
 import { authFirebase, database } from '../firebase/config';
 import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import Map from '../components/map';
+import distance from '@turf/distance';
 
 interface CleanupUser {
   uid: string;
-  latitude: number;
-  longitude: number;
-  timestamp: number;
   email: string | null;
+  route: number[][]; // [longitude, latitude, timestamp] //
 }
 
 export default function Cleanup() {
   const history = useHistory();
-  const [myPosition, setMyPosition] = useState<GeolocationPosition>();
-  const [cleanupUser, setCleanupUser] = useState<CleanupUser[]>([]);
-  const [updated, setUpdated] = useState(0);
+  const [myCleanup, setMyCleanup] = useState<CleanupUser>();
+  const [allCleanups, setAllCleanups] = useState<CleanupUser[]>([]);
 
   const loadCleanupUser = () => {
     database
       .ref(`cleanups/-eventid`)
       .get()
-      .then((snapshot) => {
-        setCleanupUser(Object.values(snapshot.val()));
+      .then((data) => {
+        if (data.exists()) setAllCleanups(Object.values(data.val()));
       });
   };
 
   useEffect(() => {
-    loadCleanupUser();
-    // momentan, alle 10s aktualisieren...
-    const interval = setInterval(loadCleanupUser, 10e3);
-    return () => clearInterval(interval);
+    const user = authFirebase.currentUser;
+    if (user) {
+      setMyCleanup({ uid: user.uid, email: user.email, route: [] });
+      loadCleanupUser();
+      // momentan, alle 10s aktualisieren...
+      const interval = setInterval(loadCleanupUser, 10e3);
+      return () => clearInterval(interval);
+    }
   }, []);
 
-  const handleGeolocate = (position: GeolocationPosition) => {
-    setMyPosition(position);
-    // momentan, max. alle 10s updaten...
-    const user = authFirebase.currentUser;
-    if (user && updated < Date.now() - 10e3) {
-      setUpdated(Date.now());
-      const cleanupUser: CleanupUser = {
-        uid: user.uid,
-        email: user.email,
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        timestamp: position.timestamp,
-      };
-      database.ref(`cleanups/-eventid/${user.uid}`).set(cleanupUser);
-    }
+  const getGeoJsonData = (positions: number[][]): GeoJSON.Feature<GeoJSON.Geometry> => {
+    return {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'LineString',
+        coordinates: positions.map((p) => [p[0], p[1]]),
+      },
+    };
+  };
+
+  const handleGeolocate = ({ coords: { longitude, latitude }, timestamp }: GeolocationPosition) => {
+    if (!myCleanup) return;
+    // update max. all 10 seconds and 10 meters
+    const [lng, lat, time] = myCleanup.route[0] || [0, 0, 0];
+    if (time > Date.now() - 10e3 || distance([longitude, latitude], [lng, lat]) * 1e3 < 10) return;
+    myCleanup.route.unshift([longitude, latitude, timestamp]);
+    setMyCleanup({ ...myCleanup, route: myCleanup.route });
+    database.ref(`cleanups/-eventid/${myCleanup.uid}`).set(myCleanup);
   };
 
   // https://visgl.github.io/react-map-gl/docs
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2000 }}>
+    <div
+      style={{ position: 'absolute', zIndex: 2000, top: 0, left: 0, width: '100%', height: '100%', background: '#FFF' }}
+    >
       <Map enableNavigation={true}>
-
         <GeolocateControl
           style={{ right: 10, top: 10 }}
           positionOptions={{ enableHighAccuracy: true }}
@@ -68,17 +75,30 @@ export default function Cleanup() {
           auto
         />
 
-        {cleanupUser
-          .filter((u) => u.timestamp > Date.now() - 24 * 36e5)
-          .map((u) => (
-            <Marker key={u.uid} latitude={u.latitude} longitude={u.longitude}>
-              <MarkerIcon style={{ opacity: 0.8, transform: 'translate(-50%, -50%)' }} />
-            </Marker>
+        {allCleanups
+          .filter((d) => d.route[0] && d.route[0][2] > Date.now() - 24 * 36e5)
+          .map((d) => (
+            <div key={d.uid}>
+              <Source id={`source-${d.uid}`} type="geojson" data={getGeoJsonData(d.route)} />
+              <Layer
+                id={`layer-${d.uid}`}
+                type="line"
+                source={`source-${d.uid}`}
+                paint={{
+                  'line-color': 'rgba(66, 100, 251, .5)',
+                  'line-width': 6,
+                }}
+              />
+              <Marker longitude={d.route[0][0]} latitude={d.route[0][1]}>
+                <MarkerIcon style={{ opacity: 0.8, transform: 'translate(-50%, -50%)' }} />
+              </Marker>
+            </div>
           ))}
 
-        {myPosition && (
+        {myCleanup && myCleanup.route[0] && (
           <div style={{ position: 'absolute', top: 10, right: 50 }}>
-            {myPosition.coords.latitude.toFixed(6)} / {myPosition.coords.longitude.toFixed(6)}
+            {myCleanup.route[0][0].toFixed(6)} / {myCleanup.route[0][1].toFixed(6)} /{' '}
+            {new Date(myCleanup.route[0][2]).toJSON()}
           </div>
         )}
       </Map>
