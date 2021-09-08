@@ -51,13 +51,13 @@ export default function Cleanup() {
     if (!user) return;
 
     // update max. all 10 seconds and 10 meters
-    const [lng, lat, time] = myCleanup?.route[0] || [0, 0, 0];
+    const [lng, lat, time] = (myCleanup && myCleanup.route[0]) || [0, 0, 0];
     if (time > Date.now() - 10e3 || distance([longitude, latitude], [lng, lat]) * 1e3 < 10) return;
 
     const cleanup: CleanupUser = {
       uid: user.uid,
       email: user.email,
-      route: [[longitude, latitude, timestamp], ...(myCleanup?.route || [])],
+      route: [[longitude, latitude, timestamp], ...((myCleanup && myCleanup.route) || [])],
     };
     setMyCleanup(cleanup);
     database.ref(`cleanups/-eventid/${user.uid}`).set(cleanup);
