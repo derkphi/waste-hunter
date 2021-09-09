@@ -5,6 +5,7 @@ import { Routes } from '../components/customRoute';
 import { EventType } from '../common/firebase_types';
 import { database } from '../firebase/config';
 import EventCard from '../components/eventCard';
+import Info from '../components/info';
 
 function Calendar() {
   let history = useHistory();
@@ -26,15 +27,18 @@ function Calendar() {
 
   let eventsWithTime = [];
   for (const [, event] of Object.entries<EventType>(events)) {
-    console.log(event.anlass);
     const time = Date.parse(event.datum + ' ' + event.zeit);
-
     eventsWithTime.push({ time: time, event: event });
   }
   eventsWithTime.sort((a, b) => (a.time > b.time ? 1 : a.time < b.time ? -1 : 0));
-  let cards = [];
-  for (const item of eventsWithTime) {
-    cards.push(<EventCard event={item.event} />);
+
+  const oldEventsTime = new Date().getTime();
+  eventsWithTime = eventsWithTime.filter((item) => item.time > oldEventsTime);
+  let cards: JSX.Element[] = [];
+  if (eventsWithTime.length > 0) {
+    eventsWithTime.forEach((item, idx) => {
+      cards.push(<EventCard event={item.event} joinEnabled={idx === 0} />);
+    });
   }
 
   return (
@@ -42,7 +46,7 @@ function Calendar() {
       <Button variant="contained" color="primary" onClick={handleNewEvent}>
         Event erfassen
       </Button>
-      {cards}
+      {cards.length > 0 ? cards : <Info text="Kein Event geplant." />}
       {/* <RecipeReviewCard></RecipeReviewCard> */}
     </>
   );
