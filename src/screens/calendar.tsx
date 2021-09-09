@@ -37,7 +37,7 @@ function Calendar() {
   let cards: JSX.Element[] = [];
   if (eventsWithTime.length > 0) {
     eventsWithTime.forEach((item, idx) => {
-      cards.push(<EventCard event={item.event} joinEnabled={idx === 0} />);
+      cards.push(<EventCard key={idx} event={item.event} joinEnabled={idx === 0} />);
     });
   }
 
