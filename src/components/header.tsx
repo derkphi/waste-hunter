@@ -1,49 +1,47 @@
-import { AppBar, Toolbar, Typography, makeStyles, Button, IconButton, Drawer, Link, MenuItem } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import React, { useState, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { AppBar, Toolbar, Typography, makeStyles, Button, IconButton, Drawer, Link, MenuItem } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import React, { useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   header: {
     backgroundColor: theme.palette.primary.main,
-    paddingRight: "10px",
-    paddingLeft: "79px",
-    "@media (max-width: 900px)": {
+    paddingRight: '10px',
+    paddingLeft: '79px',
+    '@media (max-width: 900px)': {
       paddingLeft: 0,
     },
-    position: "sticky",
+    position: 'sticky',
   },
   logo: {
-    fontFamily: "Work Sans, sans-serif",
+    fontFamily: 'Work Sans, sans-serif',
     fontWeight: 600,
-    color: theme.palette.primary.light,
-    textAlign: "left",
+    textAlign: 'left',
   },
   menuButton: {
-    fontFamily: "Open Sans, sans-serif",
+    fontFamily: 'Open Sans, sans-serif',
     fontWeight: 700,
-    size: "18px",
-    marginLeft: "38px",
+    size: '18px',
+    marginLeft: '38px',
   },
   toolbar: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   drawerContainer: {
-    padding: "20px 30px",
+    padding: '20px 30px',
   },
 }));
 
 interface MenuItemProp {
-  label : string,
-  href: string
+  label: string;
+  href: string;
 }
 
 interface HeaderProps {
-  title: string,
-  menuItems: MenuItemProp[]
+  title: string;
+  menuItems: MenuItemProp[];
 }
-
 
 export default function Header(props: HeaderProps) {
   const { header, logo, menuButton, toolbar, drawerContainer } = useStyles();
@@ -64,10 +62,10 @@ export default function Header(props: HeaderProps) {
 
     setResponsiveness();
 
-    window.addEventListener("resize", () => setResponsiveness());
+    window.addEventListener('resize', () => setResponsiveness());
 
     return () => {
-      window.removeEventListener("resize", () => setResponsiveness());
+      window.removeEventListener('resize', () => setResponsiveness());
     };
   }, []);
 
@@ -81,28 +79,26 @@ export default function Header(props: HeaderProps) {
   };
 
   const displayMobile = () => {
-    const handleDrawerOpen = () =>
-      setState((prevState) => ({ ...prevState, drawerOpen: true }));
-    const handleDrawerClose = () =>
-      setState((prevState) => ({ ...prevState, drawerOpen: false }));
+    const handleDrawerOpen = () => setState((prevState) => ({ ...prevState, drawerOpen: true }));
+    const handleDrawerClose = () => setState((prevState) => ({ ...prevState, drawerOpen: false }));
 
     return (
       <Toolbar>
         <IconButton
           {...{
-            edge: "start",
-            color: "inherit",
-            "aria-label": "menu",
-            "aria-haspopup": "true",
+            edge: 'start',
+            color: 'inherit',
+            'aria-label': 'menu',
+            'aria-haspopup': 'true',
             onClick: handleDrawerOpen,
           }}
         >
           <MenuIcon />
         </IconButton>
 
-        <Drawer 
+        <Drawer
           {...{
-            anchor: "top",
+            anchor: 'top',
             open: drawerOpen,
             onClose: handleDrawerClose,
           }}
@@ -116,14 +112,18 @@ export default function Header(props: HeaderProps) {
   };
 
   const getDrawerChoices = (handleDrawerClose: () => void) => {
-    return props.menuItems.map(item => {
+    return props.menuItems.map((item) => {
       return (
-        <Link tabIndex={0} role="button" onClick={handleDrawerClose} onKeyDown={handleDrawerClose}
+        <Link
+          tabIndex={0}
+          role="button"
+          onClick={handleDrawerClose}
+          onKeyDown={handleDrawerClose}
           {...{
             component: RouterLink,
             to: item.href,
-            color: "inherit",
-            style: { textDecoration: "none" },
+            color: 'inherit',
+            style: { textDecoration: 'none' },
             key: item.label,
           }}
         >
@@ -134,18 +134,20 @@ export default function Header(props: HeaderProps) {
   };
 
   const wasteHunterLogo = (
-    <Typography variant="h6" component="h1" className={logo}>
-      {props.title}
-    </Typography>
+    <>
+      <Typography variant="h6" component="h1" className={logo}>
+        {props.title}
+      </Typography>
+    </>
   );
 
   const getMenuButtons = () => {
-    return props.menuItems.map(item => {
+    return props.menuItems.map((item) => {
       return (
         <Button
           {...{
             key: item.label,
-            color: "inherit",
+            color: 'inherit',
             to: item.href,
             component: RouterLink,
             className: menuButton,
@@ -159,9 +161,7 @@ export default function Header(props: HeaderProps) {
 
   return (
     <header>
-      <AppBar className={header}>
-        {mobileView ? displayMobile() : displayDesktop()}
-      </AppBar>
+      <AppBar className={header}>{mobileView ? displayMobile() : displayDesktop()}</AppBar>
     </header>
   );
 }

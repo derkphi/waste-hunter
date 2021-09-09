@@ -7,26 +7,25 @@ import Calendar from './screens/calendar';
 import Reports from './screens/reports';
 import CreateEvent from './screens/createEvent';
 import Cleanup from './screens/cleanup';
-import {PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
-import { Container, createTheme, ThemeProvider} from "@material-ui/core";
+import { PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
+import { Container, createTheme, ThemeProvider } from '@material-ui/core';
 
 const theme = createTheme({
   palette: {
-      primary: {
-          light:'#528777',
-          main: '#276955',
-          dark:'#1b493b',
-      },
-      secondary: {
-          light:'#67b7a3',
-          main: '#41a58d',
-          dark:'#2d7362',
-      },
+    primary: {
+      light: '#528777',
+      main: '#276955',
+      dark: '#1b493b',
+    },
+    secondary: {
+      light: '#67b7a3',
+      main: '#41a58d',
+      dark: '#2d7362',
+    },
   },
 });
 
 const headerData = {
-  title: 'WasteHunter',
   menuItems: [
     {
       label: 'Home',
@@ -56,19 +55,19 @@ function App() {
             <Login />
           </RestrictedRoute>
           <PrivateRoute path={Routes.calendar} exact>
-            {withHeader(<Calendar />)}
+            {withHeader('Kalender', <Calendar />)}
           </PrivateRoute>
           <PrivateRoute path={Routes.reports} exact>
-            {withHeader(<Reports />)}
+            {withHeader('Berichte', <Reports />)}
           </PrivateRoute>
           <PrivateRoute path={Routes.cleanup} exact>
-            {withHeader(<Cleanup />)}
+            {withHeader('Cleanup', <Cleanup />)}
           </PrivateRoute>
           <PrivateRoute path={Routes.home} exact>
-            {withHeader(<Home />)}
-            </PrivateRoute>
-          <PrivateRoute path={Routes.createEvent} exact >
-            {withHeader(<CreateEvent />)}
+            {withHeader('Home', <Home />)}
+          </PrivateRoute>
+          <PrivateRoute path={Routes.createEvent} exact>
+            {withHeader('Event erfassen', <CreateEvent />)}
           </PrivateRoute>
         </Switch>
       </Router>
@@ -76,11 +75,11 @@ function App() {
   );
 }
 
-function withHeader(element: React.ReactElement): React.ReactElement {
+function withHeader(title: string, element: React.ReactElement): React.ReactElement {
   return (
     <>
-      <Header title={headerData.title} menuItems={headerData.menuItems} />
-      <Container maxWidth='lg' style={{marginTop:'20px'}}>
+      <Header title={title} menuItems={headerData.menuItems} />
+      <Container maxWidth="lg" style={{ marginTop: '20px' }}>
         {element}
       </Container>
     </>
