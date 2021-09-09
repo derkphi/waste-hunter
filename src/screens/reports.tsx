@@ -1,10 +1,8 @@
 import React from 'react';
-
+import Info from '../components/info';
 
 function Reports() {
-  return (
-    <h1>Reports</h1>
-  );
+  return <Info text="Kein Berichte vorhanden." />;
 }
 
 export default Reports;
