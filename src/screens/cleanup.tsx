@@ -68,7 +68,7 @@ export default function Cleanup() {
       .then((d) => setEvent(d.val()));
     const ref = database.ref(`cleanups/${id}`);
     ref.on('value', (d) => setCleanupUsers(Object.values(d.val())));
-    return () => ref.off('value');
+    return () => ref.off();
   }, [id]);
 
   useEffect(() => {

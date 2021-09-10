@@ -1,19 +1,19 @@
-import { EventType } from '../common/firebase_types';
+import { EventWithId, EventType } from '../common/firebase_types';
 
-export function filterNext(events: EventType[]) {
+export function filterNext(events: { [id: string]: EventType }): EventWithId[] {
   // Get time for events
-  let eventsWithTime = [];
-  for (const [, event] of Object.entries<EventType>(events)) {
+  let eventsWithIdAndTime = [];
+  for (const [id, event] of Object.entries(events)) {
     const time = Date.parse(event.datum + ' ' + event.zeit);
-    eventsWithTime.push({ time: time, event: event });
+    eventsWithIdAndTime.push({ id, time, event });
   }
 
   // Sort by time
-  eventsWithTime.sort((a, b) => (a.time > b.time ? 1 : a.time < b.time ? -1 : 0));
+  eventsWithIdAndTime.sort((a, b) => (a.time > b.time ? 1 : a.time < b.time ? -1 : 0));
 
   // Filter out outdated events
   const oldEventsTime = new Date().getTime();
-  eventsWithTime = eventsWithTime.filter((item) => item.time > oldEventsTime);
+  eventsWithIdAndTime = eventsWithIdAndTime.filter((item) => item.time > oldEventsTime);
 
-  return eventsWithTime.map((item) => item.event);
+  return eventsWithIdAndTime.map((item) => ({ ...item.event, id: item.id }));
 }

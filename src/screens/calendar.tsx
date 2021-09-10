@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { Routes } from '../components/customRoute';
-import { EventType } from '../common/firebase_types';
+import { EventWithId } from '../common/firebase_types';
 import { database } from '../firebase/config';
 import EventCard from '../components/eventCard';
 import Info from '../components/info';
@@ -10,16 +10,14 @@ import { filterNext } from '../firebase/events';
 
 function Calendar() {
   let history = useHistory();
-  const [events, setEvents] = useState<EventType[]>();
+  const [events, setEvents] = useState<EventWithId[]>();
 
   useEffect(() => {
     const dbRef = database.ref('events');
-    const cb = (snapshot: any) => {
-      //todo: Use correct type DataSnapshot
+    dbRef.on('value', (snapshot) => {
       setEvents(filterNext(snapshot.val()));
-    };
-    dbRef.on('value', cb);
-    return () => dbRef.off('value', cb);
+    });
+    return () => dbRef.off();
   }, []);
 
   function handleNewEvent() {

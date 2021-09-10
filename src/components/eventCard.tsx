@@ -5,16 +5,17 @@ import CardContent from '@material-ui/core/CardContent';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Grid, Button } from '@material-ui/core';
-import { EventType } from '../common/firebase_types';
+import { EventWithId } from '../common/firebase_types';
 import Map from '../components/map';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import { Routes } from '../components/customRoute';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       marginTop: '20px',
     },
-
     mapGridItem: {
       width: '100%',
       height: '350px',
@@ -24,11 +25,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface EventCardProps {
-  event: EventType;
+  event: EventWithId;
   joinEnabled: boolean;
 }
 
 function EventCard(props: EventCardProps) {
+  const history = useHistory();
   const classes = useStyles();
   return (
     <Card className={classes.root}>
@@ -47,6 +49,7 @@ function EventCard(props: EventCardProps) {
               variant="contained"
               endIcon={<KeyboardArrowRightIcon />}
               disabled={!props.joinEnabled}
+              onClick={() => history.push(Routes.cleanup.replace(':id', props.event.id))}
             >
               Teilnehmen
             </Button>

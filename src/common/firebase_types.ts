@@ -11,3 +11,7 @@ export interface EventType {
   position: PositionType;
   zeit: string;
 }
+
+export interface EventWithId extends EventType {
+  id: string;
+}

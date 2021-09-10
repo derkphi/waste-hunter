@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Typography } from '@material-ui/core';
-import { EventType } from '../common/firebase_types';
+import { EventWithId } from '../common/firebase_types';
 import Info from '../components/info';
 import { database } from '../firebase/config';
 import { filterNext } from '../firebase/events';
 import EventCard from '../components/eventCard';
 
 function Home() {
-  const [nextEvent, setNextEvent] = useState<EventType>();
+  const [nextEvent, setNextEvent] = useState<EventWithId>();
 
   useEffect(() => {
     const dbRef = database.ref('events');
-    const cb = (snapshot: any) => {
-      //todo: Use correct type DataSnapshot
+    dbRef.on('value', (snapshot) => {
       const events = filterNext(snapshot.val());
       if (events.length > 0) {
         setNextEvent(events[0]);
       }
-    };
-    dbRef.on('value', cb);
-    return () => dbRef.off('value', cb);
+    });
+    return () => dbRef.off();
   }, []);
 
   const nextEventCard = nextEvent ? <EventCard event={nextEvent} joinEnabled={true} /> : undefined;
