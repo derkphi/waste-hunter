@@ -7,21 +7,21 @@ import Calendar from './screens/calendar';
 import Reports from './screens/reports';
 import CreateEvent from './screens/createEvent';
 import Cleanup from './screens/cleanup';
-import {PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
-import { Container, createTheme, ThemeProvider} from "@material-ui/core";
+import { PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
+import { Container, createTheme, ThemeProvider } from '@material-ui/core';
 
 const theme = createTheme({
   palette: {
-      primary: {
-          light:'#528777',
-          main: '#276955',
-          dark:'#1b493b',
-      },
-      secondary: {
-          light:'#67b7a3',
-          main: '#41a58d',
-          dark:'#2d7362',
-      },
+    primary: {
+      light: '#528777',
+      main: '#276955',
+      dark: '#1b493b',
+    },
+    secondary: {
+      light: '#67b7a3',
+      main: '#41a58d',
+      dark: '#2d7362',
+    },
   },
 });
 
@@ -39,10 +39,6 @@ const headerData = {
     {
       label: 'Berichte',
       href: Routes.reports,
-    },
-    {
-      label: 'Cleanup-Test',
-      href: Routes.cleanup,
     },
   ],
 };
@@ -66,8 +62,8 @@ function App() {
           </PrivateRoute>
           <PrivateRoute path={Routes.home} exact>
             {withHeader(<Home />)}
-            </PrivateRoute>
-          <PrivateRoute path={Routes.createEvent} exact >
+          </PrivateRoute>
+          <PrivateRoute path={Routes.createEvent} exact>
             {withHeader(<CreateEvent />)}
           </PrivateRoute>
         </Switch>
@@ -80,7 +76,7 @@ function withHeader(element: React.ReactElement): React.ReactElement {
   return (
     <>
       <Header title={headerData.title} menuItems={headerData.menuItems} />
-      <Container maxWidth='lg' style={{marginTop:'20px'}}>
+      <Container maxWidth="lg" style={{ marginTop: '20px' }}>
         {element}
       </Container>
     </>

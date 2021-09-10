@@ -8,7 +8,7 @@ export enum Routes {
   reports = '/reports',
   home = '/',
   createEvent = '/calendar/new-event',
-  cleanup = '/cleanup',
+  cleanup = '/cleanup/:id',
 }
 
 function isAuthenticated() {

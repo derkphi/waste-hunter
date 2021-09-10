@@ -1,136 +1,223 @@
 import React, { useEffect, useState } from 'react';
 import { GeolocateControl, Marker, Layer, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { ReactComponent as MarkerIcon } from '../assets/mapbox-marker-icon-blue.svg';
 import { authFirebase, database } from '../firebase/config';
-import { Button } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  makeStyles,
+  TextField,
+} from '@material-ui/core';
+import { useHistory, useParams } from 'react-router-dom';
 import Map from '../components/map';
 import distance from '@turf/distance';
+import length from '@turf/length';
+import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
+import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 
 interface CleanupUser {
   uid: string;
   email: string | null;
-  positions?: { [key: string]: CleanupPosition };
+  route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
 }
 
-interface CleanupPosition {
-  longitude: number;
-  latitude: number;
-  timestamp: number;
+interface Event {
+  anlass: string;
+  position: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+  };
 }
+
+const useStyles = makeStyles({
+  main: {
+    position: 'absolute',
+    zIndex: 2000,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: '#FFF',
+  },
+  footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
+  iconStart: { transform: 'translate(-50%, -100%)' },
+  iconUser: { color: 'rgba(66, 100, 251, .8)', transform: 'translate(-50%, -100%)' },
+});
 
 export default function Cleanup() {
+  const classes = useStyles();
   const history = useHistory();
-  const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>([]);
-  const [position, setPosition] = useState<CleanupPosition>();
-  const [lastPosition, setLastPosition] = useState<CleanupPosition>();
+  const [event, setEvent] = useState<Event>();
+  const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
+  const [position, setPosition] = useState<GeolocationPosition>();
+  const [lastPosition, setLastPosition] = useState<GeolocationPosition>();
+  const [showDialog, setShowDialog] = useState(false);
+  const [collected, setCollected] = useState<number>();
+  const { id } = useParams<{ id: string }>();
   const user = authFirebase.currentUser;
 
   useEffect(() => {
+    database
+      .ref(`events/${id}`)
+      .get()
+      .then((d) => setEvent(d.val()));
+    const ref = database.ref(`cleanups/${id}`);
+    ref.on('value', (d) => setCleanupUsers(Object.values(d.val())));
+    return () => ref.off('value');
+  }, [id]);
+
+  useEffect(() => {
     if (!user) return;
-    database.ref(`cleanups/-eventid/${user.uid}`).set({
+    database.ref(`cleanups/${id}/${user.uid}`).set({
       uid: user.uid,
       email: user.email,
     });
-  }, [user]);
+    setLastPosition(undefined);
+  }, [user, id]);
 
   useEffect(() => {
-    function getCleanups() {
-      database
-        .ref(`cleanups/-eventid`)
-        .get()
-        .then((d) => {
-          if (d.exists()) setCleanupUsers(Object.values(d.val()));
-        });
-    }
-    getCleanups();
-    const interval = setInterval(getCleanups, 10e3);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    console.log('position', position, lastPosition);
     if (!user || !position) return;
-    // push position max. all 10 seconds and 10 meters...
+    // push position max. all 10 seconds and 5 meters
     if (
       !lastPosition ||
       (Date.now() > lastPosition.timestamp + 10e3 &&
-        distance([position.longitude, position.latitude], [lastPosition.longitude, lastPosition.latitude]) > 5e-3)
+        distance(
+          [position.coords.longitude, position.coords.latitude],
+          [lastPosition.coords.longitude, lastPosition.coords.latitude]
+        ) > 5e-3)
     ) {
       setLastPosition(position);
-      database.ref(`cleanups/-eventid/${user.uid}/positions`).push(position);
+      database
+        .ref(`cleanups/${id}/${user.uid}/route`)
+        .push([position.coords.longitude, position.coords.latitude, position.timestamp]);
     }
-  }, [user, position, lastPosition]);
+  }, [user, id, position, lastPosition]);
 
-  function handleGeolocate({ coords: { longitude, latitude }, timestamp }: GeolocationPosition) {
-    setPosition({ longitude, latitude, timestamp });
-  }
-
-  function getGeoJsonData(positions: { [key: string]: CleanupPosition }): GeoJSON.Feature<GeoJSON.Geometry> {
+  function getGeoJsonData(route: { [key: string]: number[] }): GeoJSON.Feature<GeoJSON.Geometry> {
     return {
       type: 'Feature',
       properties: {},
       geometry: {
         type: 'LineString',
-        coordinates: Object.values(positions).map((p) => [p.longitude, p.latitude]),
+        coordinates: Object.values(route).map((p) => p.slice(0, 2)),
       },
     };
   }
 
-  console.log('render', cleanupUsers);
-  return (
-    <div
-      style={{ position: 'absolute', zIndex: 2000, top: 0, left: 0, width: '100%', height: '100%', background: '#FFF' }}
-    >
-      <Map enableNavigation={true}>
+  const handleDialogClose = () => {
+    if (user) {
+      const route = cleanupUsers?.find((u) => u.uid === user.uid)?.route;
+      const distance = route ? length(getGeoJsonData(route)) : 0;
+      database.ref(`cleanups/${id}/${user.uid}`).update({
+        collected,
+        distance,
+      });
+    }
+    history.push('/');
+  };
+
+  return event ? (
+    <main className={classes.main}>
+      <Map enableNavigation={true} initialPosition={event.position}>
         <GeolocateControl
           style={{ right: 10, top: 10 }}
           positionOptions={{ enableHighAccuracy: true }}
           trackUserLocation={true}
-          onGeolocate={handleGeolocate}
+          onGeolocate={(p: GeolocationPosition) => setPosition(p)}
           auto
         />
 
-        {cleanupUsers.map(
-          (c) =>
-            c.positions && (
-              <div key={c.uid}>
-                <Source id={`source-${c.uid}`} type="geojson" data={getGeoJsonData(c.positions)} />
+        {event && (
+          <Marker longitude={event.position.longitude} latitude={event.position.latitude}>
+            <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
+          </Marker>
+        )}
+
+        {cleanupUsers?.map(
+          (u) =>
+            u.route && (
+              <div key={u.uid}>
+                <Source id={`source-${u.uid}`} type="geojson" data={getGeoJsonData(u.route)} />
                 <Layer
-                  id={`layer-${c.uid}`}
+                  id={`layer-${u.uid}`}
                   type="line"
-                  source={`source-${c.uid}`}
+                  source={`source-${u.uid}`}
                   layout={{
                     'line-cap': 'round',
                     'line-join': 'round',
                   }}
                   paint={{
-                    'line-color': 'rgba(66, 100, 251, .5)',
+                    'line-color': 'rgba(66, 100, 251, .4)',
                     'line-width': 6,
                   }}
                 />
-                {lastPosition && (
-                  <Marker longitude={lastPosition.longitude} latitude={lastPosition.latitude}>
-                    <MarkerIcon style={{ opacity: 0.8, transform: 'translate(-50%, -50%)' }} />
-                  </Marker>
-                )}
+                {Object.values(u.route)
+                  .slice(-1)
+                  .map((r, i) => (
+                    <Marker key={i} longitude={r[0]} latitude={r[1]}>
+                      <PersonPinCircleIcon fontSize="large" className={classes.iconUser} />
+                    </Marker>
+                  ))}
               </div>
             )
         )}
 
-        {position && (
+        {/* {position && (
           <div style={{ position: 'absolute', top: 10, right: 50 }}>
-            {position.longitude.toFixed(6)} / {position.latitude.toFixed(6)} / {position.timestamp}
+            {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} / {position.timestamp}
           </div>
-        )}
+        )} */}
       </Map>
 
-      <div style={{ position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' }}>
-        <Button color="primary" variant="contained" onClick={() => history.push('/')}>
-          Event verlassen
+      <footer className={classes.footer}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => {
+            setCollected(undefined);
+            setShowDialog(true);
+          }}
+        >
+          Beenden
         </Button>
-      </div>
-    </div>
-  );
+      </footer>
+
+      <Dialog open={showDialog} onClose={() => setShowDialog(false)} style={{ zIndex: 3000 }}>
+        <DialogTitle>Event beenden</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Vielen Dank für die Teilnahme beim "{event.anlass}" Event.</DialogContentText>
+          <DialogContentText>
+            Bitte geben sie zum beenden des Events noch die Menge ihres gesammelten Abfalles ein.
+          </DialogContentText>
+          <TextField
+            id="collected-waste"
+            label="Abfall (in Liter)"
+            type="number"
+            onChange={(e) => setCollected(Number(e.target.value))}
+            autoComplete="off"
+            required
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary" onClick={() => setShowDialog(false)}>
+            Abbrechen
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!(collected !== undefined && collected >= 0)}
+            onClick={handleDialogClose}
+          >
+            Beenden
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </main>
+  ) : null;
 }
