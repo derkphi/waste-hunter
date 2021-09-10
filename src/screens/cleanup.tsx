@@ -18,21 +18,7 @@ import distance from '@turf/distance';
 import length from '@turf/length';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-
-interface CleanupUser {
-  uid: string;
-  email: string | null;
-  route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
-}
-
-interface Event {
-  anlass: string;
-  position: {
-    latitude: number;
-    longitude: number;
-    zoom: number;
-  };
-}
+import firebase from 'firebase/app';
 
 const useStyles = makeStyles({
   main: {
@@ -48,6 +34,21 @@ const useStyles = makeStyles({
   iconStart: { transform: 'translate(-50%, -100%)' },
   iconUser: { color: 'rgba(66, 100, 251, .8)', transform: 'translate(-50%, -100%)' },
 });
+
+interface CleanupUser {
+  uid: string;
+  email: string | null;
+  route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
+}
+
+interface Event {
+  anlass: string;
+  position: {
+    latitude: number;
+    longitude: number;
+    zoom: number;
+  };
+}
 
 export default function Cleanup() {
   const classes = useStyles();
@@ -67,8 +68,9 @@ export default function Cleanup() {
       .get()
       .then((d) => setEvent(d.val()));
     const ref = database.ref(`cleanups/${id}`);
-    ref.on('value', (d) => setCleanupUsers(Object.values(d.val())));
-    return () => ref.off();
+    const cb = (d: firebase.database.DataSnapshot) => setCleanupUsers(Object.values(d.val()));
+    ref.on('value', cb);
+    return () => ref.off('value', cb);
   }, [id]);
 
   useEffect(() => {

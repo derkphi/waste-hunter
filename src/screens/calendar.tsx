@@ -7,6 +7,7 @@ import { database } from '../firebase/config';
 import EventCard from '../components/eventCard';
 import Info from '../components/info';
 import { filterNext } from '../firebase/events';
+import firebase from 'firebase/app';
 
 function Calendar() {
   let history = useHistory();
@@ -14,10 +15,9 @@ function Calendar() {
 
   useEffect(() => {
     const dbRef = database.ref('events');
-    dbRef.on('value', (snapshot) => {
-      setEvents(filterNext(snapshot.val()));
-    });
-    return () => dbRef.off();
+    const cb = (d: firebase.database.DataSnapshot) => setEvents(filterNext(d.val()));
+    dbRef.on('value', cb);
+    return () => dbRef.off('value', cb);
   }, []);
 
   function handleNewEvent() {

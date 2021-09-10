@@ -5,19 +5,19 @@ import Info from '../components/info';
 import { database } from '../firebase/config';
 import { filterNext } from '../firebase/events';
 import EventCard from '../components/eventCard';
+import firebase from 'firebase/app';
 
 function Home() {
   const [nextEvent, setNextEvent] = useState<EventWithId>();
 
   useEffect(() => {
     const dbRef = database.ref('events');
-    dbRef.on('value', (snapshot) => {
-      const events = filterNext(snapshot.val());
-      if (events.length > 0) {
-        setNextEvent(events[0]);
-      }
-    });
-    return () => dbRef.off();
+    const cb = (d: firebase.database.DataSnapshot) => {
+      const events = filterNext(d.val());
+      if (events.length > 0) setNextEvent(events[0]);
+    };
+    dbRef.on('value', cb);
+    return () => dbRef.off('value', cb);
   }, []);
 
   const nextEventCard = nextEvent ? <EventCard event={nextEvent} joinEnabled={true} /> : undefined;
