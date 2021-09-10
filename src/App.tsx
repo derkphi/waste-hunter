@@ -39,10 +39,6 @@ const headerData = {
       label: 'Berichte',
       href: Routes.reports,
     },
-    {
-      label: 'Cleanup-Test',
-      href: Routes.cleanup,
-    },
   ],
 };
 
