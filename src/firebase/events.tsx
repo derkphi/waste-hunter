@@ -12,8 +12,12 @@ export function filterNext(events: { [id: string]: EventType }): EventWithId[] {
   eventsWithIdAndTime.sort((a, b) => (a.time > b.time ? 1 : a.time < b.time ? -1 : 0));
 
   // Filter out outdated events
-  const oldEventsTime = new Date().getTime();
-  eventsWithIdAndTime = eventsWithIdAndTime.filter((item) => item.time > oldEventsTime);
+  const today = new Date(); // Get current date and time
+  today.setHours(0, 0, 0, 0); // Set time to midnight
+
+  eventsWithIdAndTime = eventsWithIdAndTime.filter((item) => {
+    return item.time > today.getTime();
+  });
 
   return eventsWithIdAndTime.map((item) => ({ ...item.event, id: item.id }));
 }
