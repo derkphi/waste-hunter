@@ -5,6 +5,8 @@ import { Grid } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import EventMap, { defaultPos } from '../components/eventMap';
+import { database } from '../firebase/config';
+import { EventType } from '../common/firebase_types';
 
 const useStyles = makeStyles(() => ({
   field: {
@@ -67,11 +69,15 @@ function CreateEvent() {
       settimeerror(true);
     }
     if (event && place) {
-      fetch('https://waste-hunter-default-rtdb.europe-west1.firebasedatabase.app/events.json', {
-        method: 'POST',
-        headers: { 'Content-type': 'application/json' },
-        body: JSON.stringify({ anlass: event, ort: place, datum: date, zeit: time, position }),
-      }).then(() => history.push(Routes.calendar));
+      const newEventKey = database.ref().child('events').push().key;
+      const newEvent: EventType = { anlass: event, ort: place, datum: date, zeit: time, position };
+      const updates = {
+        ['/events/' + newEventKey]: newEvent,
+      };
+      database
+        .ref()
+        .update(updates)
+        .then(() => history.push(Routes.calendar));
     }
   };
 
