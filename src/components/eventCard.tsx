@@ -10,6 +10,7 @@ import Map from '../components/map';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Routes } from '../components/customRoute';
 import { useHistory } from 'react-router-dom';
+import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '350px',
       padding: '1px',
     },
+    iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
   })
 );
 
@@ -38,7 +40,9 @@ function EventCard(props: EventCardProps) {
       <CardContent style={{ width: '100%' }}>
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.mapGridItem}>
-            <Map initialPosition={props.event.position} />
+            <Map initialPosition={props.event.position}>
+              <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
+            </Map>
           </Grid>
           <Grid item sm={12} md={6}>
             <Typography paragraph variant="h6">
