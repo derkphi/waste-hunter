@@ -55,7 +55,7 @@ export default function Reports() {
           .map(([k, v]) => ({
             ...v,
             id: k,
-            time: Date.parse(`${v.datum} ${v.zeit}`),
+            time: Date.parse(`${v.datum}T${v.zeit}`),
           }))
           .sort((a, b) => b.time - a.time)
           .filter((e) => Date.parse(e.datum) < Date.now());

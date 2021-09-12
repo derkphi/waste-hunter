@@ -4,7 +4,7 @@ export function filterNext(events: { [id: string]: EventType }): EventWithId[] {
   // Get time for events
   let eventsWithIdAndTime = [];
   for (const [id, event] of Object.entries(events)) {
-    const time = Date.parse(event.datum + ' ' + event.zeit);
+    const time = Date.parse(event.datum + 'T' + event.zeit);
     eventsWithIdAndTime.push({ id, time, event });
   }
 

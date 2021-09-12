@@ -52,6 +52,7 @@ const Map: React.FunctionComponent<MapProps> = (props) => {
       height="100%"
       onClick={enableNavigation ? checkPosition : undefined}
       onKeyUp={enableNavigation ? checkPosition : undefined}
+      style={{ background: 'rgba(82, 135, 119, .1)' }}
     >
       <ReactMapGL
         mapboxApiAccessToken="pk.eyJ1IjoiZGVya3NlbnBoaWxpcHAiLCJhIjoiY2tycXV1ejZxMnFzNTJ1cnY5eHZ0ZXp1YSJ9.iWymYhi7VBjE_C6WIt0mOw"
