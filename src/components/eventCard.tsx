@@ -37,7 +37,7 @@ function EventCard(props: EventCardProps) {
   return (
     <Card className={classes.root}>
       <CardHeader title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass} />
-      <CardContent style={{ width: '100%' }}>
+      <CardContent>
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.mapGridItem}>
             <Map initialPosition={props.event.position}>
