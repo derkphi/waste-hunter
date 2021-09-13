@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import Map from '../components/map';
-import distance from '@turf/distance';
+//import distance from '@turf/distance';
 import length from '@turf/length';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
@@ -85,19 +85,19 @@ export default function Cleanup() {
   useEffect(() => {
     if (!user || !position) return;
     // push position max. all 10 seconds and 5 meters
-    if (
-      !lastPosition ||
-      (Date.now() > lastPosition.timestamp + 10e3 &&
-        distance(
-          [position.coords.longitude, position.coords.latitude],
-          [lastPosition.coords.longitude, lastPosition.coords.latitude]
-        ) > 5e-3)
-    ) {
-      setLastPosition(position);
-      database
-        .ref(`cleanups/${id}/${user.uid}/route`)
-        .push([position.coords.longitude, position.coords.latitude, position.timestamp]);
-    }
+    // if (
+    //   !lastPosition ||
+    //   (Date.now() > lastPosition.timestamp + 10e3 &&
+    //     distance(
+    //       [position.coords.longitude, position.coords.latitude],
+    //       [lastPosition.coords.longitude, lastPosition.coords.latitude]
+    //     ) > 5e-3)
+    // ) {
+    setLastPosition(position);
+    database
+      .ref(`cleanups/${id}/${user.uid}/route`)
+      .push([position.coords.longitude, position.coords.latitude, position.timestamp]);
+    //}
   }, [user, id, position, lastPosition]);
 
   function getGeoJsonData(route: { [key: string]: number[] }): GeoJSON.Feature<GeoJSON.Geometry> {
