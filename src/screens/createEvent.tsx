@@ -4,7 +4,7 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Grid } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
-import EventMap, { defaultPos } from '../components/eventMap';
+import EventMap, { fallbackViewport } from '../components/maps/eventMap';
 import { database } from '../firebase/config';
 import { EventType } from '../common/firebase_types';
 
@@ -47,7 +47,7 @@ function CreateEvent() {
   const [placeerror, setPlaceerror] = useState(false);
   const [dateerror, setdateerror] = useState(false);
   const [timeerror, settimeerror] = useState(false);
-  const [position, setPosition] = useState(defaultPos);
+  const [viewport, setViewport] = useState(fallbackViewport);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -70,7 +70,7 @@ function CreateEvent() {
     }
     if (event && place) {
       const newEventKey = database.ref().child('events').push().key;
-      const newEvent: EventType = { anlass: event, ort: place, datum: date, zeit: time, position };
+      const newEvent: EventType = { anlass: event, ort: place, datum: date, zeit: time, position: viewport };
       const updates = {
         ['/events/' + newEventKey]: newEvent,
       };
@@ -138,7 +138,7 @@ function CreateEvent() {
         <Grid item sm={12} md={7} className={classes.mapGridItem}>
           <FormLabel>Suchgebiet</FormLabel>
           <Box className={classes.map}>
-            <EventMap onNewPosition={(pos) => setPosition(pos)} />
+            <EventMap onViewportChange={(viewport) => setViewport(viewport)} />
           </Box>
         </Grid>
       </Grid>
