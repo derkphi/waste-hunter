@@ -3,7 +3,7 @@ import { EventType, EventWithId } from '../common/firebase_types';
 import Info from '../components/info';
 import { database } from '../firebase/config';
 import { Card, CardHeader, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
-import Map from '../components/map';
+import BasicMap from '../components/maps/basicMap';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 
 const useStyles = makeStyles({
@@ -72,9 +72,9 @@ export default function Reports() {
           <CardContent style={{ width: '100%' }}>
             <Grid container spacing={3}>
               <Grid item sm={12} md={6} className={classes.gridItem}>
-                <Map initialPosition={event.position}>
+                <BasicMap viewport={event.position}>
                   <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
-                </Map>
+                </BasicMap>
               </Grid>
               <Grid item sm={12} md={6}>
                 <Typography paragraph variant="h6">

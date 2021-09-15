@@ -15,7 +15,7 @@ export const defaultViewport: MapViewport = {
 };
 
 interface BasicMapProps {
-  viewport?: MapViewport;
+  viewport: MapViewport;
   enableNavigation?: boolean;
   onViewportChange?: (viewport: MapViewport) => void;
 }
