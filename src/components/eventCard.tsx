@@ -6,7 +6,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Grid, Button } from '@material-ui/core';
 import { EventWithId } from '../common/firebase_types';
-import Map from '../components/map';
+import BasicMap from '../components/maps/basicMap';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Routes } from '../components/customRoute';
 import { useHistory } from 'react-router-dom';
@@ -40,9 +40,9 @@ function EventCard(props: EventCardProps) {
       <CardContent>
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.mapGridItem}>
-            <Map initialPosition={props.event.position}>
+            <BasicMap viewport={props.event.position}>
               <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
-            </Map>
+            </BasicMap>
           </Grid>
           <Grid item sm={12} md={6}>
             <Typography paragraph variant="h6">
