@@ -75,7 +75,7 @@ export default function Header(props: HeaderProps) {
   const displayDesktop = () => {
     return (
       <Toolbar className={toolbar}>
-        <img src="android-chrome-512x512.png" alt="logo" className={whlogo} />
+        <img src="../android-chrome-512x512.png" alt="logo" className={whlogo} />
 
         <div>{getMenuButtons()}</div>
       </Toolbar>
