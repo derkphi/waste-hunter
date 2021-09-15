@@ -7,6 +7,12 @@ export interface MapViewport {
   zoom: number;
 }
 
+export const defaultViewport: MapViewport = {
+  latitude: 46.82,
+  longitude: 8.26,
+  zoom: 7,
+};
+
 interface BasicMapProps {
   viewport?: MapViewport;
   enableNavigation?: boolean;
@@ -32,25 +38,25 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       onViewportChange={enableNavigation ? handleViewport : undefined}
       width="100%"
       height="100%"
-      scrollZoom={false}
-      dragPan={false}
-      dragRotate={false}
-      doubleClickZoom={false}
-      touchZoom={false}
+      scrollZoom={enableNavigation}
+      dragPan={enableNavigation}
+      dragRotate={enableNavigation}
+      doubleClickZoom={enableNavigation}
+      touchZoom={enableNavigation}
       touchRotate={false}
-      keyboard={false}
-      touchAction={'pan-y'}
-      getCursor={() => 'default'}
+      keyboard={enableNavigation}
+      touchAction={enableNavigation ? 'none' : 'pan-y'}
+      getCursor={() => (enableNavigation ? 'grap' : 'default')}
       // onMouseUp={(e) => console.log("Mouse:", e.lngLat)}
     >
       <NavigationControl
         style={{ left: 10, top: 10 }}
-        showCompass={false}
-        showZoom={false}
+        showCompass={enableNavigation}
+        showZoom={enableNavigation}
         captureScroll={false}
-        captureDrag={false}
-        captureClick={false}
-        captureDoubleClick={false}
+        captureDrag={enableNavigation}
+        captureClick={enableNavigation}
+        captureDoubleClick={enableNavigation}
         capturePointerMove={false}
       />
       {props.children}

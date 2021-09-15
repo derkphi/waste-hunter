@@ -13,7 +13,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import Map from '../components/map';
+import BasicMap, { MapViewport, defaultViewport } from '../components/maps/basicMap';
 import distance from '@turf/distance';
 import length from '@turf/length';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
@@ -54,6 +54,7 @@ export default function Cleanup() {
   const classes = useStyles();
   const history = useHistory();
   const [event, setEvent] = useState<Event>();
+  const [viewport, setViewport] = useState<MapViewport>(event ? event.position : defaultViewport);
   const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
   const [position, setPosition] = useState<GeolocationPosition>();
   const [lastPosition, setLastPosition] = useState<GeolocationPosition>();
@@ -123,9 +124,13 @@ export default function Cleanup() {
     history.push('/');
   };
 
+  function handleViewport(viewport: MapViewport) {
+    setViewport(viewport);
+  }
+
   return event ? (
     <main className={classes.main}>
-      <Map enableNavigation={true} initialPosition={event.position}>
+      <BasicMap enableNavigation={true} viewport={viewport} onViewportChange={handleViewport}>
         <GeolocateControl
           style={{ right: 10, top: 10 }}
           positionOptions={{ enableHighAccuracy: true }}
@@ -174,7 +179,7 @@ export default function Cleanup() {
             {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} / {position.timestamp}
           </div>
         )} */}
-      </Map>
+      </BasicMap>
 
       <footer className={classes.footer}>
         <Button
