@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     textAlign: 'left',
   },
+  whlogo: {
+    maxWidth: 90,
+  },
   menuButton: {
     fontFamily: 'Open Sans, sans-serif',
     fontWeight: 700,
@@ -44,7 +47,7 @@ interface HeaderProps {
 }
 
 export default function Header(props: HeaderProps) {
-  const { header, logo, menuButton, toolbar, drawerContainer } = useStyles();
+  const { header, logo, menuButton, toolbar, drawerContainer,whlogo } = useStyles();
 
   const [state, setState] = useState({
     mobileView: false,
@@ -72,7 +75,8 @@ export default function Header(props: HeaderProps) {
   const displayDesktop = () => {
     return (
       <Toolbar className={toolbar}>
-        {wasteHunterLogo}
+        <img src="android-chrome-512x512.png" alt="logo" className={whlogo} />
+
         <div>{getMenuButtons()}</div>
       </Toolbar>
     );
