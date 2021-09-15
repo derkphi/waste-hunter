@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import ReactMapGL, { NavigationControl, ViewportProps } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -20,6 +21,7 @@ interface BasicMapProps {
 }
 
 const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
+  const [mouseDown, setMouseDown] = useState(false);
   const enableNavigation = props.enableNavigation ?? false;
 
   function handleViewport(viewport: ViewportProps) {
@@ -28,6 +30,10 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
         props.onViewportChange({ latitude: viewport.latitude, longitude: viewport.longitude, zoom: viewport.zoom });
       }
     }
+  }
+
+  function cursor() {
+    return enableNavigation ? (mouseDown ? 'grabbing' : 'grab') : 'default';
   }
 
   return (
@@ -46,7 +52,9 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       touchRotate={false}
       keyboard={enableNavigation}
       touchAction={enableNavigation ? 'none' : 'pan-y'}
-      getCursor={() => (enableNavigation ? 'grap' : 'default')}
+      getCursor={cursor}
+      onMouseDown={(e) => setMouseDown(true)}
+      onMouseUp={(e) => setMouseDown(false)}
       // onMouseUp={(e) => console.log("Mouse:", e.lngLat)}
     >
       <NavigationControl

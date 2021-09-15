@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Map, { MapPosition, defaultPosition } from './map';
+import BasicMap, { MapViewport } from './basicMap';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { makeStyles } from '@material-ui/core/styles';
-
-export const defaultPos = defaultPosition;
 
 const options = {
   enableHighAccuracy: true,
@@ -11,7 +9,7 @@ const options = {
   maximumAge: 0,
 };
 
-const fallbackPosition = {
+export const fallbackViewport: MapViewport = {
   latitude: 46.8131873,
   longitude: 8.22421,
   zoom: 6,
@@ -22,24 +20,29 @@ const useStyles = makeStyles({
 });
 
 interface EventMapProps {
-  onNewPosition?: (pos: MapPosition) => void;
+  onViewportChange: (viewport: MapViewport) => void;
 }
 
-function EventMap(props: EventMapProps) {
+const EventMap: React.FunctionComponent<EventMapProps> = ({ onViewportChange }) => {
   const classes = useStyles();
+  const [viewport, setViewport] = useState<MapViewport>(fallbackViewport);
   const [ready, setReady] = useState(false);
-  const [position, setPosition] = useState(fallbackPosition);
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(onPositionUpdate, onPositionError, options);
+      navigator.geolocation.getCurrentPosition(onGeoPosUpdate, onPositionError, options);
     }
   }, []);
 
-  function onPositionUpdate(position: GeolocationPosition) {
-    setPosition({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
+  function handleViewport(viewport: MapViewport) {
+    setViewport(viewport);
+    onViewportChange(viewport);
+  }
+
+  function onGeoPosUpdate(geoPos: GeolocationPosition) {
+    setViewport({
+      latitude: geoPos.coords.latitude,
+      longitude: geoPos.coords.longitude,
       zoom: 11,
     });
     setReady(true);
@@ -52,13 +55,13 @@ function EventMap(props: EventMapProps) {
 
   if (ready) {
     return (
-      <Map initialPosition={position} enableNavigation={true} onPositionChange={props.onNewPosition}>
+      <BasicMap enableNavigation={true} viewport={viewport} onViewportChange={handleViewport}>
         <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
-      </Map>
+      </BasicMap>
     );
   } else {
     return <div>Karte wird geladen...</div>;
   }
-}
+};
 
 export default EventMap;

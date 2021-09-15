@@ -129,7 +129,7 @@ export default function Cleanup() {
   }
 
   return event ? (
-    <main className={classes.main}>
+    <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
       <BasicMap enableNavigation={true} viewport={viewport} onViewportChange={handleViewport}>
         <GeolocateControl
           style={{ right: 10, top: 10 }}
