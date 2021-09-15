@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -14,6 +14,11 @@ import useInput from "../hooks/useInput";
 import { Input } from "@material-ui/core";
 import { Routes } from './customRoute';
 import { useHistory } from 'react-router-dom';
+import Info from "./info";
+
+
+
+
 
 
 function Copyright() {
@@ -56,7 +61,7 @@ export default function SignIn() {
     const password=useInput('');
     let history = useHistory();
     const firebaseInstance=authFirebase;
-
+    const [hasError, setHasError] = useState(false);
 
     const signUp=async (event:React.FormEvent)=> {
         event.preventDefault();
@@ -66,30 +71,30 @@ export default function SignIn() {
                 await firebaseInstance.signInWithEmailAndPassword(email.value, password.value)
                 history.push(Routes.home);
             }
-        } catch (error) {
-            console.log('error', error);
-            //alert(error.message);
+        } catch (error){
+            setHasError(true);
+
+
         }
 
     };
 
-    return (
+
+        return (
             <Container component="main" maxWidth="xs">
 
-                <CssBaseline />
+                <CssBaseline/>
 
                 <div className={classes.paper}>
-<div>
-    <img src="../android-chrome-512x512.png" alt="Logo" height="200" width="200
+                    <div>
+                        <img src="../android-chrome-512x512.png" alt="Logo" height="200" width="200
     "/>
-</div>
+                    </div>
                     <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
+                        <LockOutlinedIcon/>
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Login
-
-
 
 
                     </Typography>
@@ -131,6 +136,8 @@ export default function SignIn() {
                         >
                             Login
                         </Button>
+                        {hasError && <Info text={"Falsches Login"}/>}
+                        {!hasError && <Info text={"Gebe bitte dein Login ein"}/>}
                         <Grid container justifyContent="flex-end">
                             <Grid item>
 
@@ -139,10 +146,11 @@ export default function SignIn() {
                     </form>
                 </div>
                 <Box mt={5}>
-                    <Copyright />
+                    <Copyright/>
                 </Box>
             </Container>
-    );
+        );
+    
 }
 
 
