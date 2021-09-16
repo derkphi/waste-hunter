@@ -9,7 +9,7 @@ import CreateEvent from './screens/createEvent';
 import Cleanup from './screens/cleanup';
 import { PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
 import { Container, createTheme, ThemeProvider } from '@material-ui/core';
-import SignOutButton from "./components/SignOutButton";
+import SignOutButton from './components/SignOutButton';
 
 const theme = createTheme({
   palette: {
@@ -69,6 +69,9 @@ function App() {
           </PrivateRoute>
           <PrivateRoute path={Routes.createEvent} exact>
             {withHeader('Event erfassen', <CreateEvent />)}
+          </PrivateRoute>
+          <PrivateRoute path={Routes.editEvent} exact>
+            {withHeader('Event ändern', <CreateEvent />)}
           </PrivateRoute>
           <PrivateRoute path={Routes.logout} exact>
             {withHeader('Logout', <SignOutButton />)}

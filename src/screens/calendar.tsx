@@ -9,6 +9,11 @@ import Info from '../components/info';
 import { filterNext } from '../firebase/events';
 import firebase from 'firebase/app';
 
+function deleteEvent(id: string) {
+  const dbRef = database.ref('events/' + id);
+  dbRef.remove();
+}
+
 function Calendar() {
   let history = useHistory();
   const [events, setEvents] = useState<EventWithId[]>();
@@ -27,7 +32,7 @@ function Calendar() {
   let cards: JSX.Element[] = [];
   if (events && events.length > 0) {
     events.forEach((item, idx) => {
-      cards.push(<EventCard key={idx} event={item} joinEnabled={idx === 0} />);
+      cards.push(<EventCard key={idx} event={item} joinEnabled={idx === 0} showEditDelete deleteClick={deleteEvent} />);
     });
   }
 
