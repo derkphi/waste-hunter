@@ -61,6 +61,7 @@ export default function Cleanup() {
   const [showDialog, setShowDialog] = useState(false);
   const [collected, setCollected] = useState<number>();
   const { id } = useParams<{ id: string }>();
+  console.log(id);
   const user = authFirebase.currentUser;
 
   useEffect(() => {

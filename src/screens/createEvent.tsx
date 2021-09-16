@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Typography, makeStyles, FormLabel, Button, Box } from '@material-ui/core';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Grid } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
-import EventMap, { fallbackViewport } from '../components/maps/eventMap';
+import EventMap from '../components/maps/eventMap';
 import { database } from '../firebase/config';
 import { EventType } from '../common/firebase_types';
 
@@ -35,6 +35,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const fallbackViewport = {
+  latitude: 46.8131873,
+  longitude: 8.22421,
+  zoom: 7,
+};
+
 function CreateEvent() {
   const classes = useStyles();
   const history = useHistory();
@@ -42,12 +48,29 @@ function CreateEvent() {
   const [place, setPlace] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [eventerror, setEventerror] = useState(false);
+  const [viewport, setViewport] = useState(fallbackViewport);
 
+  const [eventerror, setEventerror] = useState(false);
   const [placeerror, setPlaceerror] = useState(false);
   const [dateerror, setdateerror] = useState(false);
   const [timeerror, settimeerror] = useState(false);
-  const [viewport, setViewport] = useState(fallbackViewport);
+
+  const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    if (id) {
+      database
+        .ref(`events/${id}`)
+        .get()
+        .then((d) => {
+          setEvent(d.val().anlass);
+          setPlace(d.val().ort);
+          setDate(d.val().datum);
+          setTime(d.val().zeit);
+          setViewport(d.val().position);
+        });
+    }
+  }, [id]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -69,10 +92,15 @@ function CreateEvent() {
       settimeerror(true);
     }
     if (event && place) {
-      const newEventKey = database.ref().child('events').push().key;
-      const newEvent: EventType = { anlass: event, ort: place, datum: date, zeit: time, position: viewport };
+      let eventKey;
+      if (id) {
+        eventKey = id;
+      } else {
+        eventKey = database.ref().child('events').push().key;
+      }
+      const eventData: EventType = { anlass: event, ort: place, datum: date, zeit: time, position: viewport };
       const updates = {
-        ['/events/' + newEventKey]: newEvent,
+        ['/events/' + eventKey]: eventData,
       };
       database
         .ref()
@@ -84,37 +112,39 @@ function CreateEvent() {
   return (
     <form noValidate autoComplete="off" onSubmit={handleSubmit}>
       <Typography variant="h4" color="textPrimary" component="h2" gutterBottom>
-        Erfasse einen Event
+        {id ? 'Passe den Event an' : 'Erfasse einen Event'}
       </Typography>
       <Grid container spacing={3}>
         <Grid item sm={12} md={5}>
           <FormLabel>Anlass</FormLabel>
           <TextField
             className={classes.field}
-            onChange={(e) => setEvent(e.target.value)}
+            value={event}
+            onChange={(e) => {
+              setEvent(e.target.value);
+            }}
             autoFocus={true}
             variant="outlined"
             color="secondary"
             fullWidth
             required
             error={eventerror}
-          ></TextField>
+          />
           <FormLabel>Treffpunkt</FormLabel>
-
           <TextField
             className={classes.field}
+            value={place}
             onChange={(e) => setPlace(e.target.value)}
             variant="outlined"
             color="secondary"
             fullWidth
             required
             error={placeerror}
-          >
-            <FormLabel>Datum</FormLabel>
-          </TextField>
+          />
           <FormLabel>Datum</FormLabel>
           <TextField
             className={classes.field}
+            value={date}
             onChange={(e) => setDate(e.target.value)}
             type="date"
             variant="outlined"
@@ -122,10 +152,11 @@ function CreateEvent() {
             fullWidth
             required
             error={dateerror}
-          ></TextField>
+          />
           <FormLabel>Startzeit Anlass</FormLabel>
           <TextField
             className={classes.field}
+            value={time}
             onChange={(e) => setTime(e.target.value)}
             type="time"
             variant="outlined"
@@ -133,12 +164,16 @@ function CreateEvent() {
             fullWidth
             required
             error={timeerror}
-          ></TextField>
+          />
         </Grid>
         <Grid item sm={12} md={7} className={classes.mapGridItem}>
           <FormLabel>Suchgebiet</FormLabel>
           <Box className={classes.map}>
-            <EventMap onViewportChange={(viewport) => setViewport(viewport)} />
+            <EventMap
+              useGeoLocation={id === undefined}
+              viewport={viewport}
+              onViewportChange={(viewport) => setViewport(viewport)}
+            />
           </Box>
         </Grid>
       </Grid>

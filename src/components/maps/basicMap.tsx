@@ -55,6 +55,7 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       getCursor={cursor}
       onMouseDown={(e) => setMouseDown(true)}
       onMouseUp={(e) => setMouseDown(false)}
+      //onClick={(e) => console.log('Mouse:', e.lngLat)}
       // onMouseUp={(e) => console.log("Mouse:", e.lngLat)}
     >
       <NavigationControl
