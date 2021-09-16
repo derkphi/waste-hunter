@@ -24,20 +24,17 @@ function Home() {
 
   return (
     <>
-      <Box p={1}>
+      <Box p={1} bgcolor='#e0f2f1'>
         <img src="../logo_transparent_background.png" alt="logo" height="75" />
-        <Typography variant="h6">Schön, dass du dich für einen sauberen Lebensraum engagieren willst.
-        </Typography>
-        <Typography variant="h6">Die Waste Hunter Community ist auch in deiner Gegend aktiv und organisiert Cleaning Events.
-
-        </Typography>
-
+        <Typography paragraph variant="h5">Schön, dass du dich für einen sauberen Lebensraum engagierst.
+      </Typography>
       </Box>
+
+<Box p={3}>
+</Box>
       <Box p={1}>
-
-      </Box>
-
       <Typography variant="h4">Nächster Event</Typography>
+      </Box>
       {nextEventCard || <Info text="Kein Event anstehend." />}
     </>
   );

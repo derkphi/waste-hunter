@@ -21,6 +21,9 @@ const useStyles = makeStyles((theme) => ({
   whlogo: {
     maxWidth: 125,
   },
+  whlogo_mobile: {
+    maxWidth: 50,
+  },
   menuButton: {
     fontFamily: 'Open Sans, sans-serif',
     fontWeight: 700,
@@ -47,7 +50,7 @@ interface HeaderProps {
 }
 
 export default function Header(props: HeaderProps) {
-  const { header, logo, menuButton, toolbar, drawerContainer,whlogo } = useStyles();
+  const { header, logo, menuButton, toolbar, drawerContainer,whlogo,whlogo_mobile } = useStyles();
 
   const [state, setState] = useState({
     mobileView: false,
@@ -98,7 +101,7 @@ export default function Header(props: HeaderProps) {
             onClick: handleDrawerOpen,
           }}
         >
-          <MenuIcon />
+          <img src="../logo192.png" alt="logo" className={whlogo_mobile} />
         </IconButton>
 
         <Drawer
