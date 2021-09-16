@@ -5,6 +5,7 @@ import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import EventMap from '../components/maps/eventMap';
+import SearchArea from '../components/maps/searchArea';
 import { database } from '../firebase/config';
 import { EventType } from '../common/firebase_types';
 
@@ -49,6 +50,7 @@ function CreateEvent() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [viewport, setViewport] = useState(fallbackViewport);
+  const [searchArea, setSearchArea] = useState<GeoJSON.Feature<GeoJSON.Geometry> | undefined>(undefined);
 
   const [eventerror, setEventerror] = useState(false);
   const [placeerror, setPlaceerror] = useState(false);
@@ -68,6 +70,7 @@ function CreateEvent() {
           setDate(d.val().datum);
           setTime(d.val().zeit);
           setViewport(d.val().position);
+          setSearchArea(d.val().searchArea);
         });
     }
   }, [id]);
@@ -98,7 +101,14 @@ function CreateEvent() {
       } else {
         eventKey = database.ref().child('events').push().key;
       }
-      const eventData: EventType = { anlass: event, ort: place, datum: date, zeit: time, position: viewport };
+      const eventData: EventType = {
+        anlass: event,
+        ort: place,
+        datum: date,
+        zeit: time,
+        position: viewport,
+        searchArea: searchArea,
+      };
       const updates = {
         ['/events/' + eventKey]: eventData,
       };
@@ -167,13 +177,15 @@ function CreateEvent() {
           />
         </Grid>
         <Grid item sm={12} md={7} className={classes.mapGridItem}>
-          <FormLabel>Suchgebiet</FormLabel>
           <Box className={classes.map}>
             <EventMap
               useGeoLocation={id === undefined}
               viewport={viewport}
               onViewportChange={(viewport) => setViewport(viewport)}
-            />
+              onSearchAreaChange={(searchArea) => setSearchArea(searchArea)}
+            >
+              {searchArea && <SearchArea data={searchArea} />}
+            </EventMap>
           </Box>
         </Grid>
       </Grid>
