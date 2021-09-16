@@ -26,7 +26,7 @@ function Home() {
     <>
       <Box p={1}>
         <img src="../logo_transparent_background.png" alt="logo" height="75" />
-        <Typography variant="h6">Schön das du dich für einen sauberen Lebensraum engagieren willst.
+        <Typography variant="h6">Schön, dass du dich für einen sauberen Lebensraum engagieren willst.
         </Typography>
         <Typography variant="h6">Die Waste Hunter Community ist auch in deiner Gegend aktiv und organisiert Cleaning Events.
 
