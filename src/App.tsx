@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import Login from './components/login';
+import Login from './screens/login';
 import Header from './components/header';
 import Home from './screens/home';
 import Calendar from './screens/calendar';

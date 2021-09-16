@@ -12,9 +12,9 @@ import Container from '@material-ui/core/Container';
 import {authFirebase} from "../firebase/config";
 import useInput from "../hooks/useInput";
 import { Input } from "@material-ui/core";
-import { Routes } from './customRoute';
+import { Routes } from '../components/customRoute';
 import { useHistory } from 'react-router-dom';
-import Info from "./info";
+import Info from "../components/info";
 
 
 
@@ -87,8 +87,8 @@ export default function SignIn() {
 
                 <div className={classes.paper}>
                     <div>
-                        <img src="../android-chrome-512x512.png" alt="Logo" height="200" width="200
-    "/>
+                        <img src="../logo_transparent_background.png" alt="Logo" height="150"
+    />
                     </div>
                     <Avatar className={classes.avatar}>
                         <LockOutlinedIcon/>

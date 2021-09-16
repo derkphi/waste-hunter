@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'left',
   },
   whlogo: {
-    maxWidth: 90,
+    maxWidth: 125,
   },
   menuButton: {
     fontFamily: 'Open Sans, sans-serif',
@@ -76,7 +76,7 @@ export default function Header(props: HeaderProps) {
     return (
       <Toolbar className={toolbar}>
 
-        <img src="../android-chrome-512x512.png" alt="logo" className={whlogo} />
+        <img src="../white_logo_transparent_background.png" alt="logo" className={whlogo} />
         {wasteHunterLogo}
         <div>{getMenuButtons()}</div>
       </Toolbar>

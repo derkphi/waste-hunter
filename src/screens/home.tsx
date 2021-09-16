@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography,Box } from '@material-ui/core';
 import { EventWithId } from '../common/firebase_types';
 import Info from '../components/info';
 import { database } from '../firebase/config';
@@ -24,6 +24,19 @@ function Home() {
 
   return (
     <>
+      <Box p={1}>
+        <img src="../logo_transparent_background.png" alt="logo" height="75" />
+        <Typography variant="h6">Schön das du dich für einen sauberen Lebensraum engagieren willst.
+        </Typography>
+        <Typography variant="h6">Die Waste Hunter Community ist auch in deiner Gegend aktiv und organisiert Cleaning Events.
+
+        </Typography>
+
+      </Box>
+      <Box p={1}>
+
+      </Box>
+
       <Typography variant="h4">Nächster Event</Typography>
       {nextEventCard || <Info text="Kein Event anstehend." />}
     </>
