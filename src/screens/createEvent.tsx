@@ -5,9 +5,9 @@ import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import EventMap from '../components/maps/eventMap';
+import SearchArea from '../components/maps/searchArea';
 import { database } from '../firebase/config';
 import { EventType } from '../common/firebase_types';
-import { Source, Layer } from 'react-map-gl';
 
 const useStyles = makeStyles(() => ({
   field: {
@@ -184,18 +184,7 @@ function CreateEvent() {
               onViewportChange={(viewport) => setViewport(viewport)}
               onSearchAreaChange={(searchArea) => setSearchArea(searchArea)}
             >
-              {searchArea && (
-                <Source id="polygonSource" type="geojson" data={searchArea}>
-                  <Layer
-                    id="polygonLayer"
-                    type="fill"
-                    paint={{
-                      'fill-color': 'purple',
-                      'fill-opacity': 0.3,
-                    }}
-                  />
-                </Source>
-              )}
+              {searchArea && <SearchArea data={searchArea} />}
             </EventMap>
           </Box>
         </Grid>
