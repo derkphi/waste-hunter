@@ -1,16 +1,19 @@
 import React from "react";
 import {authFirebase} from "../firebase/config";
 import Button from "@material-ui/core/Button";
-
+import {Routes} from "./customRoute";
+import { useHistory } from 'react-router-dom';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const SignOutButton =()=> {
     const firebaseInstance=authFirebase;
+    let history = useHistory();
 
     const signOut=async()=>{
         try{
             if (firebaseInstance){
                 await firebaseInstance.signOut();
-                alert('Successfully signed out!');
+                history.push(Routes.home);
             }
         } catch(error){
             console.log('error',error)
@@ -19,7 +22,13 @@ const SignOutButton =()=> {
 
     return(
 
-    <Button variant="outlined" color="secondary" onClick={()=>signOut()}>Sign out</Button>
+    <Button
+        color="secondary"
+        variant="contained"
+        endIcon={<ExitToAppIcon />}
+        onClick={()=>signOut()}>
+        Logout
+    </Button>
 )
 };
 

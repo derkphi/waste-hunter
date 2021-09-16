@@ -137,7 +137,7 @@ export default function SignIn() {
                             Login
                         </Button>
                         {hasError && <Info text={"Falsches Login"}/>}
-                        {!hasError && <Info text={"Gebe bitte dein Login ein"}/>}
+
                         <Grid container justifyContent="flex-end">
                             <Grid item>
 
