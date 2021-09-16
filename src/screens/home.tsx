@@ -30,7 +30,7 @@ function Home() {
       </Typography>
       </Box>
 
-<Box p={3}>
+<Box p={2}>
 </Box>
       <Box p={1}>
       <Typography variant="h4">Nächster Event</Typography>
