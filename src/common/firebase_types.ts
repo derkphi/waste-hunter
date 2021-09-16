@@ -10,6 +10,7 @@ export interface EventType {
   ort: string;
   position: PositionType;
   zeit: string;
+  searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
 }
 
 export interface EventWithId extends EventType {

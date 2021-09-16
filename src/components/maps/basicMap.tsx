@@ -18,6 +18,8 @@ interface BasicMapProps {
   viewport: MapViewport;
   enableNavigation?: boolean;
   onViewportChange?: (viewport: MapViewport) => void;
+  cursorOverride?: () => string | undefined;
+  onClick?: (longitude: number, latitude: number) => void;
 }
 
 const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
@@ -33,6 +35,8 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
   }
 
   function cursor() {
+    const cursorParent = props.cursorOverride && props.cursorOverride();
+    if (cursorParent) return cursorParent;
     return enableNavigation ? (mouseDown ? 'grabbing' : 'grab') : 'default';
   }
 
@@ -55,8 +59,7 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       getCursor={cursor}
       onMouseDown={(e) => setMouseDown(true)}
       onMouseUp={(e) => setMouseDown(false)}
-      //onClick={(e) => console.log('Mouse:', e.lngLat)}
-      // onMouseUp={(e) => console.log("Mouse:", e.lngLat)}
+      onClick={(e) => props.onClick && props.onClick(e.lngLat[0], e.lngLat[1])}
     >
       <NavigationControl
         style={{ left: 10, top: 10 }}
