@@ -5,7 +5,6 @@ import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import EventMap from '../components/maps/eventMap';
-import SearchArea from '../components/maps/searchArea';
 import { database } from '../firebase/config';
 import { EventType } from '../common/firebase_types';
 
@@ -183,9 +182,7 @@ function CreateEvent() {
               viewport={viewport}
               onViewportChange={(viewport) => setViewport(viewport)}
               onSearchAreaChange={(searchArea) => setSearchArea(searchArea)}
-            >
-              {searchArea && <SearchArea data={searchArea} />}
-            </EventMap>
+            />
           </Box>
         </Grid>
       </Grid>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import BasicMap, { MapViewport } from './basicMap';
-import { getGeoJsonPolygon, getGeoJsonLine } from './geoJsonHelper';
+import { getGeoJsonPolygon } from './geoJsonHelper';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Box } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
+import MapPolygon from './mapPolygon';
 
 const options = {
   enableHighAccuracy: true,
@@ -46,6 +47,7 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
   const classes = useStyles();
   const [ready, setReady] = useState(false);
   const [area, setArea] = useState<Array<[number, number]>>([]);
+  const [next, setNext] = useState<[number, number] | undefined>();
   const [mark, setMark] = useState(false);
 
   useEffect(() => {
@@ -73,12 +75,17 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
   }
 
   function handleMarkButtonClick() {
-    if (!mark) updateArea([]);
+    if (!mark) {
+      updateArea([]);
+    } else {
+      setNext(undefined);
+    }
     setMark(!mark);
   }
 
   function handleDeleteButtonClick() {
     updateArea([]);
+    setNext(undefined);
   }
 
   function markCursor() {
@@ -92,6 +99,19 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
     if (mark) {
       const newArea: Array<[number, number]> = [...area, [longitude, latitude]];
       updateArea(newArea);
+    }
+  }
+
+  function handleMapDoubleClick(longitude: number, latitude: number) {
+    if (mark) {
+      handleMapClick(longitude, latitude);
+      handleMarkButtonClick();
+    }
+  }
+
+  function handleMapMove(longitude: number, latitude: number) {
+    if (mark) {
+      setNext([longitude, latitude]);
     }
   }
 
@@ -127,8 +147,10 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
           onViewportChange={onViewportChange}
           cursorOverride={markCursor}
           onClick={handleMapClick}
+          onMove={handleMapMove}
+          onDoubleClick={handleMapDoubleClick}
         >
-          {children}
+          {area.length > 0 && <MapPolygon data={getGeoJsonPolygon(next ? [...area, next] : area)} />}
           <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
         </BasicMap>
       </Box>

@@ -20,6 +20,8 @@ interface BasicMapProps {
   onViewportChange?: (viewport: MapViewport) => void;
   cursorOverride?: () => string | undefined;
   onClick?: (longitude: number, latitude: number) => void;
+  onDoubleClick?: (longitude: number, latitude: number) => void;
+  onMove?: (longitude: number, latitude: number) => void;
 }
 
 const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
@@ -51,7 +53,7 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       scrollZoom={enableNavigation}
       dragPan={enableNavigation}
       dragRotate={enableNavigation}
-      doubleClickZoom={enableNavigation}
+      doubleClickZoom={enableNavigation && props.onDoubleClick === undefined}
       touchZoom={enableNavigation}
       touchRotate={false}
       keyboard={enableNavigation}
@@ -60,6 +62,8 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       onMouseDown={(e) => setMouseDown(true)}
       onMouseUp={(e) => setMouseDown(false)}
       onClick={(e) => props.onClick && props.onClick(e.lngLat[0], e.lngLat[1])}
+      onMouseMove={(e) => props.onMove && props.onMove(e.lngLat[0], e.lngLat[1])}
+      onDblClick={(e) => props.onDoubleClick && props.onDoubleClick(e.lngLat[0], e.lngLat[1])}
     >
       <NavigationControl
         style={{ left: 10, top: 10 }}

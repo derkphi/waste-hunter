@@ -5,7 +5,7 @@ interface SearchAreaProps {
   data: GeoJSON.Feature<GeoJSON.Geometry>;
 }
 
-function SearchArea(props: SearchAreaProps) {
+function MapPolygon(props: SearchAreaProps) {
   return (
     <Source id="polygonSource" type="geojson" data={props.data}>
       <Layer
@@ -20,4 +20,4 @@ function SearchArea(props: SearchAreaProps) {
   );
 }
 
-export default SearchArea;
+export default MapPolygon;

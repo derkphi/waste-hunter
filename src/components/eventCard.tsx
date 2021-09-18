@@ -7,7 +7,7 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Grid, Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
 import { EventWithId } from '../common/firebase_types';
 import BasicMap from '../components/maps/basicMap';
-import SearchArea from '../components/maps/searchArea';
+import MapPolygon from './maps/mapPolygon';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Routes } from '../components/customRoute';
 import { useHistory } from 'react-router-dom';
@@ -48,7 +48,7 @@ function EventCard(props: EventCardProps) {
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.mapGridItem}>
             <BasicMap viewport={props.event.position}>
-              {props.event.searchArea && <SearchArea data={props.event.searchArea} />}
+              {props.event.searchArea && <MapPolygon data={props.event.searchArea} />}
               <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
             </BasicMap>
           </Grid>
