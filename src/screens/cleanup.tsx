@@ -19,6 +19,7 @@ import length from '@turf/length';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import firebase from 'firebase/app';
+// import DemoPlayer from '../components/cleanup/demoPlayer';
 
 const useStyles = makeStyles({
   main: {
@@ -33,6 +34,7 @@ const useStyles = makeStyles({
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
   iconStart: { transform: 'translate(-50%, -100%)' },
   iconUser: { color: 'rgba(66, 100, 251, .8)', transform: 'translate(-50%, -100%)' },
+  cleanupDemo: { position: 'absolute', bottom: 20, right: 0 },
 });
 
 interface CleanupUser {
@@ -41,7 +43,8 @@ interface CleanupUser {
   route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
 }
 
-interface Event {
+export interface Event {
+  id: string;
   anlass: string;
   position: {
     latitude: number;
@@ -67,7 +70,7 @@ export default function Cleanup() {
     database
       .ref(`events/${id}`)
       .get()
-      .then((d) => setEvent(d.val()));
+      .then((d) => setEvent({ ...d.val(), id }));
     const ref = database.ref(`cleanups/${id}`);
     const cb = (d: firebase.database.DataSnapshot) => setCleanupUsers(Object.values(d.val()));
     ref.on('value', cb);
@@ -84,11 +87,11 @@ export default function Cleanup() {
   }, [user, id]);
 
   useEffect(() => {
-    if (!user || !position) return;
-    // push position max. all 10 seconds and 5 meters
+    if (!user || !position || position.coords.accuracy > 50 || position.timestamp < Date.now() - 60e3) return;
+    // push position max. all 5 seconds and 5 meters
     if (
       !lastPosition ||
-      (Date.now() > lastPosition.timestamp + 10e3 &&
+      (Date.now() > lastPosition.timestamp + 5e3 &&
         distance(
           [position.coords.longitude, position.coords.latitude],
           [lastPosition.coords.longitude, lastPosition.coords.latitude]
@@ -174,11 +177,12 @@ export default function Cleanup() {
             )
         )}
 
-        {/* {position && (
+        {position && (
           <div style={{ position: 'absolute', top: 10, right: 50 }}>
-            {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} / {position.timestamp}
+            {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} / {position.coords.accuracy}{' '}
+            / {position.timestamp}
           </div>
-        )} */}
+        )}
       </BasicMap>
 
       <footer className={classes.footer}>
@@ -225,6 +229,8 @@ export default function Cleanup() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* <DemoPlayer className={classes.cleanupDemo} event={event} /> */}
     </main>
   ) : null;
 }
