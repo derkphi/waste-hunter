@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import BasicMap, { MapViewport } from './basicMap';
+import { getGeoJsonPolygon } from './geoJsonHelper';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Box } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
+import MapPolygon from './mapPolygon';
 
 const options = {
   enableHighAccuracy: true,
@@ -13,17 +15,6 @@ const options = {
 };
 
 const markCursorStyle = 'crosshair';
-
-function getGeoJsonData(points: Array<[number, number]>): GeoJSON.Feature<GeoJSON.Geometry> {
-  return {
-    type: 'Feature',
-    properties: {},
-    geometry: {
-      type: 'Polygon',
-      coordinates: [points],
-    },
-  };
-}
 
 const useStyles = makeStyles({
   iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
@@ -56,6 +47,7 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
   const classes = useStyles();
   const [ready, setReady] = useState(false);
   const [area, setArea] = useState<Array<[number, number]>>([]);
+  const [next, setNext] = useState<[number, number] | undefined>();
   const [mark, setMark] = useState(false);
 
   useEffect(() => {
@@ -83,12 +75,17 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
   }
 
   function handleMarkButtonClick() {
-    if (!mark) updateArea([]);
+    if (!mark) {
+      updateArea([]);
+    } else {
+      setNext(undefined);
+    }
     setMark(!mark);
   }
 
   function handleDeleteButtonClick() {
     updateArea([]);
+    setNext(undefined);
   }
 
   function markCursor() {
@@ -105,9 +102,22 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
     }
   }
 
+  function handleMapDoubleClick(longitude: number, latitude: number) {
+    if (mark) {
+      handleMapClick(longitude, latitude);
+      handleMarkButtonClick();
+    }
+  }
+
+  function handleMapMove(longitude: number, latitude: number) {
+    if (mark) {
+      setNext([longitude, latitude]);
+    }
+  }
+
   function updateArea(newArea: Array<[number, number]>) {
     setArea(newArea);
-    onSearchAreaChange(getGeoJsonData(newArea));
+    onSearchAreaChange(getGeoJsonPolygon(newArea));
   }
 
   if (ready) {
@@ -137,8 +147,10 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
           onViewportChange={onViewportChange}
           cursorOverride={markCursor}
           onClick={handleMapClick}
+          onMove={handleMapMove}
+          onDoubleClick={handleMapDoubleClick}
         >
-          {children}
+          {area.length > 0 && <MapPolygon data={getGeoJsonPolygon(next ? [...area, next] : area)} />}
           <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
         </BasicMap>
       </Box>
