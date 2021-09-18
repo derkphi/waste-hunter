@@ -53,7 +53,7 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       scrollZoom={enableNavigation}
       dragPan={enableNavigation}
       dragRotate={enableNavigation}
-      doubleClickZoom={enableNavigation && props.onDoubleClick === undefined}
+      doubleClickZoom={false} //default true
       touchZoom={enableNavigation}
       touchRotate={false}
       keyboard={enableNavigation}

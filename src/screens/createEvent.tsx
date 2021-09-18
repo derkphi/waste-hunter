@@ -6,7 +6,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import EventMap from '../components/maps/eventMap';
 import { database } from '../firebase/config';
-import { EventType } from '../common/firebase_types';
+import { EventType, MeetingPoint } from '../common/firebase_types';
 
 const useStyles = makeStyles(() => ({
   field: {
@@ -50,6 +50,7 @@ function CreateEvent() {
   const [time, setTime] = useState('');
   const [viewport, setViewport] = useState(fallbackViewport);
   const [searchArea, setSearchArea] = useState<GeoJSON.Feature<GeoJSON.Geometry> | undefined>(undefined);
+  const [meetingPoint, setMeetingPoint] = useState<MeetingPoint | undefined>(undefined);
 
   const [eventerror, setEventerror] = useState(false);
   const [placeerror, setPlaceerror] = useState(false);
@@ -70,6 +71,7 @@ function CreateEvent() {
           setTime(d.val().zeit);
           setViewport(d.val().position);
           setSearchArea(d.val().searchArea);
+          setMeetingPoint(d.val().meetingPoint);
         });
     }
   }, [id]);
@@ -107,6 +109,7 @@ function CreateEvent() {
         zeit: time,
         position: viewport,
         searchArea: searchArea,
+        meetingPoint: meetingPoint,
       };
       const updates = {
         ['/events/' + eventKey]: eventData,
@@ -182,6 +185,14 @@ function CreateEvent() {
               viewport={viewport}
               onViewportChange={(viewport) => setViewport(viewport)}
               onSearchAreaChange={(searchArea) => setSearchArea(searchArea)}
+              onMeetingPointChange={(c) => {
+                console.log(c);
+                if (c) {
+                  setMeetingPoint({ longitude: c.longitude, latitude: c.latitude });
+                } else {
+                  setMeetingPoint(undefined);
+                }
+              }}
             />
           </Box>
         </Grid>
