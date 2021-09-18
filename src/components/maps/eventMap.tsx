@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BasicMap, { MapViewport } from './basicMap';
+import { getGeoJsonPolygon, getGeoJsonLine } from './geoJsonHelper';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Box } from '@material-ui/core';
@@ -13,17 +14,6 @@ const options = {
 };
 
 const markCursorStyle = 'crosshair';
-
-function getGeoJsonData(points: Array<[number, number]>): GeoJSON.Feature<GeoJSON.Geometry> {
-  return {
-    type: 'Feature',
-    properties: {},
-    geometry: {
-      type: 'Polygon',
-      coordinates: [points],
-    },
-  };
-}
 
 const useStyles = makeStyles({
   iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
@@ -107,7 +97,7 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({
 
   function updateArea(newArea: Array<[number, number]>) {
     setArea(newArea);
-    onSearchAreaChange(getGeoJsonData(newArea));
+    onSearchAreaChange(getGeoJsonPolygon(newArea));
   }
 
   if (ready) {

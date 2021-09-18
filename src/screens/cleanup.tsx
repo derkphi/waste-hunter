@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import BasicMap, { MapViewport, defaultViewport } from '../components/maps/basicMap';
+import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
@@ -102,21 +103,10 @@ export default function Cleanup() {
     }
   }, [user, id, position, lastPosition]);
 
-  function getGeoJsonData(route: { [key: string]: number[] }): GeoJSON.Feature<GeoJSON.Geometry> {
-    return {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'LineString',
-        coordinates: Object.values(route).map((p) => p.slice(0, 2)),
-      },
-    };
-  }
-
   const handleDialogClose = () => {
     if (user) {
       const route = cleanupUsers?.find((u) => u.uid === user.uid)?.route;
-      const distance = route ? length(getGeoJsonData(route)) : 0;
+      const distance = route ? length(getGeoJsonLineFromRoute(route)) : 0;
       database.ref(`cleanups/${id}/${user.uid}`).update({
         collected,
         distance,
@@ -150,7 +140,7 @@ export default function Cleanup() {
           (u) =>
             u.route && (
               <div key={u.uid}>
-                <Source id={`source-${u.uid}`} type="geojson" data={getGeoJsonData(u.route)} />
+                <Source id={`source-${u.uid}`} type="geojson" data={getGeoJsonLineFromRoute(u.route)} />
                 <Layer
                   id={`layer-${u.uid}`}
                   type="line"
