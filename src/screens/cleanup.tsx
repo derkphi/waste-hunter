@@ -35,7 +35,7 @@ const useStyles = makeStyles({
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
   iconStart: { transform: 'translate(-50%, -100%)' },
   iconUser: { color: 'rgba(66, 100, 251, .8)', transform: 'translate(-50%, -100%)' },
-  demoCleanups: { position: 'absolute', bottom: 20, right: 0 },
+  demoCleanups: { position: 'absolute', bottom: 25, right: 0 },
 });
 
 interface CleanupUser {
@@ -67,7 +67,6 @@ export default function Cleanup() {
   const [showDialog, setShowDialog] = useState(false);
   const [collected, setCollected] = useState<number>();
   const { id } = useParams<{ id: string }>();
-  console.log(id);
   const user = authFirebase.currentUser;
 
   useEffect(() => {
@@ -170,12 +169,12 @@ export default function Cleanup() {
             )
         )}
 
-        {position && (
+        {/* {position && (
           <div style={{ position: 'absolute', top: 10, right: 50 }}>
             {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} / {position.coords.accuracy}{' '}
             / {position.timestamp}
           </div>
-        )}
+        )} */}
       </BasicMap>
 
       <footer className={classes.footer}>
