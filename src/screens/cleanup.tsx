@@ -19,7 +19,7 @@ import length from '@turf/length';
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import firebase from 'firebase/app';
-// import DemoPlayer from '../components/cleanup/demoPlayer';
+import DemoCleanups from '../components/demoCleanups';
 
 const useStyles = makeStyles({
   main: {
@@ -34,13 +34,15 @@ const useStyles = makeStyles({
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
   iconStart: { transform: 'translate(-50%, -100%)' },
   iconUser: { color: 'rgba(66, 100, 251, .8)', transform: 'translate(-50%, -100%)' },
-  cleanupDemo: { position: 'absolute', bottom: 20, right: 0 },
+  demoCleanups: { position: 'absolute', bottom: 20, right: 0 },
 });
 
 interface CleanupUser {
   uid: string;
   email: string | null;
   route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
+  collected?: number;
+  distance?: number;
 }
 
 export interface Event {
@@ -230,7 +232,7 @@ export default function Cleanup() {
         </DialogActions>
       </Dialog>
 
-      {/* <DemoPlayer className={classes.cleanupDemo} event={event} /> */}
+      <DemoCleanups className={classes.demoCleanups} event={event} />
     </main>
   ) : null;
 }
