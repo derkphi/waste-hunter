@@ -4,7 +4,7 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
-import EventMap from '../components/maps/eventMap';
+import EventMap from '../components/maps/createEventMap';
 import { database } from '../firebase/config';
 import { EventType, MeetingPoint } from '../common/firebase_types';
 
