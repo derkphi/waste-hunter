@@ -41,7 +41,9 @@ interface CreateEventMapProps {
   viewport: MapViewport;
   onViewportChange: (viewport: MapViewport) => void;
   useGeoLocation: boolean;
-  onSearchAreaChange: (area: GeoJSON.Feature<GeoJSON.Geometry>) => void;
+  searchArea: GeoJSON.Feature<GeoJSON.Polygon> | undefined;
+  onSearchAreaChange: (area: GeoJSON.Feature<GeoJSON.Polygon>) => void;
+  meetingPoint: Coordinate | undefined;
   onMeetingPointChange: (c: Coordinate | undefined) => void;
 }
 
@@ -49,17 +51,22 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   onViewportChange,
   viewport,
   useGeoLocation,
+  searchArea,
   onSearchAreaChange,
+  meetingPoint,
   onMeetingPointChange,
 }) => {
   const classes = useStyles();
   const [ready, setReady] = useState(false);
-  const [area, setArea] = useState<Array<[number, number]>>([]);
   const [next, setNext] = useState<[number, number] | undefined>();
   const [mark, setMark] = useState(false);
-  const [meetingPointSet, setMeetingPointSet] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
-  const [meetingPoint, setMeetingPoint] = useState([viewport.longitude, viewport.latitude]);
+  const [showPopup, setShowPopup] = useState(false);
+  let area: Array<[number, number]>;
+  if (searchArea) {
+    area = searchArea?.geometry.coordinates[0].map((item) => [item[0], item[1]]);
+  } else {
+    area = [];
+  }
 
   useEffect(() => {
     if (navigator.geolocation && useGeoLocation && !ready) {
@@ -127,19 +134,16 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   }
 
   function updateArea(newArea: Array<[number, number]>) {
-    setArea(newArea);
     onSearchAreaChange(getGeoJsonPolygon(newArea));
   }
 
   function handleMeetingPointButtonClick() {
-    if (!meetingPointSet) {
+    if (meetingPoint === undefined) {
       setShowPopup(true);
-      setMeetingPoint([viewport.longitude, viewport.latitude]);
       onMeetingPointChange({ longitude: viewport.longitude, latitude: viewport.latitude });
     } else {
       onMeetingPointChange(undefined);
     }
-    setMeetingPointSet(!meetingPointSet);
   }
 
   function handleMarkerDragStart() {
@@ -147,15 +151,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   }
 
   function handleMarkerDragEnd(longitude: number, latitude: number) {
-    setMeetingPoint([longitude, latitude]);
     onMeetingPointChange({ longitude: longitude, latitude: latitude });
-  }
-
-  function handleViewportChange(vp: MapViewport) {
-    onViewportChange(vp);
-    if (!meetingPointSet) {
-      setMeetingPoint([vp.longitude, vp.latitude]);
-    }
   }
 
   if (ready) {
@@ -168,9 +164,9 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
             className={`${classes.markButton} ${mark && classes.markActive}`}
             color="secondary"
             variant="contained"
-            endIcon={meetingPointSet ? <DeleteForeverIcon /> : <LocationOnOutlinedIcon />}
+            endIcon={meetingPoint ? <DeleteForeverIcon /> : <LocationOnOutlinedIcon />}
           >
-            {meetingPointSet ? 'löschen' : 'markieren'}
+            {meetingPoint ? 'löschen' : 'markieren'}
           </Button>
         </Box>
         <Box>
@@ -197,23 +193,28 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
         </Box>
         <DynamicMap
           viewport={viewport}
-          onViewportChange={handleViewportChange}
+          onViewportChange={onViewportChange}
           cursorOverride={markCursor}
           onClick={handleMapClick}
           onMove={handleMapMove}
           onDoubleClick={handleMapDoubleClick}
         >
           {area.length > 0 && <SearchArea data={getGeoJsonPolygon(next ? [...area, next] : area)} />}
-          {meetingPointSet && (
+          {meetingPoint && (
             <>
               {showPopup && (
-                <Popup longitude={meetingPoint[0]} latitude={meetingPoint[1]} offsetTop={-35} closeButton={false}>
+                <Popup
+                  longitude={meetingPoint.longitude}
+                  latitude={meetingPoint.latitude}
+                  offsetTop={-35}
+                  closeButton={false}
+                >
                   Ziehe mich zum Treffpunkt
                 </Popup>
               )}
               <MeetingPoint
-                longitude={meetingPoint[0]}
-                latitude={meetingPoint[1]}
+                longitude={meetingPoint.longitude}
+                latitude={meetingPoint.latitude}
                 onDragStart={handleMarkerDragStart}
                 onDragEnd={handleMarkerDragEnd}
               />

@@ -49,7 +49,7 @@ function CreateEvent() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [viewport, setViewport] = useState(fallbackViewport);
-  const [searchArea, setSearchArea] = useState<GeoJSON.Feature<GeoJSON.Geometry> | undefined>(undefined);
+  const [searchArea, setSearchArea] = useState<GeoJSON.Feature<GeoJSON.Polygon> | undefined>(undefined);
   const [meetingPoint, setMeetingPoint] = useState<MeetingPoint | undefined>(undefined);
 
   const [eventerror, setEventerror] = useState(false);
@@ -184,9 +184,10 @@ function CreateEvent() {
               useGeoLocation={id === undefined}
               viewport={viewport}
               onViewportChange={(viewport) => setViewport(viewport)}
-              onSearchAreaChange={(searchArea) => setSearchArea(searchArea)}
+              searchArea={searchArea}
+              onSearchAreaChange={(sa) => setSearchArea(sa)}
+              meetingPoint={meetingPoint}
               onMeetingPointChange={(c) => {
-                console.log(c);
                 if (c) {
                   setMeetingPoint({ longitude: c.longitude, latitude: c.latitude });
                 } else {

@@ -8,7 +8,6 @@ interface EventMapProps {
 }
 
 function EventMap(props: EventMapProps) {
-  console.log(props.event.meetingPoint);
   return (
     <StaticMap viewport={props.event.position}>
       <>
