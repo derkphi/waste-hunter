@@ -6,7 +6,7 @@ interface SearchAreaProps {
   opacity?: number;
 }
 
-function MapPolygon(props: SearchAreaProps) {
+function SearchArea(props: SearchAreaProps) {
   return (
     <Source id="polygonSource" type="geojson" data={props.data}>
       <Layer
@@ -21,4 +21,4 @@ function MapPolygon(props: SearchAreaProps) {
   );
 }
 
-export default MapPolygon;
+export default SearchArea;

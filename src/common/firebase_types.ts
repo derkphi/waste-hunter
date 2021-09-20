@@ -4,6 +4,11 @@ export interface PositionType {
   zoom: number;
 }
 
+export interface MeetingPoint {
+  longitude: number;
+  latitude: number;
+}
+
 export interface EventType {
   anlass: string;
   datum: string;
@@ -11,6 +16,7 @@ export interface EventType {
   position: PositionType;
   zeit: string;
   searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
+  meetingPoint?: MeetingPoint;
 }
 
 export interface EventWithId extends EventType {

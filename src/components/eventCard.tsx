@@ -6,12 +6,10 @@ import { Typography } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Grid, Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
 import { EventWithId } from '../common/firebase_types';
-import BasicMap from '../components/maps/basicMap';
-import MapPolygon from './maps/mapPolygon';
+import EventMap from '../components/maps/eventMap';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Routes } from '../components/customRoute';
 import { useHistory } from 'react-router-dom';
-import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
 import { IconButton, Box } from '@material-ui/core';
@@ -26,7 +24,6 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '350px',
       padding: '1px',
     },
-    iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
   })
 );
 
@@ -48,10 +45,7 @@ function EventCard(props: EventCardProps) {
       <CardContent>
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.mapGridItem}>
-            <BasicMap viewport={props.event.position}>
-              {props.event.searchArea && <MapPolygon data={props.event.searchArea} />}
-              <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
-            </BasicMap>
+            <EventMap event={props.event} />
           </Grid>
           <Grid item sm={12} md={6}>
             <Typography paragraph variant="h6">

@@ -1,4 +1,4 @@
-export function getGeoJsonPolygon(points: Array<[number, number]>): GeoJSON.Feature<GeoJSON.Geometry> {
+export function getGeoJsonPolygon(points: Array<[number, number]>): GeoJSON.Feature<GeoJSON.Polygon> {
   return {
     type: 'Feature',
     properties: {},

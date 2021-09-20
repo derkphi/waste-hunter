@@ -4,9 +4,9 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
-import EventMap from '../components/maps/eventMap';
+import EventMap from '../components/maps/createEventMap';
 import { database } from '../firebase/config';
-import { EventType } from '../common/firebase_types';
+import { EventType, MeetingPoint } from '../common/firebase_types';
 
 const useStyles = makeStyles(() => ({
   field: {
@@ -49,7 +49,8 @@ function CreateEvent() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [viewport, setViewport] = useState(fallbackViewport);
-  const [searchArea, setSearchArea] = useState<GeoJSON.Feature<GeoJSON.Geometry> | undefined>(undefined);
+  const [searchArea, setSearchArea] = useState<GeoJSON.Feature<GeoJSON.Polygon> | undefined>(undefined);
+  const [meetingPoint, setMeetingPoint] = useState<MeetingPoint | undefined>(undefined);
 
   const [eventerror, setEventerror] = useState(false);
   const [placeerror, setPlaceerror] = useState(false);
@@ -70,6 +71,7 @@ function CreateEvent() {
           setTime(d.val().zeit);
           setViewport(d.val().position);
           setSearchArea(d.val().searchArea);
+          setMeetingPoint(d.val().meetingPoint);
         });
     }
   }, [id]);
@@ -107,6 +109,7 @@ function CreateEvent() {
         zeit: time,
         position: viewport,
         searchArea: searchArea,
+        meetingPoint: meetingPoint,
       };
       const updates = {
         ['/events/' + eventKey]: eventData,
@@ -181,7 +184,16 @@ function CreateEvent() {
               useGeoLocation={id === undefined}
               viewport={viewport}
               onViewportChange={(viewport) => setViewport(viewport)}
-              onSearchAreaChange={(searchArea) => setSearchArea(searchArea)}
+              searchArea={searchArea}
+              onSearchAreaChange={(sa) => setSearchArea(sa)}
+              meetingPoint={meetingPoint}
+              onMeetingPointChange={(c) => {
+                if (c) {
+                  setMeetingPoint({ longitude: c.longitude, latitude: c.latitude });
+                } else {
+                  setMeetingPoint(undefined);
+                }
+              }}
             />
           </Box>
         </Grid>

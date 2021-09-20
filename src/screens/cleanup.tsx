@@ -13,7 +13,8 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import BasicMap, { MapViewport, defaultViewport } from '../components/maps/basicMap';
+import DynamicMap, { defaultViewport } from '../components/maps/dynamicMap';
+import { MapViewport } from '../components/maps/mapTypes';
 import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
@@ -22,7 +23,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
-import MapPolygon from '../components/maps/mapPolygon';
+import SearchArea from '../components/maps/searchArea';
 
 const useStyles = makeStyles({
   main: {
@@ -153,7 +154,7 @@ export default function Cleanup() {
 
   return event ? (
     <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
-      <BasicMap enableNavigation={true} viewport={viewport} onViewportChange={handleViewport}>
+      <DynamicMap viewport={viewport} onViewportChange={handleViewport}>
         <GeolocateControl
           style={{ right: 10, top: 10 }}
           positionOptions={{ enableHighAccuracy: true }}
@@ -162,7 +163,7 @@ export default function Cleanup() {
           auto
         />
 
-        {event.searchArea && <MapPolygon data={event.searchArea} opacity={0.2} />}
+        {event.searchArea && <SearchArea data={event.searchArea} opacity={0.2} />}
 
         {event && (
           <Marker longitude={event.position.longitude} latitude={event.position.latitude}>
@@ -211,7 +212,7 @@ export default function Cleanup() {
             / {position.timestamp}
           </div>
         )} */}
-      </BasicMap>
+      </DynamicMap>
 
       <footer className={classes.footer}>
         <Button
