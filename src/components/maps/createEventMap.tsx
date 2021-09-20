@@ -196,7 +196,6 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
           </Button>
         </Box>
         <DynamicMap
-          enableNavigation={true}
           viewport={viewport}
           onViewportChange={handleViewportChange}
           cursorOverride={markCursor}

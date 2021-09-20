@@ -154,7 +154,7 @@ export default function Cleanup() {
 
   return event ? (
     <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
-      <DynamicMap enableNavigation={true} viewport={viewport} onViewportChange={handleViewport}>
+      <DynamicMap viewport={viewport} onViewportChange={handleViewport}>
         <GeolocateControl
           style={{ right: 10, top: 10 }}
           positionOptions={{ enableHighAccuracy: true }}

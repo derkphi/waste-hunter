@@ -12,7 +12,6 @@ export const defaultViewport: MapViewport = {
 
 interface BasicMapProps {
   viewport: MapViewport;
-  enableNavigation?: boolean;
   onViewportChange?: (viewport: MapViewport) => void;
   cursorOverride?: () => string | undefined;
   onClick?: (longitude: number, latitude: number) => void;
@@ -22,7 +21,6 @@ interface BasicMapProps {
 
 const DynamicMap: React.FunctionComponent<BasicMapProps> = (props) => {
   const [mouseDown, setMouseDown] = useState(false);
-  const enableNavigation = props.enableNavigation ?? false;
 
   function handleViewport(viewport: ViewportProps) {
     if (props.onViewportChange) {
@@ -35,7 +33,7 @@ const DynamicMap: React.FunctionComponent<BasicMapProps> = (props) => {
   function cursor() {
     const cursorParent = props.cursorOverride && props.cursorOverride();
     if (cursorParent) return cursorParent;
-    return enableNavigation ? (mouseDown ? 'grabbing' : 'grab') : 'default';
+    return mouseDown ? 'grabbing' : 'grab';
   }
 
   return (
@@ -43,17 +41,10 @@ const DynamicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       mapboxApiAccessToken={apiAccessToken}
       mapStyle={mapStyle}
       {...props.viewport}
-      onViewportChange={enableNavigation ? handleViewport : undefined}
+      onViewportChange={handleViewport}
       width="100%"
       height="100%"
-      scrollZoom={enableNavigation}
-      dragPan={enableNavigation}
-      dragRotate={enableNavigation}
       doubleClickZoom={false} //default true
-      touchZoom={enableNavigation}
-      touchRotate={false}
-      keyboard={enableNavigation}
-      touchAction={enableNavigation ? 'none' : 'pan-y'}
       getCursor={cursor}
       onMouseDown={(e) => setMouseDown(true)}
       onMouseUp={(e) => setMouseDown(false)}
@@ -61,16 +52,7 @@ const DynamicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       onMouseMove={(e) => props.onMove && props.onMove(e.lngLat[0], e.lngLat[1])}
       onDblClick={(e) => props.onDoubleClick && props.onDoubleClick(e.lngLat[0], e.lngLat[1])}
     >
-      <NavigationControl
-        style={{ left: 10, top: 10 }}
-        showCompass={enableNavigation}
-        showZoom={enableNavigation}
-        captureScroll={false}
-        captureDrag={enableNavigation}
-        captureClick={enableNavigation}
-        captureDoubleClick={enableNavigation}
-        capturePointerMove={false}
-      />
+      <NavigationControl style={{ left: 10, top: 10 }} />
       {props.children}
     </ReactMapGL>
   );
