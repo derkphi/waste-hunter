@@ -45,6 +45,7 @@ interface CreateEventMapProps {
   onSearchAreaChange: (area: GeoJSON.Feature<GeoJSON.Polygon>) => void;
   meetingPoint: Coordinate | undefined;
   onMeetingPointChange: (c: Coordinate | undefined) => void;
+  onDoubleClick: () => void;
 }
 
 const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
@@ -55,6 +56,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   onSearchAreaChange,
   meetingPoint,
   onMeetingPointChange,
+  onDoubleClick,
 }) => {
   const classes = useStyles();
   const [ready, setReady] = useState(false);
@@ -124,6 +126,8 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
     if (mark) {
       handleMapClick(longitude, latitude);
       handleMarkButtonClick();
+    } else {
+      onDoubleClick();
     }
   }
 
