@@ -3,6 +3,7 @@ import { Source, Layer } from 'react-map-gl';
 
 interface SearchAreaProps {
   data: GeoJSON.Feature<GeoJSON.Geometry>;
+  opacity?: number;
 }
 
 function MapPolygon(props: SearchAreaProps) {
@@ -13,7 +14,7 @@ function MapPolygon(props: SearchAreaProps) {
         type="fill"
         paint={{
           'fill-color': 'purple',
-          'fill-opacity': 0.3,
+          'fill-opacity': props.opacity || 0.3,
         }}
       />
     </Source>

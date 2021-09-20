@@ -25,12 +25,12 @@ interface Demo extends DemoValue {
   play?: { start: number; time: number };
 }
 
-interface DemoPlayerProps {
+interface DemoCleanupsProps {
   event: Event;
   className?: string;
 }
 
-export default function DemoCleanups({ event, className }: DemoPlayerProps) {
+export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
   const [showDialog, setShowDialog] = useState(false);
   const [demos, setDemos] = useState<Demo[]>([]);
 

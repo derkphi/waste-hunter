@@ -17,10 +17,12 @@ import BasicMap, { MapViewport, defaultViewport } from '../components/maps/basic
 import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
-import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
+// import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
+import MapPolygon from '../components/maps/mapPolygon';
 
 const useStyles = makeStyles({
   main: {
@@ -34,14 +36,29 @@ const useStyles = makeStyles({
   },
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
   iconStart: { transform: 'translate(-50%, -100%)' },
-  iconUser: { color: 'rgba(66, 100, 251, .8)', transform: 'translate(-50%, -100%)' },
+  userMarker: { opacity: 0.8, '&.inactive': { opacity: 0.4 } },
+  userIcon: { color: 'rgb(66, 100, 251)', transform: 'translate(-50%, -100%)' },
+  userCode: {
+    position: 'absolute',
+    top: -17,
+    left: 0,
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    fontSize: 10,
+    lineHeight: 1,
+    color: '#FFF',
+    transform: 'translate(-50%, -100%) scaleX(90%)',
+    background: 'rgb(66, 100, 251)',
+  },
   demoCleanups: { position: 'absolute', bottom: 25, right: 0 },
 });
 
 interface CleanupUser {
   uid: string;
   email: string | null;
+  start: number;
   route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
+  end?: number;
   collected?: number;
   distance?: number;
 }
@@ -54,6 +71,7 @@ export interface Event {
     longitude: number;
     zoom: number;
   };
+  searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
 }
 
 export default function Cleanup() {
@@ -85,6 +103,7 @@ export default function Cleanup() {
     database.ref(`cleanups/${id}/${user.uid}`).set({
       uid: user.uid,
       email: user.email,
+      start: Date.now(),
     });
     setLastPosition(undefined);
   }, [user, id]);
@@ -108,12 +127,21 @@ export default function Cleanup() {
   }, [user, id, position, lastPosition]);
 
   const handleDialogClose = () => {
-    if (user) {
-      const route = cleanupUsers?.find((u) => u.uid === user.uid)?.route;
-      const distance = route ? length(getGeoJsonLineFromRoute(route)) : 0;
-      database.ref(`cleanups/${id}/${user.uid}`).update({
-        collected,
+    const cleanup = cleanupUsers?.find((u) => u.uid === user?.uid);
+    if (cleanup) {
+      const distance = cleanup.route ? length(getGeoJsonLineFromRoute(cleanup.route)) : 0;
+      database.ref(`cleanups/${id}/${cleanup.uid}`).update({
+        end: Date.now(),
         distance,
+        collected,
+      });
+      database.ref(`events/${id}/cleanup/${cleanup.uid}`).set({
+        uid: cleanup.uid,
+        email: cleanup.email,
+        start: cleanup.start,
+        end: Date.now(),
+        distance,
+        collected,
       });
     }
     history.push('/');
@@ -133,6 +161,8 @@ export default function Cleanup() {
           onGeolocate={(p: GeolocationPosition) => setPosition(p)}
           auto
         />
+
+        {event.searchArea && <MapPolygon data={event.searchArea} opacity={0.2} />}
 
         {event && (
           <Marker longitude={event.position.longitude} latitude={event.position.latitude}>
@@ -161,8 +191,14 @@ export default function Cleanup() {
                 {Object.values(u.route)
                   .slice(-1)
                   .map((r, i) => (
-                    <Marker key={i} longitude={r[0]} latitude={r[1]}>
-                      <PersonPinCircleIcon fontSize="large" className={classes.iconUser} />
+                    <Marker
+                      key={i}
+                      longitude={r[0]}
+                      latitude={r[1]}
+                      className={`${classes.userMarker} ${r[2] > Date.now() - 5 * 60e3 ? 'active' : 'inactive'}`}
+                    >
+                      <LocationOnIcon fontSize="large" className={classes.userIcon} />
+                      <div className={classes.userCode}>{u.email?.replace(/\W+/g, '').slice(0, 2)}</div>
                     </Marker>
                   ))}
               </div>

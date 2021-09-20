@@ -41,6 +41,7 @@ function EventCard(props: EventCardProps) {
   const history = useHistory();
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
+
   return (
     <Card className={classes.root}>
       <CardHeader title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass} />

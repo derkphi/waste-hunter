@@ -18,49 +18,50 @@ const useStyles = makeStyles({
   iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
 });
 
-interface EventReports {
-  [id: string]: { users: number; collected: number; distance: number };
+interface EventWithCleanupData extends EventType {
+  cleanup?: {
+    [uid: string]: {
+      uid: string;
+      email: string;
+      start: number;
+      end: number;
+      distance: number;
+      collected: number;
+    };
+  };
+}
+
+interface EventWithReport extends EventWithId {
+  users: number;
+  duration: number;
+  distance: number;
+  collected: number;
 }
 
 export default function Reports() {
   const classes = useStyles();
-  const [events, setEvents] = useState<EventWithId[]>([]);
-  const [reports, setReports] = useState<EventReports>({});
-
-  async function loadReports(events: EventWithId[]) {
-    events.forEach((event) => {
-      database
-        .ref(`cleanups/${event.id}`)
-        .get()
-        .then((d) => {
-          if (!d.exists()) return;
-          const user: { collected?: number; distance?: number }[] = Object.values(d.val()) || [];
-          const report = {
-            users: user.length,
-            collected: user.reduce((p, c) => p + (c.collected || 0), 0),
-            distance: user.reduce((p, c) => p + (c.distance || 0), 0),
-          };
-          setReports((r) => ({ ...r, [event.id]: report }));
-        });
-    });
-  }
+  const [events, setEvents] = useState<EventWithReport[]>([]);
 
   useEffect(() => {
     database
       .ref('events')
       .get()
-      .then((d) => {
-        const eventEntries: [string, EventType][] = Object.entries(d.val());
-        const events: EventWithId[] = eventEntries
-          .map(([k, v]) => ({
-            ...v,
-            id: k,
-            time: Date.parse(`${v.datum}T${v.zeit}`),
-          }))
-          .sort((a, b) => b.time - a.time)
-          .filter((e) => Date.parse(e.datum) < Date.now());
-        setEvents(events);
-        loadReports(events);
+      .then((data) => {
+        if (!data.exists()) return;
+        setEvents(
+          Object.entries(data.val() as { [id: string]: EventWithCleanupData })
+            .map(([id, event]) => ({
+              ...event,
+              id,
+              time: Date.parse(`${event.datum}T${event.zeit}`),
+              users: event.cleanup ? Object.keys(event.cleanup).length : 0,
+              duration: event.cleanup ? Math.max(...Object.values(event.cleanup).map((c) => c.end - c.start)) : 0,
+              distance: event.cleanup ? Math.max(...Object.values(event.cleanup).map((c) => c.distance)) : 0,
+              collected: event.cleanup ? Object.values(event.cleanup).reduce((p, c) => p + (c.collected || 0), 0) : 0,
+            }))
+            .sort((a, b) => b.time - a.time)
+            .filter((e) => Date.parse(e.datum) < Date.now())
+        );
       });
   }, []);
 
@@ -80,14 +81,15 @@ export default function Reports() {
                 <Typography paragraph variant="h6">
                   Treffpunkt bei {event.ort} um {event.zeit} Uhr
                 </Typography>
-                {reports[event.id] && (
+                {event.users > 0 && (
                   <Typography paragraph>
-                    Gesammelter Abfall: {Math.round(reports[event.id].collected * 1e2) / 1e2} Liter
+                    {event.users} Person{event.users === 1 ? '' : 'en'}
                     <br />
-                    Teilgenommen: {reports[event.id].users} Person{reports[event.id].users === 1 ? '' : 'en'}
+                    {Math.round(event.duration / 60e3)} Min. Dauer
                     <br />
-                    Durchschnittliche Strecke:{' '}
-                    {Math.round((reports[event.id].distance / reports[event.id].users) * 1e3) / 1e3} km
+                    {Math.round(event.distance * 1e3)} m Strecke
+                    <br />
+                    {Math.round(event.collected * 1e2) / 1e2} l Abfall
                   </Typography>
                 )}
               </Grid>
@@ -97,6 +99,6 @@ export default function Reports() {
       ))}
     </>
   ) : (
-    <Info text="Kein Event geplant." />
+    <Info text="Kein Bericht vorhanden." />
   );
 }
