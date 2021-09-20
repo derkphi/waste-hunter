@@ -4,27 +4,38 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
-import EventMap from '../components/maps/createEventMap';
+import CreateEventMap from '../components/maps/createEventMap';
 import { database } from '../firebase/config';
 import { EventType, MeetingPoint } from '../common/firebase_types';
 
-const useStyles = makeStyles(() => ({
+const defaultMapStyle = {
+  marginTop: 20,
+  height: '50vh',
+  width: '100%',
+};
+
+const useStyles = makeStyles((theme) => ({
   field: {
     marginTop: 20,
     marginBottom: 20,
   },
-  map: {
-    marginTop: 20,
-    height: '50vh',
-    width: '100%',
-    // [theme.breakpoints.down('sm')] : {
-    //   height: '75vh',
-    //   width: '100%'
-    // },
-    // [theme.breakpoints.up('md')] : {
-    //   height: '100%',
-    //   width: '100%'
-    // }
+  map: defaultMapStyle,
+  [theme.breakpoints.down('sm')]: {
+    mapFull: {
+      position: 'fixed',
+      boxSizing: 'border-box',
+      paddingLeft: '5px',
+      paddingRight: '5px',
+      zIndex: 2000,
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: '#FFF',
+    },
+  },
+  [theme.breakpoints.up('md')]: {
+    mapFull: defaultMapStyle,
   },
   mapGridItem: {
     width: '100%',
@@ -44,6 +55,8 @@ const fallbackViewport = {
 function CreateEvent() {
   const classes = useStyles();
   const history = useHistory();
+  const [mapFull, setMapFull] = useState(false);
+
   const [event, setEvent] = useState('');
   const [place, setPlace] = useState('');
   const [date, setDate] = useState('');
@@ -121,6 +134,10 @@ function CreateEvent() {
     }
   };
 
+  function handleMapDoubleClick() {
+    setMapFull(!mapFull);
+  }
+
   return (
     <form noValidate autoComplete="off" onSubmit={handleSubmit}>
       <Typography variant="h4" color="textPrimary" component="h2" gutterBottom>
@@ -179,8 +196,8 @@ function CreateEvent() {
           />
         </Grid>
         <Grid item sm={12} md={7} className={classes.mapGridItem}>
-          <Box className={classes.map}>
-            <EventMap
+          <Box className={mapFull ? classes.mapFull : classes.map}>
+            <CreateEventMap
               useGeoLocation={id === undefined}
               viewport={viewport}
               onViewportChange={(viewport) => setViewport(viewport)}
@@ -194,6 +211,7 @@ function CreateEvent() {
                   setMeetingPoint(undefined);
                 }
               }}
+              onDoubleClick={handleMapDoubleClick}
             />
           </Box>
         </Grid>
