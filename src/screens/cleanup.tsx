@@ -23,7 +23,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
-import MapPolygon from '../components/maps/mapPolygon';
+import SearchArea from '../components/maps/searchArea';
 
 const useStyles = makeStyles({
   main: {
@@ -163,7 +163,7 @@ export default function Cleanup() {
           auto
         />
 
-        {event.searchArea && <MapPolygon data={event.searchArea} opacity={0.2} />}
+        {event.searchArea && <SearchArea data={event.searchArea} opacity={0.2} />}
 
         {event && (
           <Marker longitude={event.position.longitude} latitude={event.position.latitude}>
