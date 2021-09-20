@@ -1,4 +1,4 @@
-import BasicMap from './basicMap';
+import StaticMap from './staticMap';
 import SearchArea from './searchArea';
 import MeetingPoint from './meetingPoint';
 import { EventWithId } from '../../common/firebase_types';
@@ -8,13 +8,16 @@ interface EventMapProps {
 }
 
 function EventMap(props: EventMapProps) {
+  console.log(props.event.meetingPoint);
   return (
-    <BasicMap viewport={props.event.position}>
-      {props.event.searchArea && <SearchArea data={props.event.searchArea} />}
-      {props.event.meetingPoint && (
-        <MeetingPoint longitude={props.event.meetingPoint.longitude} latitude={props.event.meetingPoint.latitude} />
-      )}
-    </BasicMap>
+    <StaticMap viewport={props.event.position}>
+      <>
+        {props.event.meetingPoint && (
+          <MeetingPoint longitude={props.event.meetingPoint.longitude} latitude={props.event.meetingPoint.latitude} />
+        )}
+        {props.event.searchArea && <SearchArea data={props.event.searchArea} />}
+      </>
+    </StaticMap>
   );
 }
 

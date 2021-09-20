@@ -13,7 +13,8 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import BasicMap, { MapViewport, defaultViewport } from '../components/maps/basicMap';
+import DynamicMap, { defaultViewport } from '../components/maps/dynamicMap';
+import { MapViewport } from '../components/maps/mapTypes';
 import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
@@ -153,7 +154,7 @@ export default function Cleanup() {
 
   return event ? (
     <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
-      <BasicMap enableNavigation={true} viewport={viewport} onViewportChange={handleViewport}>
+      <DynamicMap enableNavigation={true} viewport={viewport} onViewportChange={handleViewport}>
         <GeolocateControl
           style={{ right: 10, top: 10 }}
           positionOptions={{ enableHighAccuracy: true }}
@@ -211,7 +212,7 @@ export default function Cleanup() {
             / {position.timestamp}
           </div>
         )} */}
-      </BasicMap>
+      </DynamicMap>
 
       <footer className={classes.footer}>
         <Button

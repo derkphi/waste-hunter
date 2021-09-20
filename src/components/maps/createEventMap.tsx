@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import BasicMap, { MapViewport } from './basicMap';
+import DynamicMap from './dynamicMap';
+import { MapViewport } from './mapTypes';
 import { getGeoJsonPolygon } from './geoJsonHelper';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { Popup } from 'react-map-gl';
@@ -194,7 +195,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
             Löschen
           </Button>
         </Box>
-        <BasicMap
+        <DynamicMap
           enableNavigation={true}
           viewport={viewport}
           onViewportChange={handleViewportChange}
@@ -219,7 +220,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
               />
             </>
           )}
-        </BasicMap>
+        </DynamicMap>
       </Box>
     );
   } else {

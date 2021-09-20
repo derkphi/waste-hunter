@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import ReactMapGL, { NavigationControl, ViewportProps } from 'react-map-gl';
+import { MapViewport } from './mapTypes';
+import { apiAccessToken, mapStyle } from './config';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-export interface MapViewport {
-  latitude: number;
-  longitude: number;
-  zoom: number;
-}
 
 export const defaultViewport: MapViewport = {
   latitude: 46.82,
@@ -24,7 +20,7 @@ interface BasicMapProps {
   onMove?: (longitude: number, latitude: number) => void;
 }
 
-const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
+const DynamicMap: React.FunctionComponent<BasicMapProps> = (props) => {
   const [mouseDown, setMouseDown] = useState(false);
   const enableNavigation = props.enableNavigation ?? false;
 
@@ -44,8 +40,8 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
 
   return (
     <ReactMapGL
-      mapboxApiAccessToken="pk.eyJ1IjoiZGVya3NlbnBoaWxpcHAiLCJhIjoiY2tycXV1ejZxMnFzNTJ1cnY5eHZ0ZXp1YSJ9.iWymYhi7VBjE_C6WIt0mOw"
-      mapStyle="https://vectortiles.geo.admin.ch/styles/ch.swisstopo.leichte-basiskarte.vt/style.json"
+      mapboxApiAccessToken={apiAccessToken}
+      mapStyle={mapStyle}
       {...props.viewport}
       onViewportChange={enableNavigation ? handleViewport : undefined}
       width="100%"
@@ -80,4 +76,4 @@ const BasicMap: React.FunctionComponent<BasicMapProps> = (props) => {
   );
 };
 
-export default BasicMap;
+export default DynamicMap;
