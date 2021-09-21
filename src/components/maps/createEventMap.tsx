@@ -4,9 +4,10 @@ import { MapViewport } from './mapTypes';
 import { getGeoJsonPolygon } from './geoJsonHelper';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { Popup } from 'react-map-gl';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Box } from '@material-ui/core';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { IconButton, Typography, Box } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import DoneIcon from '@material-ui/icons/Done';
 import EditIcon from '@material-ui/icons/Edit';
 import SearchArea from './searchArea';
 import MeetingPoint from './meetingPoint';
@@ -19,18 +20,46 @@ const options = {
 
 const markCursorStyle = 'crosshair';
 
-const useStyles = makeStyles({
-  mapContainer: {
-    width: '100%',
-    height: '100%',
-  },
-  markActive: {
-    cursor: markCursorStyle,
-  },
-  markButton: {
-    margin: '5px',
-  },
-});
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    markActive: {
+      cursor: markCursorStyle,
+    },
+    mapContainer: {
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+    },
+    iconButtonContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      position: 'absolute',
+      zIndex: 2000,
+      left: '45px',
+      top: '6px',
+    },
+    iconButtonBox: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      background: 'white',
+      borderRadius: '4px',
+      margin: '4px',
+      paddingLeft: '2px',
+      boxShadow: '0 0 0 2px rgba(0,0,0,.1)',
+    },
+    iconLabel: {
+      margin: '2px',
+    },
+    iconButton: {
+      margin: '2px',
+      background: 'white',
+      border: '2px solid #cccccc',
+      boxShadow: 'none',
+      borderRadius: '4px',
+    },
+  })
+);
 
 interface Coordinate {
   longitude: number;
@@ -106,6 +135,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   function handleDeleteButtonClick() {
     updateArea([]);
     setNext(undefined);
+    setMark(false);
   }
 
   function markCursor() {
@@ -161,39 +191,38 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   if (ready) {
     return (
       <Box className={`${classes.mapContainer} ${mark && classes.markActive}`}>
-        <Box>
-          Treffunkt:
-          <Button
-            onClick={handleMeetingPointButtonClick}
-            className={`${classes.markButton} ${mark && classes.markActive}`}
-            color="secondary"
-            variant="contained"
-            endIcon={meetingPoint ? <DeleteForeverIcon /> : <LocationOnOutlinedIcon />}
-          >
-            {meetingPoint ? 'löschen' : 'markieren'}
-          </Button>
-        </Box>
-        <Box>
-          Suchgebiet:
-          <Button
-            onClick={handleMarkButtonClick}
-            className={`${classes.markButton} ${mark && classes.markActive}`}
-            color="secondary"
-            variant="contained"
-            endIcon={<EditIcon />}
-          >
-            {mark ? 'Markieren beenden' : 'markieren'}
-          </Button>
-          <Button
-            onClick={handleDeleteButtonClick}
-            className={classes.markButton}
-            color="secondary"
-            variant="contained"
-            endIcon={<DeleteForeverIcon />}
-            disabled={area.length === 0}
-          >
-            Löschen
-          </Button>
+        <Box className={classes.iconButtonContainer}>
+          <Box className={classes.iconButtonBox}>
+            <Typography className={classes.iconLabel}>Treffunkt</Typography>
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={handleMeetingPointButtonClick}
+              className={`${classes.iconButton} ${mark && classes.markActive}`}
+            >
+              {meetingPoint ? <DeleteForeverIcon color="inherit" /> : <LocationOnOutlinedIcon />}
+            </IconButton>
+          </Box>
+          <Box className={classes.iconButtonBox}>
+            <Typography className={classes.iconLabel}>Suchgebiet</Typography>
+            <IconButton
+              size="small"
+              onClick={handleMarkButtonClick}
+              className={`${classes.iconButton} ${mark && classes.markActive}`}
+              color="inherit"
+            >
+              {mark ? <DoneIcon /> : <EditIcon />}
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={handleDeleteButtonClick}
+              className={classes.iconButton}
+              color="inherit"
+              disabled={area.length === 0}
+            >
+              <DeleteForeverIcon />
+            </IconButton>
+          </Box>
         </Box>
         <DynamicMap
           viewport={viewport}
