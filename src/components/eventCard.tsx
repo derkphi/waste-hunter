@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import { Typography } from '@material-ui/core';
+import { Badge, Typography } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Grid, Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
 import { EventWithId } from '../common/firebase_types';
@@ -13,6 +13,10 @@ import { useHistory } from 'react-router-dom';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
 import { IconButton, Box } from '@material-ui/core';
+import PersonIcon from '@material-ui/icons/Person';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import { authFirebase, database } from '../firebase/config';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,6 +42,20 @@ function EventCard(props: EventCardProps) {
   const history = useHistory();
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
+  const [registrated, setRegistrated] = useState(
+    props.event.registrations &&
+      authFirebase.currentUser &&
+      props.event.registrations[authFirebase.currentUser.uid] &&
+      true
+  );
+
+  const handleRegistration = () => {
+    const user = authFirebase.currentUser;
+    if (!user) return;
+    const ref = database.ref(`events/${props.event.id}/registrations/${user.uid}`);
+    registrated ? ref.remove() : ref.set({ email: user.email, added: Date.now() });
+    setRegistrated(!registrated);
+  };
 
   return (
     <Card className={classes.root}>
@@ -51,6 +69,19 @@ function EventCard(props: EventCardProps) {
             <Typography paragraph variant="h6">
               Treffpunkt bei {props.event.ort} um {props.event.zeit} Uhr
             </Typography>
+            <p>
+              <Badge
+                color="primary"
+                style={{ marginRight: '1em' }}
+                badgeContent={Object.keys(props.event.registrations || {}).length || '0'}
+              >
+                <PersonIcon />
+              </Badge>
+              angemeldet
+              <IconButton size="small" onClick={handleRegistration}>
+                {registrated ? <RemoveCircleIcon /> : <AddCircleIcon />}
+              </IconButton>
+            </p>
             <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button
                 color="secondary"
