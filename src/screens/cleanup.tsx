@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GeolocateControl, Marker, Layer, Source } from 'react-map-gl';
+import { GeolocateControl, Marker, Layer, Source, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { authFirebase, database } from '../firebase/config';
 import {
@@ -24,8 +24,11 @@ import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
+import logo from '../assets/logo_transparent_background.png';
 
 const useStyles = makeStyles({
+  header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
+  logo: { marginTop: -7, height: 44, userDrag: 'none', userSelect: 'none' },
   main: {
     position: 'absolute',
     zIndex: 2000,
@@ -38,18 +41,20 @@ const useStyles = makeStyles({
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
   iconStart: { transform: 'translate(-50%, -100%)' },
   userMarker: { opacity: 0.8, '&.inactive': { opacity: 0.4 } },
-  userIcon: { color: 'rgb(66, 100, 251)', transform: 'translate(-50%, -100%)' },
+  userIcon: { color: 'rgb(66, 100, 251)' },
+  userPopup: { '& .mapboxgl-popup-content': { padding: '5px 10px' } },
   userCode: {
     position: 'absolute',
-    top: -17,
-    left: 0,
+    top: 8,
+    left: '50%',
     textTransform: 'uppercase',
     fontWeight: 'bold',
     fontSize: 10,
     lineHeight: 1,
     color: '#FFF',
-    transform: 'translate(-50%, -100%) scaleX(90%)',
+    transform: 'translateX(-50%)',
     background: 'rgb(66, 100, 251)',
+    cursor: 'pointer',
   },
   demoCleanups: { position: 'absolute', bottom: 25, right: 0 },
 });
@@ -83,6 +88,7 @@ export default function Cleanup() {
   const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
   const [position, setPosition] = useState<GeolocationPosition>();
   const [lastPosition, setLastPosition] = useState<GeolocationPosition>();
+  const [showPopup, setShowPopup] = useState('');
   const [showDialog, setShowDialog] = useState(false);
   const [collected, setCollected] = useState<number>();
   const { id } = useParams<{ id: string }>();
@@ -110,7 +116,7 @@ export default function Cleanup() {
   }, [user, id]);
 
   useEffect(() => {
-    if (!user || !position || position.coords.accuracy > 50 || position.timestamp < Date.now() - 60e3) return;
+    if (!user || !position || position.coords.accuracy > 100 || position.timestamp < Date.now() - 5 * 60e3) return;
     // push position max. all 5 seconds and 5 meters
     if (
       !lastPosition ||
@@ -172,14 +178,14 @@ export default function Cleanup() {
         )}
 
         {cleanupUsers?.map(
-          (u) =>
-            u.route && (
-              <div key={u.uid}>
-                <Source id={`source-${u.uid}`} type="geojson" data={getGeoJsonLineFromRoute(u.route)} />
+          ({ uid, route, email }) =>
+            route && (
+              <div key={uid}>
+                <Source id={`source-${uid}`} type="geojson" data={getGeoJsonLineFromRoute(route)} />
                 <Layer
-                  id={`layer-${u.uid}`}
+                  id={`layer-${uid}`}
                   type="line"
-                  source={`source-${u.uid}`}
+                  source={`source-${uid}`}
                   layout={{
                     'line-cap': 'round',
                     'line-join': 'round',
@@ -189,18 +195,41 @@ export default function Cleanup() {
                     'line-width': 6,
                   }}
                 />
-                {Object.values(u.route)
+                {Object.values(route)
                   .slice(-1)
-                  .map((r, i) => (
-                    <Marker
-                      key={i}
-                      longitude={r[0]}
-                      latitude={r[1]}
-                      className={`${classes.userMarker} ${r[2] > Date.now() - 5 * 60e3 ? 'active' : 'inactive'}`}
-                    >
-                      <LocationOnIcon fontSize="large" className={classes.userIcon} />
-                      <div className={classes.userCode}>{u.email?.replace(/\W+/g, '').slice(0, 2)}</div>
-                    </Marker>
+                  .map(([lng, lat, time]) => (
+                    <>
+                      <Marker
+                        key={time}
+                        longitude={lng}
+                        latitude={lat}
+                        offsetTop={-32}
+                        offsetLeft={-17.5}
+                        className={`${classes.userMarker} ${time > Date.now() - 5 * 60e3 ? 'active' : 'inactive'}`}
+                      >
+                        <LocationOnIcon fontSize="large" className={classes.userIcon} />
+                        <div onClick={() => setShowPopup(showPopup === uid ? '' : uid)} className={classes.userCode}>
+                          {email?.replace(/\W+/g, '').slice(0, 2)}
+                        </div>
+                      </Marker>
+                      {showPopup === uid && (
+                        <Popup
+                          longitude={lng}
+                          latitude={lat}
+                          closeButton={false}
+                          closeOnClick={true}
+                          onClose={() => setShowPopup('')}
+                          anchor="bottom"
+                          offsetTop={-25}
+                          className={classes.userPopup}
+                        >
+                          {email
+                            ?.replace(/@.*/g, '')
+                            .replace(/[._]+/g, ' ')
+                            .replace(/((^|\s)\S)/g, (m) => m.toUpperCase())}
+                        </Popup>
+                      )}
+                    </>
                   ))}
               </div>
             )
@@ -213,6 +242,10 @@ export default function Cleanup() {
           </div>
         )} */}
       </DynamicMap>
+
+      <header className={classes.header}>
+        <img src={logo} alt="Waste Hunter" className={classes.logo} />
+      </header>
 
       <footer className={classes.footer}>
         <Button
