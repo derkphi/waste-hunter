@@ -92,6 +92,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   const [next, setNext] = useState<[number, number] | undefined>();
   const [mark, setMark] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+
   let area: Array<[number, number]>;
   if (searchArea) {
     area = searchArea?.geometry.coordinates[0].map((item) => [item[0], item[1]]);
@@ -125,17 +126,15 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
 
   function handleMarkButtonClick() {
     if (!mark) {
-      updateArea([]);
+      if (area.length > 0) {
+        updateArea([]);
+      } else {
+        setMark(true);
+      }
     } else {
       setNext(undefined);
+      setMark(false);
     }
-    setMark(!mark);
-  }
-
-  function handleDeleteButtonClick() {
-    updateArea([]);
-    setNext(undefined);
-    setMark(false);
   }
 
   function markCursor() {
@@ -211,16 +210,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
               className={`${classes.iconButton} ${mark && classes.markActive}`}
               color="inherit"
             >
-              {mark ? <DoneIcon /> : <EditIcon />}
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={handleDeleteButtonClick}
-              className={classes.iconButton}
-              color="inherit"
-              disabled={area.length === 0}
-            >
-              <DeleteForeverIcon />
+              {mark ? <DoneIcon /> : area.length > 0 ? <DeleteForeverIcon /> : <EditIcon />}
             </IconButton>
           </Box>
         </Box>
