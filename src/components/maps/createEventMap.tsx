@@ -193,7 +193,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
       <Box className={`${classes.mapContainer} ${mark && classes.markActive}`}>
         <Box className={classes.iconButtonContainer}>
           <Box className={classes.iconButtonBox}>
-            <Typography className={classes.iconLabel}>Treffunkt</Typography>
+            <Typography className={classes.iconLabel}>Treffpunkt</Typography>
             <IconButton
               size="small"
               color="inherit"
