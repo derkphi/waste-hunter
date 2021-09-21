@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import Login from './screens/login';
 import Header from './components/header';
@@ -9,7 +9,10 @@ import CreateEvent from './screens/createEvent';
 import Cleanup from './screens/cleanup';
 import { PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
 import { Container, createTheme, ThemeProvider } from '@material-ui/core';
-import SignOutButton from './components/SignOutButton';
+import SignOutButton from "./components/SignOutButton";
+import Cameracomponent from "./components/notifications/camera_component";
+
+
 
 const theme = createTheme({
   palette: {
@@ -48,8 +51,12 @@ const headerData = {
 };
 
 function App() {
+
+
   return (
+
     <ThemeProvider theme={theme}>
+
       <Router>
         <Switch>
           <RestrictedRoute path={Routes.login} exact>
@@ -70,14 +77,12 @@ function App() {
           <PrivateRoute path={Routes.createEvent} exact>
             {withHeader('Event erfassen', <CreateEvent />)}
           </PrivateRoute>
-          <PrivateRoute path={Routes.editEvent} exact>
-            {withHeader('Event ändern', <CreateEvent />)}
-          </PrivateRoute>
           <PrivateRoute path={Routes.logout} exact>
-            {withHeader('Logout', <SignOutButton />)}
+            {withHeader('Logout', <Cameracomponent/>)}
           </PrivateRoute>
         </Switch>
       </Router>
+
     </ThemeProvider>
   );
 }
