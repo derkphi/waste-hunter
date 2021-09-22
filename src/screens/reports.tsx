@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { EventType, EventWithId } from '../common/firebase_types';
 import Info from '../components/info';
 import { database } from '../firebase/config';
-import { Card, CardHeader, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Card, CardHeader, CardContent, Grid, Typography, makeStyles, Box } from '@material-ui/core';
 import EventMap from '../components/maps/eventMap';
 
 const useStyles = makeStyles({
@@ -15,6 +15,36 @@ const useStyles = makeStyles({
     padding: 1,
   },
   iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
+  statsticContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  statisticItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+    boxSizing: 'content-box',
+    width: '90px',
+    height: '90px',
+    backgroundColor: 'yellow',
+    padding: '5px',
+    marginTop: '5px',
+    marginBottom: '5px',
+    marginRight: '10px',
+    '&:last-child': {
+      marginRight: '0px',
+    },
+  },
+  // statisticItem not(:firstChild):not(lastChild) {
+
+  // },
+  statisticValue: {
+    fontSize: '2em',
+    textAlign: 'center',
+  },
+  statisticUnit: {
+    textAlign: 'right',
+  },
 });
 
 interface EventWithCleanupData extends EventType {
@@ -79,15 +109,45 @@ export default function Reports() {
                   Treffpunkt bei {event.ort} um {event.zeit} Uhr
                 </Typography>
                 {event.users > 0 && (
-                  <Typography paragraph>
-                    {event.users} Person{event.users === 1 ? '' : 'en'}
-                    <br />
-                    {Math.round(event.duration / 60e3)} Min. Dauer
-                    <br />
-                    {Math.round(event.distance * 1e3)} m Strecke
-                    <br />
-                    {Math.round(event.collected * 1e2) / 1e2} l Abfall
-                  </Typography>
+                  <>
+                    <Typography paragraph>
+                      {event.users} Person{event.users === 1 ? '' : 'en'}
+                      <br />
+                      {Math.round(event.duration / 60e3)} Min. Dauer
+                      <br />
+                      {Math.round(event.distance * 1e3)} m Strecke
+                      <br />
+                      {Math.round(event.collected * 1e2) / 1e2} l Abfall
+                    </Typography>
+                    <Box className={classes.statsticContainer}>
+                      <Box className={classes.statisticItem}>
+                        <Typography>Personen</Typography>
+                        <Typography className={classes.statisticValue}>{event.users}5</Typography>
+                        <Typography className={classes.statisticUnit}>&nbsp;</Typography>
+                      </Box>
+                      <Box className={classes.statisticItem}>
+                        <Typography>Dauer</Typography>
+                        <Typography className={classes.statisticValue}>
+                          {Math.round(event.duration / 60e3)}000
+                        </Typography>
+                        <Typography className={classes.statisticUnit}>Min.</Typography>
+                      </Box>
+                      <Box className={classes.statisticItem}>
+                        <Typography>Strecke</Typography>
+                        <Typography className={classes.statisticValue}>
+                          1500{Math.round(event.distance * 1e3)}
+                        </Typography>
+                        <Typography className={classes.statisticUnit}>m</Typography>
+                      </Box>
+                      <Box className={classes.statisticItem}>
+                        <Typography>Abfall</Typography>
+                        <Typography className={classes.statisticValue}>
+                          {Math.round(event.collected * 1e2) / 1e2}000
+                        </Typography>
+                        <Typography className={classes.statisticUnit}>l</Typography>
+                      </Box>
+                    </Box>
+                  </>
                 )}
               </Grid>
             </Grid>
