@@ -21,13 +21,13 @@ import length from '@turf/length';
 // import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import {CameraAltRounded} from "@mui/icons-material";
+import {CameraAltRounded} from "@material-ui/icons";
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
 import logo from '../assets/logo_transparent_background.png';
 import Cameracomponent from '../components/camera/camera_component';
-import SaveIcon from '@mui/icons-material/Save';
+import SaveIcon from '@material-ui/icons/Save';
 
 const useStyles = makeStyles({
   header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
@@ -42,7 +42,8 @@ const useStyles = makeStyles({
     background: '#FFF',
   },
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
-  iconStart: { transform: 'translate(-50%, -100%)' },
+  camera: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center'},
+    iconStart: { transform: 'translate(-50%, -100%)' },
   userMarker: { opacity: 0.8, '&.inactive': { opacity: 0.4 } },
   userIcon: { color: 'rgb(66, 100, 251)' },
   userPopup: { '& .mapboxgl-popup-content': { padding: '5px 10px' } },
@@ -318,7 +319,7 @@ else {return event ? (
     <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
       <Cameracomponent/>
 
-      <footer className={classes.footer}>
+      <footer className={classes.camera}>
 
 
         <Button
