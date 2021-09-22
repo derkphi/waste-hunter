@@ -11,6 +11,7 @@ import { PrivateRoute, RestrictedRoute, Routes } from './components/customRoute'
 import { Container, createTheme, ThemeProvider } from '@material-ui/core';
 import SignOutButton from './components/SignOutButton';
 
+
 const theme = createTheme({
   palette: {
     primary: {

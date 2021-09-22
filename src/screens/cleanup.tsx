@@ -21,10 +21,13 @@ import length from '@turf/length';
 // import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
+import {CameraAltRounded} from "@mui/icons-material";
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
 import logo from '../assets/logo_transparent_background.png';
+import Cameracomponent from '../components/camera/camera_component';
+import SaveIcon from '@mui/icons-material/Save';
 
 const useStyles = makeStyles({
   header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
@@ -90,6 +93,7 @@ export default function Cleanup() {
   const [lastPosition, setLastPosition] = useState<GeolocationPosition>();
   const [showPopup, setShowPopup] = useState('');
   const [showDialog, setShowDialog] = useState(false);
+  const [showCamera,setShowCamera]=useState(false);
   const [collected, setCollected] = useState<number>();
   const { id } = useParams<{ id: string }>();
   const user = authFirebase.currentUser;
@@ -157,8 +161,9 @@ export default function Cleanup() {
   function handleViewport(viewport: MapViewport) {
     setViewport(viewport);
   }
-
+if (!showCamera){
   return event ? (
+
     <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
       <DynamicMap viewport={viewport} onViewportChange={handleViewport}>
         <GeolocateControl
@@ -249,6 +254,17 @@ export default function Cleanup() {
 
       <footer className={classes.footer}>
         <Button
+            color="secondary"
+            variant="contained"
+            endIcon={<CameraAltRounded />}
+            onClick={() => {
+              setShowCamera(true);
+            }}
+        >
+          Markieren
+        </Button>
+
+                <Button
           color="primary"
           variant="contained"
           onClick={() => {
@@ -259,6 +275,7 @@ export default function Cleanup() {
           Beenden
         </Button>
       </footer>
+
 
       <Dialog open={showDialog} onClose={() => setShowDialog(false)} style={{ zIndex: 3000 }}>
         <DialogTitle>Event beenden</DialogTitle>
@@ -296,3 +313,31 @@ export default function Cleanup() {
     </main>
   ) : null;
 }
+else {return event ? (
+
+    <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
+      <Cameracomponent/>
+
+      <footer className={classes.footer}>
+
+
+        <Button
+            color="primary"
+            variant="contained"
+            endIcon={<SaveIcon />}
+            onClick={() => {
+              setShowCamera(false);
+            }}
+        >
+          Speichern
+        </Button>
+      </footer>
+
+
+
+
+    </main>
+) : null;
+}
+  }
+
