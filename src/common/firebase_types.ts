@@ -17,6 +17,7 @@ export interface EventType {
   zeit: string;
   searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
   meetingPoint?: MeetingPoint;
+  registrations?: { [uid: string]: { email: string; added: number } };
 }
 
 export interface EventWithId extends EventType {

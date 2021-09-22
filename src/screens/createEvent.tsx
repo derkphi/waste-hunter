@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
       boxSizing: 'border-box',
       paddingLeft: '5px',
       paddingRight: '5px',
+      paddingBottom: '5px',
       zIndex: 2000,
       top: 0,
       left: 0,
