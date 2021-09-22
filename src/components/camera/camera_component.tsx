@@ -2,9 +2,7 @@ import React, { useState,useRef,useCallback} from 'react';
 import {Button,} from '@material-ui/core';
 import Webcam from "react-webcam";
 import { makeStyles } from '@material-ui/core/styles';
-
-
-
+import {projectStorage} from "../../firebase/config";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -29,11 +27,14 @@ export default function Cameracomponent() {
         () => {
             // @ts-ignore
             const imageSrc = webcamRef.current.getScreenshot();
-            setImage(imageSrc);},
+            setImage(imageSrc);
 
+
+            projectStorage.ref(`/image/${image}`).put(imageSrc)
+            },
 
                 []
-        )
+        );
 
    return (
 
