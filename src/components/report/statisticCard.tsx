@@ -34,7 +34,7 @@ function StatisticCard() {
     <Card>
       <CardHeader title="Gruppenerfolg seit Gründung" />
       <CardContent>
-        <StatisticGroup duration={statistic.duration} distance={statistic.distance} collected={statistic.collected} />)
+        <StatisticGroup duration={statistic.duration} distance={statistic.distance} collected={statistic.collected} />
       </CardContent>
     </Card>
   );

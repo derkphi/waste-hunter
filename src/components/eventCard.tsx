@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
+import { useMeasure } from 'react-use';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import { Badge, Typography } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Grid, Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
+import { Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
 import { EventWithId } from '../common/firebase_types';
-import EventMap from '../components/maps/eventMap';
+import EventMap from './maps/eventMap';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { Routes } from '../components/customRoute';
+import { Routes } from './customRoute';
 import { useHistory } from 'react-router-dom';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
@@ -21,13 +22,21 @@ import { authFirebase, database } from '../firebase/config';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      marginTop: '20px',
-    },
-    mapGridItem: {
       width: '100%',
-      height: '350px',
-      padding: '1px',
+      marginBottom: '20px',
     },
+    content: {
+      display: 'flex',
+      gap: '20px',
+    },
+    map: {
+      boxSizing: 'border-box',
+      height: '325px',
+    },
+    info: {
+      boxSizing: 'border-box',
+    },
+    iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
   })
 );
 
@@ -41,6 +50,7 @@ interface EventCardProps {
 function EventCard(props: EventCardProps) {
   const history = useHistory();
   const classes = useStyles();
+  const [ref, { width }] = useMeasure<HTMLDivElement>();
   const [showDialog, setShowDialog] = useState(false);
   const [registrated, setRegistrated] = useState(
     props.event.registrations &&
@@ -58,14 +68,14 @@ function EventCard(props: EventCardProps) {
   };
 
   return (
-    <Card className={classes.root}>
-      <CardHeader title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass} />
-      <CardContent>
-        <Grid container spacing={3}>
-          <Grid item sm={12} md={6} className={classes.mapGridItem}>
+    <div ref={ref}>
+      <Card className={classes.root}>
+        <CardHeader title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass} />
+        <CardContent className={classes.content} style={{ flexDirection: width < 960 ? 'column' : 'row' }}>
+          <Box className={classes.map} style={{ width: width < 960 ? '100%' : '50%' }}>
             <EventMap event={props.event} />
-          </Grid>
-          <Grid item sm={12} md={6}>
+          </Box>
+          <Box className={classes.info} style={{ width: width < 960 ? '100%' : '50%' }}>
             <Typography paragraph variant="h6">
               Treffpunkt bei {props.event.ort} um {props.event.zeit} Uhr
             </Typography>
@@ -106,31 +116,31 @@ function EventCard(props: EventCardProps) {
                 </Box>
               )}
             </Box>
-          </Grid>
-        </Grid>
-      </CardContent>
+          </Box>
+        </CardContent>
 
-      <Dialog open={showDialog} onClose={() => setShowDialog(false)} style={{ zIndex: 3000 }}>
-        <DialogTitle>Event löschen?</DialogTitle>
-        <DialogContent>
-          <DialogActions>
-            <Button color="secondary" onClick={() => setShowDialog(false)}>
-              Abbrechen
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                setShowDialog(false);
-                props.deleteClick && props.deleteClick(props.event.id);
-              }}
-            >
-              Löschen
-            </Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
-    </Card>
+        <Dialog open={showDialog} onClose={() => setShowDialog(false)} style={{ zIndex: 3000 }}>
+          <DialogTitle>Event löschen?</DialogTitle>
+          <DialogContent>
+            <DialogActions>
+              <Button color="secondary" onClick={() => setShowDialog(false)}>
+                Abbrechen
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setShowDialog(false);
+                  props.deleteClick && props.deleteClick(props.event.id);
+                }}
+              >
+                Löschen
+              </Button>
+            </DialogActions>
+          </DialogContent>
+        </Dialog>
+      </Card>
+    </div>
   );
 }
 

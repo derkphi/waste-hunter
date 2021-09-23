@@ -38,11 +38,10 @@ function Calendar() {
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleNewEvent}>
+      <Button variant="contained" color="primary" onClick={handleNewEvent} style={{ marginBottom: '20px' }}>
         Event erfassen
       </Button>
       {cards.length > 0 ? cards : <Info text="Kein Event geplant." />}
-      {/* <RecipeReviewCard></RecipeReviewCard> */}
     </>
   );
 }

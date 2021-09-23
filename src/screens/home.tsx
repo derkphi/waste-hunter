@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box } from '@material-ui/core';
+import { Typography, Box, Grid } from '@material-ui/core';
 import { EventWithId } from '../common/firebase_types';
 import Info from '../components/info';
 import { database } from '../firebase/config';
@@ -36,15 +36,17 @@ function Home() {
       <Box p={1}>
         <Typography variant="h4">Gruppe Bern</Typography>
       </Box>
-      <Box p={1}>
-        <Typography variant="h5">Nächster Event</Typography>
-      </Box>
-      {nextEventCard || <Info text="Kein Event anstehend." />}
-      <Box p={2}></Box>
-      <Box p={1}>
-        <Typography variant="h5">Statistik</Typography>
-      </Box>
-      <StatisticCard />
+      <Box p={1}></Box>
+      <Grid container spacing={3}>
+        <Grid item sm={12} md={6}>
+          <Typography variant="h5">Nächster Event</Typography>
+          {nextEventCard || <Info text="Kein Event anstehend." />}
+        </Grid>
+        <Grid item sm={12} md={6}>
+          <Typography variant="h5">Statistik</Typography>
+          <StatisticCard />
+        </Grid>
+      </Grid>
     </>
   );
 }
