@@ -50,9 +50,6 @@ function Cameracomponent() {
             }
         };
 
-function sendimage (){
-
-}
 
     return (
         <div className={classes.root}>

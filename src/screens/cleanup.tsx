@@ -27,7 +27,7 @@ import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
 import logo from '../assets/logo_transparent_background.png';
 import Cameracomponent from '../components/camera/camera_component';
-import SaveIcon from '@material-ui/icons/Save';
+
 
 const useStyles = makeStyles({
   header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
