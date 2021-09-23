@@ -90,3 +90,5 @@ function sendimage (){
     );
 }
 export default Cameracomponent;
+
+
