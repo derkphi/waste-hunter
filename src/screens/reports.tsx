@@ -5,6 +5,8 @@ import { database } from '../firebase/config';
 import { Card, CardHeader, CardContent, Grid, Typography, makeStyles, Box } from '@material-ui/core';
 import EventMap from '../components/maps/eventMap';
 
+// red '#f6dfc6'
+
 const useStyles = makeStyles({
   card: {
     marginTop: '20px',
@@ -35,9 +37,6 @@ const useStyles = makeStyles({
       marginRight: '0px',
     },
   },
-  // statisticItem not(:firstChild):not(lastChild) {
-
-  // },
   statisticValue: {
     fontSize: '2em',
     textAlign: 'center',
@@ -120,31 +119,28 @@ export default function Reports() {
                       {Math.round(event.collected * 1e2) / 1e2} l Abfall
                     </Typography>
                     <Box className={classes.statsticContainer}>
-                      <Box className={classes.statisticItem}>
+                      <Box className={classes.statisticItem} style={{ backgroundColor: '#d9b3d9' }}>
                         <Typography>Personen</Typography>
-                        <Typography className={classes.statisticValue}>{event.users}5</Typography>
+                        <Typography className={classes.statisticValue}>{event.users}</Typography>
                         <Typography className={classes.statisticUnit}>&nbsp;</Typography>
                       </Box>
-                      <Box className={classes.statisticItem}>
-                        <Typography>Dauer</Typography>
-                        <Typography className={classes.statisticValue}>
-                          {Math.round(event.duration / 60e3)}000
-                        </Typography>
+                      <Box className={classes.statisticItem} style={{ backgroundColor: '#f7eeb3' }}>
+                        {' '}
+                        <Typography>Suchzeit</Typography>
+                        <Typography className={classes.statisticValue}>{Math.round(event.duration / 60e3)}</Typography>
                         <Typography className={classes.statisticUnit}>Min.</Typography>
                       </Box>
-                      <Box className={classes.statisticItem}>
+                      <Box className={classes.statisticItem} style={{ backgroundColor: '#bbdeeb' }}>
                         <Typography>Strecke</Typography>
-                        <Typography className={classes.statisticValue}>
-                          1500{Math.round(event.distance * 1e3)}
-                        </Typography>
-                        <Typography className={classes.statisticUnit}>m</Typography>
+                        <Typography className={classes.statisticValue}>{Math.round(event.distance * 1e3)}</Typography>
+                        <Typography className={classes.statisticUnit}>Meter</Typography>
                       </Box>
-                      <Box className={classes.statisticItem}>
+                      <Box className={classes.statisticItem} style={{ backgroundColor: '#c8e9d4' }}>
                         <Typography>Abfall</Typography>
                         <Typography className={classes.statisticValue}>
-                          {Math.round(event.collected * 1e2) / 1e2}000
+                          {Math.round(event.collected * 1e2) / 1e2}
                         </Typography>
-                        <Typography className={classes.statisticUnit}>l</Typography>
+                        <Typography className={classes.statisticUnit}>Liter</Typography>
                       </Box>
                     </Box>
                   </>
