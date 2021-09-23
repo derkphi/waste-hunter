@@ -57,14 +57,13 @@ console.log("actualime",actualtime)
   }
 
   return (
-      <>
-        <Button variant="contained" color="primary" onClick={handleNewEvent}>
-          Event erfassen
-        </Button>
-        {hasTime && <Info text={"Der Event startet: Mit Teilnehmen kannst du auf die Liveansicht wechseln."}/>}
-        {cards.length > 0 ? cards : <Info text="Kein Event geplant." />}
-        {/* <RecipeReviewCard></RecipeReviewCard> */}
-      </>
+    <>
+      <Button variant="contained" color="primary" onClick={handleNewEvent} style={{ marginBottom: '20px' }}>
+        Event erfassen
+      </Button>
+      {hasTime && <Info text={"Der Event startet: Mit Teilnehmen kannst du auf die Liveansicht wechseln."}/>}
+      {cards.length > 0 ? cards : <Info text="Kein Event geplant." />}
+    </>
   );
 }
 
