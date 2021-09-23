@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import { Button, IconButton, Typography } from '@material-ui/core';
+import { Button, IconButton, Typography} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PhotoCameraRoundedIcon from '@material-ui/icons/PhotoCameraRounded';
 import { projectStorage, database } from '../../firebase/config';
+
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,15 +67,19 @@ function Cameracomponent(props: CameracomponentProps) {
 
   const handleSave = async () => {
     if (file) {
+      try {
         const storageRef = projectStorage.ref(file.name);
-            await storageRef.put(file);
+        await storageRef.put(file);
 
-            const url = await storageRef.getDownloadURL();
-            const createdAt = Date();
-            const { longitude, latitude } = position?.coords || {};
-            database.ref(`events/${props.eventId}/photos`).push({ url, longitude, latitude, createdAt });
-            props.onClose()
-
+        const url = await storageRef.getDownloadURL();
+        const createdAt = Date();
+        const {longitude, latitude} = position?.coords || {};
+        database.ref(`events/${props.eventId}/photos`).push({url, longitude, latitude, createdAt});
+        props.onClose()
+      }
+      catch(error){
+        console.log(error)
+      }
 
     }
   };
