@@ -21,7 +21,7 @@ import length from '@turf/length';
 // import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import { CameraAltRounded, SettingsInputAntennaTwoTone } from '@material-ui/icons';
+import { CameraAltRounded,} from '@material-ui/icons';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   },
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
   iconStart: { transform: 'translate(-50%, -100%)' },
-  iconPhoto: { transform: 'translate(-50%, -50%)', cursor: 'pointer', color: 'rgb(66, 100, 251)' },
+  iconPhoto: { transform: 'translate(-75%, -75%)', cursor: 'pointer', color: 'rgb(196, 148, 36)' },
   userMarker: { opacity: 0.8, '&.inactive': { opacity: 0.4 } },
   userIcon: { color: 'rgb(66, 100, 251)' },
   userPopup: { '& .mapboxgl-popup-content': { padding: '5px 10px' } },
@@ -192,7 +192,7 @@ export default function Cleanup() {
               <>
                 {photo.longitude && photo.latitude && (
                   <Marker key={i} longitude={photo.longitude} latitude={photo.latitude}>
-                    <LocationOnIcon
+                    <CameraAltRounded
                       fontSize="large"
                       className={classes.iconPhoto}
                       onClick={() => setShowPhoto(photo.url)}
@@ -328,10 +328,10 @@ export default function Cleanup() {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={showPhoto ? true : false} onClose={() => setShowPhoto('')} style={{ zIndex: 3000 }}>
+        <Dialog open={!!showPhoto } onClose={() => setShowPhoto('')} style={{ zIndex: 3000 }}>
           <DialogContent>
             <DialogContentText>
-              <img src={showPhoto} alt="" width="100%" />
+              <img src={showPhoto} alt="" width="95%" />
             </DialogContentText>
           </DialogContent>
           <DialogActions>

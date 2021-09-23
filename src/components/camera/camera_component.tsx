@@ -65,18 +65,21 @@ function Cameracomponent(props: CameracomponentProps) {
 
   const handleSave = async () => {
     if (file) {
-      const storageRef = projectStorage.ref(file.name);
-      await storageRef.put(file);
-      const url = await storageRef.getDownloadURL();
-      const createdAt = Date();
-      const { longitude, latitude } = position?.coords || {};
-      database.ref(`events/${props.eventId}/photos`).push({ url, longitude, latitude, createdAt });
-      props.onClose();
+        const storageRef = projectStorage.ref(file.name);
+            await storageRef.put(file);
+
+            const url = await storageRef.getDownloadURL();
+            const createdAt = Date();
+            const { longitude, latitude } = position?.coords || {};
+            database.ref(`events/${props.eventId}/photos`).push({ url, longitude, latitude, createdAt });
+            props.onClose()
+
+
     }
   };
 
   return (
-    <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
+    <main className={classes.main} >
       <div className={classes.root}>
         <Grid container>
           <Grid item xs={12}>
@@ -89,20 +92,7 @@ function Cameracomponent(props: CameracomponentProps) {
               </IconButton>
             </label>
 
-            <Button color="secondary" variant="contained" onClick={() => props.onClose()}>
-              Abbrechen
-            </Button>
 
-            <Button
-              color="primary"
-              variant="contained"
-              disabled={!file}
-              onClick={() => {
-                handleSave();
-              }}
-            >
-              Speichern
-            </Button>
 
             {source && (
               <Box display="flex" justifyContent="center" border={0} className={classes.imgBox}>
@@ -117,6 +107,20 @@ function Cameracomponent(props: CameracomponentProps) {
               capture="environment"
               onChange={(e) => handleCapture(e.target)}
             />
+              <Button color="secondary" variant="contained" onClick={() => props.onClose()}>
+                  Abbrechen
+              </Button>
+
+              <Button
+                  color="primary"
+                  variant="contained"
+                  disabled={!file}
+                  onClick={() => {
+                      handleSave();
+                  }}
+              >
+                  Speichern
+              </Button>
           </Grid>
         </Grid>
       </div>
