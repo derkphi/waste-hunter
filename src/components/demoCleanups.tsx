@@ -102,8 +102,9 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          {demos.map((demo) => (
+          {demos.map((demo, i) => (
             <Button
+              key={i}
               fullWidth
               color="primary"
               startIcon={demo.play ? <PlayCircleFilledOutlinedIcon /> : <PlayCircleOutlineIcon />}

@@ -23,7 +23,7 @@ import {
 import { useHistory, useParams } from 'react-router-dom';
 // import DynamicMap, { defaultViewport } from '../components/maps/dynamicMap';
 import { defaultViewport } from '../components/maps/dynamicMap';
-import { MapViewport } from '../components/maps/mapTypes';
+// import { MapViewport } from '../components/maps/mapTypes';
 import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
@@ -169,10 +169,6 @@ export default function Cleanup() {
     history.push('/');
   };
 
-  function handleViewport(viewport: MapViewport) {
-    setViewport(viewport);
-  }
-
   if (!showCamera) {
     return event ? (
       <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
@@ -180,17 +176,19 @@ export default function Cleanup() {
           mapboxApiAccessToken={apiAccessToken}
           mapStyle={mapStyle}
           {...viewport}
-          onViewportChange={handleViewport}
+          onViewportChange={setViewport}
           width="100%"
           height="100%"
+          touchRotate
         >
-          <NavigationControl style={{ left: 10, top: 10 }} />
+          <NavigationControl style={{ left: 10, top: 10 }} onViewportChange={setViewport} />
 
           <GeolocateControl
             style={{ right: 10, top: 10 }}
             positionOptions={{ enableHighAccuracy: true }}
-            trackUserLocation={true}
             onGeolocate={(p: GeolocationPosition) => setPosition(p)}
+            trackUserLocation={true}
+            onViewportChange={setViewport}
             auto
           />
 
