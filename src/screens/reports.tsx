@@ -57,8 +57,12 @@ export default function Reports() {
               id,
               time: Date.parse(`${event.datum}T${event.zeit}`),
               users: event.cleanup ? Object.keys(event.cleanup).length : 0,
-              duration: event.cleanup ? Math.max(...Object.values(event.cleanup).map((c) => c.end - c.start)) : 0,
-              distance: event.cleanup ? Math.max(...Object.values(event.cleanup).map((c) => c.distance)) : 0,
+              duration: event.cleanup
+                ? Object.values(event.cleanup).reduce((p, c) => (p + c.end - c.start > 0 ? c.end - c.start : 0), 0)
+                : 0,
+              distance: event.cleanup
+                ? Object.values(event.cleanup).reduce((p, c) => p + (c.distance && c.distance > 0 ? c.distance : 0), 0)
+                : 0,
               collected: event.cleanup ? Object.values(event.cleanup).reduce((p, c) => p + (c.collected || 0), 0) : 0,
             }))
             .sort((a, b) => b.time - a.time)
@@ -78,10 +82,10 @@ export default function Reports() {
                 <EventMap event={event} />
               </Grid>
               <Grid item sm={12} md={6}>
-                <Typography paragraph variant="h6">
+                <Typography paragraph variant="h5">
                   Event in {event.ort}
-                  <br />
-                  <br />
+                </Typography>
+                <Typography paragraph variant="h6">
                   Erfolg:
                 </Typography>
                 {event.users > 0 && (
