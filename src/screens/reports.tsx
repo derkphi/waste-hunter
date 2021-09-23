@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { EventType, EventWithId } from '../common/firebase_types';
 import Info from '../components/info';
-import { database } from '../firebase/config';
 import { Card, CardHeader, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
 import EventMap from '../components/maps/eventMap';
-import StatisticGroup from '../components/statistic/statisticGroup';
+import StatisticGroup from '../components/report/statisticGroup';
+import { getReportEvents, EventWithStatistic } from '../components/report/reportEvent';
 
 // red '#f6dfc6'
 
@@ -20,55 +19,12 @@ const useStyles = makeStyles({
   iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
 });
 
-interface EventWithCleanupData extends EventType {
-  cleanup?: {
-    [uid: string]: {
-      uid: string;
-      email: string;
-      start: number;
-      end: number;
-      distance: number;
-      collected: number;
-    };
-  };
-}
-
-interface EventWithReport extends EventWithId {
-  users: number;
-  duration: number;
-  distance: number;
-  collected: number;
-}
-
 export default function Reports() {
   const classes = useStyles();
-  const [events, setEvents] = useState<EventWithReport[]>([]);
+  const [events, setEvents] = useState<EventWithStatistic[]>([]);
 
   useEffect(() => {
-    database
-      .ref('events')
-      .get()
-      .then((data) => {
-        if (!data.exists()) return;
-        setEvents(
-          Object.entries(data.val() as { [id: string]: EventWithCleanupData })
-            .map(([id, event]) => ({
-              ...event,
-              id,
-              time: Date.parse(`${event.datum}T${event.zeit}`),
-              users: event.cleanup ? Object.keys(event.cleanup).length : 0,
-              duration: event.cleanup
-                ? Object.values(event.cleanup).reduce((p, c) => (p + c.end - c.start > 0 ? c.end - c.start : 0), 0)
-                : 0,
-              distance: event.cleanup
-                ? Object.values(event.cleanup).reduce((p, c) => p + (c.distance && c.distance > 0 ? c.distance : 0), 0)
-                : 0,
-              collected: event.cleanup ? Object.values(event.cleanup).reduce((p, c) => p + (c.collected || 0), 0) : 0,
-            }))
-            .sort((a, b) => b.time - a.time)
-            .filter((e) => Date.parse(e.datum) < Date.now())
-        );
-      });
+    getReportEvents().then((reportEvents) => setEvents(reportEvents));
   }, []);
 
   return events.length ? (

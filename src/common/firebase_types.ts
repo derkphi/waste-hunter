@@ -18,6 +18,16 @@ export interface EventType {
   searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
   meetingPoint?: MeetingPoint;
   registrations?: { [uid: string]: { email: string; added: number } };
+  cleanup?: {
+    [uid: string]: {
+      uid: string;
+      email: string;
+      start: number;
+      end: number;
+      distance: number;
+      collected: number;
+    };
+  };
 }
 
 export interface EventWithId extends EventType {
