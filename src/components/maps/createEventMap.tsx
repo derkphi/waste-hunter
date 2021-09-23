@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DynamicMap from './dynamicMap';
 import { MapViewport } from './mapTypes';
-import { getGeoJsonPolygon } from './geoJsonHelper';
+import { getGeoJsonFromPolygon, getPolygonFromGeoJson } from './geoJsonHelper';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { Popup } from 'react-map-gl';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -71,7 +71,7 @@ interface CreateEventMapProps {
   onViewportChange: (viewport: MapViewport) => void;
   useGeoLocation: boolean;
   searchArea: GeoJSON.Feature<GeoJSON.Polygon> | undefined;
-  onSearchAreaChange: (area: GeoJSON.Feature<GeoJSON.Polygon>) => void;
+  onSearchAreaChange: (area: GeoJSON.Feature<GeoJSON.Polygon> | undefined) => void;
   meetingPoint: Coordinate | undefined;
   onMeetingPointChange: (c: Coordinate | undefined) => void;
   onDoubleClick: () => void;
@@ -92,13 +92,11 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   const [next, setNext] = useState<[number, number] | undefined>();
   const [mark, setMark] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [area, setArea] = useState<Array<[number, number]>>(getPolygonFromGeoJson(searchArea));
 
-  let area: Array<[number, number]>;
-  if (searchArea) {
-    area = searchArea?.geometry.coordinates[0].map((item) => [item[0], item[1]]);
-  } else {
-    area = [];
-  }
+  useEffect(() => {
+    setArea(getPolygonFromGeoJson(searchArea));
+  }, [searchArea]);
 
   useEffect(() => {
     if (navigator.geolocation && useGeoLocation && !ready) {
@@ -127,7 +125,8 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   function handleMarkButtonClick() {
     if (!mark) {
       if (area.length > 0) {
-        updateArea([]);
+        setArea([]);
+        onSearchAreaChange(undefined);
       } else {
         setMark(true);
       }
@@ -147,7 +146,10 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   function handleMapClick(longitude: number, latitude: number) {
     if (mark) {
       const newArea: Array<[number, number]> = [...area, [longitude, latitude]];
-      updateArea(newArea);
+      setArea(newArea);
+      if (newArea.length > 0) {
+        onSearchAreaChange(getGeoJsonFromPolygon(newArea));
+      }
     }
   }
 
@@ -164,10 +166,6 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
     if (mark) {
       setNext([longitude, latitude]);
     }
-  }
-
-  function updateArea(newArea: Array<[number, number]>) {
-    onSearchAreaChange(getGeoJsonPolygon(newArea));
   }
 
   function handleMeetingPointButtonClick() {
@@ -222,7 +220,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
           onMove={handleMapMove}
           onDoubleClick={handleMapDoubleClick}
         >
-          {area.length > 0 && <SearchArea data={getGeoJsonPolygon(next ? [...area, next] : area)} />}
+          {area.length > 0 && <SearchArea data={getGeoJsonFromPolygon(next ? [...area, next] : area)} />}
           {meetingPoint && (
             <>
               {showPopup && (

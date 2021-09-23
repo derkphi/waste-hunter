@@ -122,9 +122,9 @@ function CreateEvent() {
         datum: date,
         zeit: time,
         position: viewport,
-        searchArea: searchArea,
-        meetingPoint: meetingPoint,
       };
+      if (searchArea) eventData.searchArea = searchArea;
+      if (meetingPoint) eventData.meetingPoint = meetingPoint;
       const updates = {
         ['/events/' + eventKey]: eventData,
       };
