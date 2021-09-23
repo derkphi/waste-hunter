@@ -9,6 +9,7 @@ import Info from '../components/info';
 import { filterNext } from '../firebase/events';
 import firebase from 'firebase/app';
 
+
 function deleteEvent(id: string) {
   const dbRef = database.ref('events/' + id);
   dbRef.remove();
@@ -17,13 +18,32 @@ function deleteEvent(id: string) {
 function Calendar() {
   let history = useHistory();
   const [events, setEvents] = useState<EventWithId[]>();
+  const [hasTime,setHasTime]=useState(false);
 
   useEffect(() => {
     const dbRef = database.ref('events');
     const cb = (d: firebase.database.DataSnapshot) => setEvents(filterNext(d.val()));
-    dbRef.on('value', cb);
+      dbRef.on('value', cb);
+
+// Alert Event started +/ 5 minutes
+
+    if(-5 < 0 || 0 < 5){
+      setHasTime(true)
+
+    }
+    else{
+      setHasTime(false)
+    }
+
     return () => dbRef.off('value', cb);
   }, []);
+
+    const today = new Date(); // Get current date and time
+    today.setHours(0, 0, 0, 0); // Set time to midnight
+    const actualtime=today.getTime();
+console.log("actualime",actualtime)
+
+
 
   function handleNewEvent() {
     history.push(Routes.createEvent);
@@ -37,13 +57,14 @@ function Calendar() {
   }
 
   return (
-    <>
-      <Button variant="contained" color="primary" onClick={handleNewEvent}>
-        Event erfassen
-      </Button>
-      {cards.length > 0 ? cards : <Info text="Kein Event geplant." />}
-      {/* <RecipeReviewCard></RecipeReviewCard> */}
-    </>
+      <>
+        <Button variant="contained" color="primary" onClick={handleNewEvent}>
+          Event erfassen
+        </Button>
+        {hasTime && <Info text={"Der Event startet: Mit Teilnehmen kannst du auf die Liveansicht wechseln."}/>}
+        {cards.length > 0 ? cards : <Info text="Kein Event geplant." />}
+        {/* <RecipeReviewCard></RecipeReviewCard> */}
+      </>
   );
 }
 

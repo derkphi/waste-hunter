@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   },
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
   iconStart: { transform: 'translate(-50%, -100%)' },
-  iconPhoto: { transform: 'translate(-75%, -75%)', cursor: 'pointer', color: 'rgb(196, 148, 36)' },
+  iconPhoto: { transform: 'translate(-75%, -75%)', cursor: 'pointer', color: 'rgb(222, 150, 27)' },
   userMarker: { opacity: 0.8, '&.inactive': { opacity: 0.4 } },
   userIcon: { color: 'rgb(66, 100, 251)' },
   userPopup: { '& .mapboxgl-popup-content': { padding: '5px 10px' } },

@@ -49,6 +49,7 @@ const headerData = {
 };
 
 function App() {
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -57,7 +58,7 @@ function App() {
             <Login />
           </RestrictedRoute>
           <PrivateRoute path={Routes.calendar} exact>
-            {withHeader('Kalender', <Calendar />)}
+            {withHeader('Kalender', <Calendar  />)}
           </PrivateRoute>
           <PrivateRoute path={Routes.reports} exact>
             {withHeader('Berichte', <Reports />)}
@@ -87,6 +88,7 @@ function withHeader(title: string, element: React.ReactElement): React.ReactElem
   return (
     <>
       <Header title={title} menuItems={headerData.menuItems} />
+
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>
         {element}
       </Container>
