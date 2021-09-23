@@ -63,7 +63,7 @@ function App() {
             {withHeader('Berichte', <Reports />)}
           </PrivateRoute>
           <PrivateRoute path={Routes.cleanup} exact>
-            {withHeader('Cleanup', <Cleanup />)}
+            <Cleanup />
           </PrivateRoute>
           <PrivateRoute path={Routes.home} exact>
             {withHeader('Home', <Home />)}

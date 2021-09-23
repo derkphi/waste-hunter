@@ -325,12 +325,11 @@ else {return event ? (
         <Button
             color="primary"
             variant="contained"
-            endIcon={<SaveIcon />}
             onClick={() => {
               setShowCamera(false);
             }}
         >
-          Speichern
+          Schliessen
         </Button>
       </footer>
 
