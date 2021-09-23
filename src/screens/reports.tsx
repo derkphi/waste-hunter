@@ -4,6 +4,9 @@ import Info from '../components/info';
 import { database } from '../firebase/config';
 import { Card, CardHeader, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
 import EventMap from '../components/maps/eventMap';
+import StatisticGroup from '../components/statistic/statisticGroup';
+
+// red '#f6dfc6'
 
 const useStyles = makeStyles({
   card: {
@@ -54,8 +57,12 @@ export default function Reports() {
               id,
               time: Date.parse(`${event.datum}T${event.zeit}`),
               users: event.cleanup ? Object.keys(event.cleanup).length : 0,
-              duration: event.cleanup ? Math.max(...Object.values(event.cleanup).map((c) => c.end - c.start)) : 0,
-              distance: event.cleanup ? Math.max(...Object.values(event.cleanup).map((c) => c.distance)) : 0,
+              duration: event.cleanup
+                ? Object.values(event.cleanup).reduce((p, c) => (p + c.end - c.start > 0 ? c.end - c.start : 0), 0)
+                : 0,
+              distance: event.cleanup
+                ? Object.values(event.cleanup).reduce((p, c) => p + (c.distance && c.distance > 0 ? c.distance : 0), 0)
+                : 0,
               collected: event.cleanup ? Object.values(event.cleanup).reduce((p, c) => p + (c.collected || 0), 0) : 0,
             }))
             .sort((a, b) => b.time - a.time)
@@ -75,19 +82,19 @@ export default function Reports() {
                 <EventMap event={event} />
               </Grid>
               <Grid item sm={12} md={6}>
+                <Typography paragraph variant="h5">
+                  Event in {event.ort}
+                </Typography>
                 <Typography paragraph variant="h6">
-                  Treffpunkt bei {event.ort} um {event.zeit} Uhr
+                  Erfolg:
                 </Typography>
                 {event.users > 0 && (
-                  <Typography paragraph>
-                    {event.users} Person{event.users === 1 ? '' : 'en'}
-                    <br />
-                    {Math.round(event.duration / 60e3)} Min. Dauer
-                    <br />
-                    {Math.round(event.distance * 1e3)} m Strecke
-                    <br />
-                    {Math.round(event.collected * 1e2) / 1e2} l Abfall
-                  </Typography>
+                  <StatisticGroup
+                    users={event.users}
+                    duration={event.duration}
+                    distance={event.distance}
+                    collected={event.collected}
+                  />
                 )}
               </Grid>
             </Grid>
