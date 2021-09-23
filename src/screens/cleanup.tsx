@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { GeolocateControl, Marker, Layer, Source, Popup } from 'react-map-gl';
+import ReactMapGL, {
+  GeolocateControl,
+  Marker,
+  Layer,
+  Source,
+  Popup,
+  ViewportProps,
+  NavigationControl,
+} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { authFirebase, database } from '../firebase/config';
 import {
@@ -13,24 +21,30 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import DynamicMap, { defaultViewport } from '../components/maps/dynamicMap';
-import { MapViewport } from '../components/maps/mapTypes';
+import { defaultViewport } from '../components/maps/dynamicMap';
 import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
-// import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import { CameraAltRounded,} from '@material-ui/icons';
+import { CameraAltRounded } from '@material-ui/icons';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
 import logo from '../assets/logo_transparent_background.png';
 import Cameracomponent from '../components/camera/camera_component';
+import { apiAccessToken, mapStyle } from '../components/maps/config';
 
 const useStyles = makeStyles({
-  header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
-  logo: { marginTop: -7, height: 44, userDrag: 'none', userSelect: 'none' },
+  logo: {
+    position: 'absolute',
+    left: '50%',
+    top: 2,
+    height: 44,
+    transform: 'translateX(-50%)',
+    userDrag: 'none',
+    userSelect: 'none',
+  },
   main: {
     position: 'absolute',
     zIndex: 2000,
@@ -88,7 +102,7 @@ export default function Cleanup() {
   const classes = useStyles();
   const history = useHistory();
   const [event, setEvent] = useState<Event>();
-  const [viewport, setViewport] = useState<MapViewport>(event ? event.position : defaultViewport);
+  const [viewport, setViewport] = useState<ViewportProps>(event ? event.position : defaultViewport);
   const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
   const [position, setPosition] = useState<GeolocationPosition>();
   const [lastPosition, setLastPosition] = useState<GeolocationPosition>();
@@ -160,19 +174,22 @@ export default function Cleanup() {
     history.push('/');
   };
 
-  function handleViewport(viewport: MapViewport) {
-    setViewport(viewport);
-  }
-
-  // if (!showCamera) {
-  //   <Cameracomponent />
-
   return event ? (
     showCamera ? (
       <Cameracomponent eventId={event.id} onClose={() => setShowCamera(false)} />
     ) : (
       <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
-        <DynamicMap viewport={viewport} onViewportChange={handleViewport}>
+        <ReactMapGL
+          mapboxApiAccessToken={apiAccessToken}
+          mapStyle={mapStyle}
+          {...viewport}
+          onViewportChange={setViewport}
+          width="100%"
+          height="100%"
+          touchRotate
+        >
+          <NavigationControl style={{ left: 10, top: 10 }} />
+
           <GeolocateControl
             style={{ right: 10, top: 10 }}
             positionOptions={{ enableHighAccuracy: true }}
@@ -260,17 +277,15 @@ export default function Cleanup() {
               )
           )}
 
-          {/* {position && (
-          <div style={{ position: 'absolute', top: 10, right: 50 }}>
-            {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} / {position.coords.accuracy}{' '}
-            / {position.timestamp}
-          </div>
-        )} */}
-        </DynamicMap>
+          {position && (
+            <div style={{ position: 'absolute', top: 10, right: 50 }}>
+              {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} /{' '}
+              {position.coords.accuracy}/ {position.coords.heading?.toFixed(2)}/ {position.timestamp}
+            </div>
+          )}
+        </ReactMapGL>
 
-        <header className={classes.header}>
-          <img src={logo} alt="Waste Hunter" className={classes.logo} />
-        </header>
+        <img src={logo} alt="Waste Hunter" className={classes.logo} />
 
         <footer className={classes.footer}>
           <Button
@@ -328,7 +343,7 @@ export default function Cleanup() {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={!!showPhoto } onClose={() => setShowPhoto('')} style={{ zIndex: 3000 }}>
+        <Dialog open={!!showPhoto} onClose={() => setShowPhoto('')} style={{ zIndex: 3000 }}>
           <DialogContent>
             <DialogContentText>
               <img src={showPhoto} alt="" width="95%" />
