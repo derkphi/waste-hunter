@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { GeolocateControl, Marker, Layer, Source, Popup } from 'react-map-gl';
+import ReactMapGL, {
+  NavigationControl,
+  GeolocateControl,
+  Marker,
+  Layer,
+  Source,
+  Popup,
+  ViewportProps,
+} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { authFirebase, database } from '../firebase/config';
 import {
@@ -13,24 +21,26 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import DynamicMap, { defaultViewport } from '../components/maps/dynamicMap';
-import { MapViewport } from '../components/maps/mapTypes';
+// import DynamicMap, { defaultViewport } from '../components/maps/dynamicMap';
+import { defaultViewport } from '../components/maps/dynamicMap';
+// import { MapViewport } from '../components/maps/mapTypes';
 import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
 // import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import {CameraAltRounded} from "@material-ui/icons";
+// import { CameraAltRounded } from '@material-ui/icons';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
 import logo from '../assets/logo_transparent_background.png';
-import Cameracomponent from '../components/camera/camera_component';
-import SaveIcon from '@material-ui/icons/Save';
+// import Cameracomponent from '../components/camera/camera_component';
+// import SaveIcon from '@material-ui/icons/Save';
+import { apiAccessToken, mapStyle } from '../components/maps/config';
 
 const useStyles = makeStyles({
-  header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
+  header: { position: 'absolute', left: '50%', top: 0, padding: 10, transform: 'translateX(-50%)' },
   logo: { marginTop: -7, height: 44, userDrag: 'none', userSelect: 'none' },
   main: {
     position: 'absolute',
@@ -42,8 +52,8 @@ const useStyles = makeStyles({
     background: '#FFF',
   },
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
-  camera: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center'},
-    iconStart: { transform: 'translate(-50%, -100%)' },
+  camera: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
+  iconStart: { transform: 'translate(-50%, -100%)' },
   userMarker: { opacity: 0.8, '&.inactive': { opacity: 0.4 } },
   userIcon: { color: 'rgb(66, 100, 251)' },
   userPopup: { '& .mapboxgl-popup-content': { padding: '5px 10px' } },
@@ -88,13 +98,12 @@ export default function Cleanup() {
   const classes = useStyles();
   const history = useHistory();
   const [event, setEvent] = useState<Event>();
-  const [viewport, setViewport] = useState<MapViewport>(event ? event.position : defaultViewport);
+  const [viewport, setViewport] = useState<ViewportProps>(event?.position || defaultViewport);
   const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
   const [position, setPosition] = useState<GeolocationPosition>();
   const [lastPosition, setLastPosition] = useState<GeolocationPosition>();
   const [showPopup, setShowPopup] = useState('');
   const [showDialog, setShowDialog] = useState(false);
-  const [showCamera,setShowCamera]=useState(false);
   const [collected, setCollected] = useState<number>();
   const { id } = useParams<{ id: string }>();
   const user = authFirebase.currentUser;
@@ -159,19 +168,25 @@ export default function Cleanup() {
     history.push('/');
   };
 
-  function handleViewport(viewport: MapViewport) {
-    setViewport(viewport);
-  }
-if (!showCamera){
   return event ? (
-
     <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
-      <DynamicMap viewport={viewport} onViewportChange={handleViewport}>
+      <ReactMapGL
+        mapboxApiAccessToken={apiAccessToken}
+        mapStyle={mapStyle}
+        {...viewport}
+        onViewportChange={setViewport}
+        width="100%"
+        height="100%"
+        touchRotate
+      >
+        <NavigationControl style={{ left: 10, top: 10 }} onViewportChange={setViewport} />
+
         <GeolocateControl
           style={{ right: 10, top: 10 }}
           positionOptions={{ enableHighAccuracy: true }}
-          trackUserLocation={true}
           onGeolocate={(p: GeolocationPosition) => setPosition(p)}
+          trackUserLocation={true}
+          onViewportChange={setViewport}
           auto
         />
 
@@ -247,7 +262,7 @@ if (!showCamera){
             / {position.timestamp}
           </div>
         )} */}
-      </DynamicMap>
+      </ReactMapGL>
 
       <header className={classes.header}>
         <img src={logo} alt="Waste Hunter" className={classes.logo} />
@@ -255,17 +270,6 @@ if (!showCamera){
 
       <footer className={classes.footer}>
         <Button
-            color="secondary"
-            variant="contained"
-            endIcon={<CameraAltRounded />}
-            onClick={() => {
-              setShowCamera(true);
-            }}
-        >
-          Markieren
-        </Button>
-
-                <Button
           color="primary"
           variant="contained"
           onClick={() => {
@@ -276,7 +280,6 @@ if (!showCamera){
           Beenden
         </Button>
       </footer>
-
 
       <Dialog open={showDialog} onClose={() => setShowDialog(false)} style={{ zIndex: 3000 }}>
         <DialogTitle>Event beenden</DialogTitle>
@@ -314,31 +317,3 @@ if (!showCamera){
     </main>
   ) : null;
 }
-else {return event ? (
-
-    <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
-      <Cameracomponent/>
-
-      <footer className={classes.camera}>
-
-
-        <Button
-            color="primary"
-            variant="contained"
-            endIcon={<SaveIcon />}
-            onClick={() => {
-              setShowCamera(false);
-            }}
-        >
-          Speichern
-        </Button>
-      </footer>
-
-
-
-
-    </main>
-) : null;
-}
-  }
-
