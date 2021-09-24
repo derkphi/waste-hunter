@@ -50,6 +50,7 @@ interface EventCardProps {
 function EventCard(props: EventCardProps) {
   const history = useHistory();
   const classes = useStyles();
+  const [hidden, setHidden] = useState(false);
   const [ref, { width }] = useMeasure<HTMLDivElement>();
   const [showDialog, setShowDialog] = useState(false);
   const [registrated, setRegistrated] = useState(
@@ -70,7 +71,10 @@ function EventCard(props: EventCardProps) {
   return (
     <div ref={ref}>
       <Card className={classes.root}>
-        <CardHeader title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass} />
+        <CardHeader
+          title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass}
+          onDoubleClick={() => setHidden(!hidden)}
+        />
         <CardContent className={classes.content} style={{ flexDirection: width < 960 ? 'column' : 'row' }}>
           <Box className={classes.map} style={{ width: width < 960 ? '100%' : '50%' }}>
             <EventMap event={props.event} />
@@ -106,7 +110,14 @@ function EventCard(props: EventCardProps) {
                 <Box>
                   <IconButton
                     size="small"
-                    onClick={() => history.push(Routes.editEvent.replace(':id', props.event.id))}
+                    onClick={() => {
+                      if (!hidden) {
+                        history.push(Routes.editEvent.replace(':id', props.event.id));
+                      } else {
+                        console.log(props.event.id);
+                        history.push(Routes.hidden.replace(':id', props.event.id));
+                      }
+                    }}
                   >
                     <EditIcon />
                   </IconButton>
