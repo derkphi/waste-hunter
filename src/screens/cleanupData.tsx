@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import DynamicMap from '../components/map/dynamicMap';
 import SearchArea from '../components/map/searchArea';
+import MeetingPoint from '../components/map/meetingPoint';
 import { getGeoJsonLine } from '../components/map/geoJsonHelper';
 import { database } from '../firebase/config';
 import { Box, Typography } from '@material-ui/core';
@@ -11,6 +12,7 @@ import StatisticItem from '../components/report/statisticItem';
 import WalkPath from '../components/map/walkPath';
 import { Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@material-ui/core';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import { MeetingPointType } from '../firebase/firebase_types';
 
 const fallbackViewport = {
   latitude: 46.8131873,
@@ -38,6 +40,7 @@ function GenData() {
   const [walkDist, setWalkDist] = useState(0);
   const [walkTime, setWalkTime] = useState(0);
   const [userEmail, setUserEmail] = useState(users[0].email);
+  const [meetingPoint, setMeetingPoint] = useState<MeetingPointType | undefined>(undefined);
   //const [sourceId, setSourceId] = useState(0);
   const { id } = useParams<{ id: string }>();
 
@@ -51,6 +54,7 @@ function GenData() {
           setEventTime(d.val().zeit);
           setViewport(d.val().position);
           setSearchArea(d.val().searchArea);
+          setMeetingPoint(d.val().meetingPoint);
         });
     }
   }, [id]);
@@ -79,7 +83,6 @@ function GenData() {
     if (draw) {
       if (route.length > 0) {
         if (distance([longitude, latitude], route[route.length - 1]) > 5e-3) {
-          console.log(longitude + '/' + latitude);
           setRoute([...route, [longitude, latitude]]);
         }
       } else {
@@ -159,11 +162,8 @@ function GenData() {
           cursorOverride={drawCursor}
         >
           {searchArea && <SearchArea data={searchArea} />}
-          {route.length > 1 && (
-            <>
-              <WalkPath uid={sourceId.toString()} walkPath={getGeoJsonLine(route)} />
-            </>
-          )}
+          {meetingPoint && <MeetingPoint longitude={meetingPoint.longitude} latitude={meetingPoint.latitude} />}
+          {route.length > 1 && <WalkPath uid={sourceId.toString()} walkPath={getGeoJsonLine(route)} />}
         </DynamicMap>
       </Box>
       <Box style={{ display: 'flex', flexDirection: 'row', marginTop: '5px' }}>
@@ -182,7 +182,7 @@ function GenData() {
                 name="radio-buttons-group"
               >
                 {users.map((user) => (
-                  <FormControlLabel value={user.email} control={<Radio />} label={user.email} />
+                  <FormControlLabel key={user.uid} value={user.email} control={<Radio />} label={user.email} />
                 ))}
               </RadioGroup>
             </FormControl>

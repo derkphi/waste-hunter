@@ -6,7 +6,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import CreateEventMap from '../components/map/createEventMap';
 import { database } from '../firebase/config';
-import { EventType, MeetingPoint } from '../firebase/firebase_types';
+import { EventType, MeetingPointType } from '../firebase/firebase_types';
 
 const defaultMapStyle = {
   marginTop: 20,
@@ -64,7 +64,7 @@ function CreateEvent() {
   const [time, setTime] = useState('');
   const [viewport, setViewport] = useState(fallbackViewport);
   const [searchArea, setSearchArea] = useState<GeoJSON.Feature<GeoJSON.Polygon> | undefined>(undefined);
-  const [meetingPoint, setMeetingPoint] = useState<MeetingPoint | undefined>(undefined);
+  const [meetingPoint, setMeetingPoint] = useState<MeetingPointType | undefined>(undefined);
 
   const [eventerror, setEventerror] = useState(false);
   const [placeerror, setPlaceerror] = useState(false);
