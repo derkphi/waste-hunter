@@ -3,12 +3,12 @@ import { useParams } from 'react-router-dom';
 import DynamicMap from '../components/maps/dynamicMap';
 import SearchArea from '../components/maps/searchArea';
 import { getGeoJsonLine } from '../components/maps/geoJsonHelper';
-import { Layer, Source } from 'react-map-gl';
 import { database } from '../firebase/config';
 import { Box, Typography } from '@material-ui/core';
 import distance from '@turf/distance';
 import length from '@turf/length';
 import StatisticItem from '../components/report/statisticItem';
+import WalkPath from '../components/maps/walkPath';
 
 const fallbackViewport = {
   latitude: 46.8131873,
@@ -98,20 +98,7 @@ function GenData() {
         {searchArea && <SearchArea data={searchArea} />}
         {route.length > 1 && (
           <>
-            <Source id={`source-${sourceId}`} type="geojson" data={getGeoJsonLine(route)} />
-            <Layer
-              id="layer-id"
-              type="line"
-              source={`source-${sourceId}`}
-              layout={{
-                'line-cap': 'round',
-                'line-join': 'round',
-              }}
-              paint={{
-                'line-color': 'rgba(66, 100, 251, .4)',
-                'line-width': 6,
-              }}
-            />
+            <WalkPath uid={sourceId.toString()} walkPath={getGeoJsonLine(route)} />
           </>
         )}
       </DynamicMap>
