@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GeolocateControl, Marker, Layer, Source, Popup } from 'react-map-gl';
+import { GeolocateControl, Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { authFirebase, database } from '../firebase/config';
 import {
@@ -21,12 +21,13 @@ import length from '@turf/length';
 // import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import { CameraAltRounded,} from '@material-ui/icons';
+import { CameraAltRounded } from '@material-ui/icons';
 import firebase from 'firebase/app';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/maps/searchArea';
 import logo from '../assets/logo_transparent_background.png';
 import Cameracomponent from '../components/camera/camera_component';
+import WalkPath from '../components/maps/walkPath';
 
 const useStyles = makeStyles({
   header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
@@ -206,20 +207,7 @@ export default function Cleanup() {
             ({ uid, route, email }) =>
               route && (
                 <div key={uid}>
-                  <Source id={`source-${uid}`} type="geojson" data={getGeoJsonLineFromRoute(route)} />
-                  <Layer
-                    id={`layer-${uid}`}
-                    type="line"
-                    source={`source-${uid}`}
-                    layout={{
-                      'line-cap': 'round',
-                      'line-join': 'round',
-                    }}
-                    paint={{
-                      'line-color': 'rgba(66, 100, 251, .4)',
-                      'line-width': 6,
-                    }}
-                  />
+                  <WalkPath uid={uid} walkPath={getGeoJsonLineFromRoute(route)} />
                   {Object.values(route)
                     .slice(-1)
                     .map(([lng, lat, time]) => (
@@ -328,7 +316,7 @@ export default function Cleanup() {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={!!showPhoto } onClose={() => setShowPhoto('')} style={{ zIndex: 3000 }}>
+        <Dialog open={!!showPhoto} onClose={() => setShowPhoto('')} style={{ zIndex: 3000 }}>
           <DialogContent>
             <DialogContentText>
               <img src={showPhoto} alt="" width="95%" />

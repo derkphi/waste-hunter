@@ -7,10 +7,10 @@ import Calendar from './screens/calendar';
 import Reports from './screens/reports';
 import CreateEvent from './screens/createEvent';
 import Cleanup from './screens/cleanup';
+import CleanupData from './screens/cleanupData';
 import { PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
 import { Container, createTheme, ThemeProvider } from '@material-ui/core';
 import SignOutButton from './components/SignOutButton';
-
 
 const theme = createTheme({
   palette: {
@@ -49,7 +49,6 @@ const headerData = {
 };
 
 function App() {
-
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -58,7 +57,7 @@ function App() {
             <Login />
           </RestrictedRoute>
           <PrivateRoute path={Routes.calendar} exact>
-            {withHeader('Kalender', <Calendar  />)}
+            {withHeader('Kalender', <Calendar />)}
           </PrivateRoute>
           <PrivateRoute path={Routes.reports} exact>
             {withHeader('Berichte', <Reports />)}
@@ -77,6 +76,9 @@ function App() {
           </PrivateRoute>
           <PrivateRoute path={Routes.logout} exact>
             {withHeader('Logout', <SignOutButton />)}
+          </PrivateRoute>
+          <PrivateRoute path={Routes.hidden} exact>
+            {withHeader('Cleanup Data', <CleanupData />)}
           </PrivateRoute>
         </Switch>
       </Router>

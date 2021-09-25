@@ -10,6 +10,7 @@ export enum Routes {
   home = '/',
   createEvent = '/calendar/new-event',
   editEvent = '/calendar/edit-event/:id',
+  hidden = '/hidden/:id',
   logout = '/logout',
 }
 
