@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import DynamicMap from '../components/maps/dynamicMap';
-import SearchArea from '../components/maps/searchArea';
-import { getGeoJsonLine } from '../components/maps/geoJsonHelper';
+import DynamicMap from '../components/map/dynamicMap';
+import SearchArea from '../components/map/searchArea';
+import { getGeoJsonLine } from '../components/map/geoJsonHelper';
 import { database } from '../firebase/config';
 import { Box, Typography } from '@material-ui/core';
 import distance from '@turf/distance';
 import length from '@turf/length';
 import StatisticItem from '../components/report/statisticItem';
-import WalkPath from '../components/maps/walkPath';
+import WalkPath from '../components/map/walkPath';
 import { Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@material-ui/core';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 

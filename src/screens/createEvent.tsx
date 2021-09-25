@@ -4,9 +4,9 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
-import CreateEventMap from '../components/maps/createEventMap';
+import CreateEventMap from '../components/map/createEventMap';
 import { database } from '../firebase/config';
-import { EventType, MeetingPoint } from '../common/firebase_types';
+import { EventType, MeetingPoint } from '../firebase/firebase_types';
 
 const defaultMapStyle = {
   marginTop: 20,

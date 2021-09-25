@@ -13,9 +13,9 @@ import {
   TextField,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import DynamicMap, { defaultViewport } from '../components/maps/dynamicMap';
-import { MapViewport } from '../components/maps/mapTypes';
-import { getGeoJsonLineFromRoute } from '../components/maps/geoJsonHelper';
+import DynamicMap, { defaultViewport } from '../components/map/dynamicMap';
+import { MapViewport } from '../components/map/mapTypes';
+import { getGeoJsonLineFromRoute } from '../components/map/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
 // import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
@@ -23,11 +23,12 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { CameraAltRounded } from '@material-ui/icons';
 import firebase from 'firebase/app';
+import { CleanupUser } from '../firebase/firebase_types';
 import DemoCleanups from '../components/demoCleanups';
-import SearchArea from '../components/maps/searchArea';
+import SearchArea from '../components/map/searchArea';
 import logo from '../assets/logo_transparent_background.png';
 import Cameracomponent from '../components/camera/camera_component';
-import WalkPath from '../components/maps/walkPath';
+import WalkPath from '../components/map/walkPath';
 
 const useStyles = makeStyles({
   header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
@@ -62,16 +63,6 @@ const useStyles = makeStyles({
   },
   demoCleanups: { position: 'absolute', bottom: 25, right: 0 },
 });
-
-interface CleanupUser {
-  uid: string;
-  email: string | null;
-  start: number;
-  route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
-  end?: number;
-  collected?: number;
-  distance?: number;
-}
 
 export interface Event {
   id: string;

@@ -33,3 +33,13 @@ export interface EventType {
 export interface EventWithId extends EventType {
   id: string;
 }
+
+export interface CleanupUser {
+  uid: string;
+  email: string | null;
+  start: number;
+  route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
+  end?: number;
+  collected?: number;
+  distance?: number;
+}
