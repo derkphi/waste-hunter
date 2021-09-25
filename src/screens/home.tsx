@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Box, Grid } from '@material-ui/core';
-import { EventWithId } from '../common/firebase_types';
+import { EventWithId } from '../firebase/firebase_types';
 import Info from '../components/info';
 import { database } from '../firebase/config';
-import { filterNext } from '../firebase/events';
-import EventCard from '../components/eventCard';
+import { filterNext } from '../components/event/eventHelper';
+import EventCard from '../components/event/eventCard';
 import firebase from 'firebase/app';
 import StatisticCard from '../components/report/statisticCard';
 

@@ -4,7 +4,7 @@ export interface PositionType {
   zoom: number;
 }
 
-export interface MeetingPoint {
+export interface MeetingPointType {
   longitude: number;
   latitude: number;
 }
@@ -16,7 +16,7 @@ export interface EventType {
   position: PositionType;
   zeit: string;
   searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
-  meetingPoint?: MeetingPoint;
+  meetingPoint?: MeetingPointType;
   registrations?: { [uid: string]: { email: string; added: number } };
   cleanup?: {
     [uid: string]: {
@@ -32,4 +32,14 @@ export interface EventType {
 
 export interface EventWithId extends EventType {
   id: string;
+}
+
+export interface CleanupUser {
+  uid: string;
+  email: string | null;
+  start: number;
+  route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
+  end?: number;
+  collected?: number;
+  distance?: number;
 }

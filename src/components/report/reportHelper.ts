@@ -1,4 +1,4 @@
-import { EventWithId } from '../../common/firebase_types';
+import { EventWithId } from '../../firebase/firebase_types';
 import { database } from '../../firebase/config';
 
 export interface EventWithStatistic extends EventWithId {

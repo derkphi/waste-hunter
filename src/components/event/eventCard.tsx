@@ -6,10 +6,10 @@ import CardContent from '@material-ui/core/CardContent';
 import { Badge, Typography } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
-import { EventWithId } from '../common/firebase_types';
-import EventMap from './maps/eventMap';
+import { EventWithId } from '../../firebase/firebase_types';
+import EventMap from '../map/eventMap';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { Routes } from './customRoute';
+import { Routes } from '../customRoute';
 import { useHistory } from 'react-router-dom';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
@@ -17,7 +17,7 @@ import { IconButton, Box } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { authFirebase, database } from '../firebase/config';
+import { authFirebase, database } from '../../firebase/config';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -114,7 +114,6 @@ function EventCard(props: EventCardProps) {
                       if (!hidden) {
                         history.push(Routes.editEvent.replace(':id', props.event.id));
                       } else {
-                        console.log(props.event.id);
                         history.push(Routes.hidden.replace(':id', props.event.id));
                       }
                     }}
