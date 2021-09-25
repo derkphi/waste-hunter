@@ -114,7 +114,6 @@ function EventCard(props: EventCardProps) {
                       if (!hidden) {
                         history.push(Routes.editEvent.replace(':id', props.event.id));
                       } else {
-                        console.log(props.event.id);
                         history.push(Routes.hidden.replace(':id', props.event.id));
                       }
                     }}
