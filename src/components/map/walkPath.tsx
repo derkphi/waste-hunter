@@ -4,6 +4,7 @@ import { Layer, Source } from 'react-map-gl';
 interface WalkPathProps {
   uid: string;
   walkPath: GeoJSON.Feature<GeoJSON.Geometry>;
+  color?: string;
 }
 
 function WalkPath(props: WalkPathProps) {
@@ -19,7 +20,7 @@ function WalkPath(props: WalkPathProps) {
           'line-join': 'round',
         }}
         paint={{
-          'line-color': 'rgba(66, 100, 251, .4)',
+          'line-color': props.color || 'rgba(66, 100, 251, .4)',
           'line-width': 6,
         }}
       />

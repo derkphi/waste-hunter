@@ -5,6 +5,8 @@ import SearchArea from '../components/map/searchArea';
 import MeetingPoint from '../components/map/meetingPoint';
 import { getGeoJsonLine } from '../components/map/geoJsonHelper';
 import { database } from '../firebase/config';
+import firebase from 'firebase/app';
+import { MeetingPointType, CleanupUser, UserWithId } from '../firebase/firebase_types';
 import { Box, Typography } from '@material-ui/core';
 import distance from '@turf/distance';
 import length from '@turf/length';
@@ -12,7 +14,7 @@ import StatisticItem from '../components/report/statisticItem';
 import WalkPath from '../components/map/walkPath';
 import { Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@material-ui/core';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { MeetingPointType } from '../firebase/firebase_types';
+import WalkPathsCleanup from '../components/map/walkPathsCleanup';
 
 const fallbackViewport = {
   latitude: 46.8131873,
@@ -23,13 +25,6 @@ const fallbackViewport = {
 const sourceId = 0;
 const walkSpeed = 5; // [km/h]
 
-const users = [
-  { email: 'deer@wastehunter.ch', uid: 'IRbrFeFseBcfBkJteP0gWXrnowL2' },
-  { email: 'wolf@wastehunter.ch', uid: 'nSM7KeIUiMhMs0EdrWbMmqzqYxj2' },
-  { email: 'rabbit@wastehunter.ch', uid: 'bASv62WAWIaPORIHXOI65eSSnVi2' },
-  { email: 'fox@wastehunter.ch ', uid: 'aMBlWyXmmtX5vGX1nlmj7wKgMj83' },
-];
-
 function GenData() {
   const [eventDate, setEventDate] = useState('');
   const [eventTime, setEventTime] = useState('');
@@ -39,10 +34,32 @@ function GenData() {
   const [route, setRoute] = useState<Array<[number, number]>>([]);
   const [walkDist, setWalkDist] = useState(0);
   const [walkTime, setWalkTime] = useState(0);
-  const [userEmail, setUserEmail] = useState(users[0].email);
+  const [userEmail, setUserEmail] = useState('');
+  const [users, setUsers] = useState<Array<UserWithId>>([]);
   const [meetingPoint, setMeetingPoint] = useState<MeetingPointType | undefined>(undefined);
-  //const [sourceId, setSourceId] = useState(0);
   const { id } = useParams<{ id: string }>();
+  const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
+
+  useEffect(() => {
+    const ref = database.ref(`cleanups/${id}`);
+    const cb = (d: firebase.database.DataSnapshot) => {
+      const cleanupData = d.val();
+      if (cleanupData) {
+        setCleanupUsers(Object.values(d.val()));
+      }
+    };
+    ref.on('value', cb);
+    return () => ref.off('value', cb);
+  }, [id]);
+
+  useEffect(() => {
+    database
+      .ref(`users`)
+      .get()
+      .then((data) => {
+        setUsers(Object.entries(data.val() as { [id: string]: UserWithId }).map(([id, user]) => ({ ...user, id })));
+      });
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -100,33 +117,37 @@ function GenData() {
 
   function handleSubmit(e: any) {
     e.preventDefault();
-    const user = users.find((u) => u.email === userEmail);
+    const user = users ? users.find((u: UserWithId) => u.email === userEmail) : undefined;
     if (user) {
       const startTime = Date.parse(eventDate + ' ' + eventTime);
       const endTime = startTime + walkTime * 60e3;
       // Register user for event
-      database.ref(`events/${id}/registrations/${user.uid}`).set({
+      database.ref(`events/${id}/registrations/${user.id}`).set({
         email: user.email,
         added: Date.now() < startTime ? Date.now() : startTime,
       });
 
+      const min = 20; // Liter
+      const max = 110; // Liter
+      const collected = Math.round(Math.random() * (max - min) + min);
+
       // Write cleanup user data
-      database.ref(`cleanups/${id}/${user.uid}`).update({
+      database.ref(`cleanups/${id}/${user.id}`).update({
         end: endTime,
         distance: walkDist,
-        collected: 35,
+        collected,
       });
-      database.ref(`events/${id}/cleanup/${user.uid}`).set({
-        uid: user.uid,
+      database.ref(`events/${id}/cleanup/${user.id}`).set({
+        uid: user.id,
         email: user.email,
         start: startTime,
         end: endTime,
         distance: walkDist,
-        collected: 35,
+        collected,
       });
 
       // Write walk path
-      const routeRef = database.ref(`cleanups/${id}/${user.uid}/route`);
+      const routeRef = database.ref(`cleanups/${id}/${user.id}/route`);
       routeRef.remove();
 
       let time = startTime;
@@ -141,8 +162,12 @@ function GenData() {
         }
       });
       console.log('Cleanup/event uid: ' + id);
-      console.log(user.email + ' uid: ' + user.uid);
-      console.log('Route length: ' + route.length);
+      console.log(user.email + ' uid: ' + user.id);
+      console.log('Route num points: ' + route.length);
+      console.log('Route length: ' + Math.round(walkDist * 1000) + ' m');
+      console.log('Collected: ', collected + ' l');
+
+      setRoute([]);
     }
   }
 
@@ -163,7 +188,8 @@ function GenData() {
         >
           {searchArea && <SearchArea data={searchArea} />}
           {meetingPoint && <MeetingPoint longitude={meetingPoint.longitude} latitude={meetingPoint.latitude} />}
-          {route.length > 1 && <WalkPath uid={sourceId.toString()} walkPath={getGeoJsonLine(route)} />}
+          {route.length > 1 && <WalkPath color="red" uid={sourceId.toString()} walkPath={getGeoJsonLine(route)} />}
+          <WalkPathsCleanup cleanupUsers={cleanupUsers} />
         </DynamicMap>
       </Box>
       <Box style={{ display: 'flex', flexDirection: 'row', marginTop: '5px' }}>
@@ -182,7 +208,7 @@ function GenData() {
                 name="radio-buttons-group"
               >
                 {users.map((user) => (
-                  <FormControlLabel key={user.uid} value={user.email} control={<Radio />} label={user.email} />
+                  <FormControlLabel key={user.id} value={user.email} control={<Radio />} label={user.email} />
                 ))}
               </RadioGroup>
             </FormControl>

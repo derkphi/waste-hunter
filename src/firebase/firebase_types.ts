@@ -43,3 +43,14 @@ export interface CleanupUser {
   collected?: number;
   distance?: number;
 }
+
+export interface User {
+  lastName: string;
+  firstName: string;
+  email: string;
+  icon: number;
+}
+
+export interface UserWithId extends User {
+  id: string;
+}
