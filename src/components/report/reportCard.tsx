@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
 import EventMap from '../map/eventMap';
-import WalkPath from '../map/walkPath';
-import { getGeoJsonLineFromRoute } from '../map/geoJsonHelper';
+import WalkPathsCleanup from '../map/walkPathsCleanup';
 import { EventWithStatistic } from './reportHelper';
 import StatisticGroup from './statisticGroup';
 import { database } from '../../firebase/config';
@@ -39,6 +38,7 @@ function ReportCard(props: ReportCardProps) {
     ref.on('value', cb);
     return () => ref.off('value', cb);
   }, [props.event]);
+
   return (
     <Card key={props.event.id} className={classes.card}>
       <CardHeader title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass} />
@@ -46,14 +46,7 @@ function ReportCard(props: ReportCardProps) {
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.gridItem}>
             <EventMap event={props.event}>
-              {cleanupUsers?.map(
-                ({ uid, route }) =>
-                  route && (
-                    <div key={uid}>
-                      <WalkPath uid={uid} walkPath={getGeoJsonLineFromRoute(route)} />
-                    </div>
-                  )
-              )}
+              <WalkPathsCleanup cleanupUsers={cleanupUsers} />
             </EventMap>
           </Grid>
           <Grid item sm={12} md={6}>

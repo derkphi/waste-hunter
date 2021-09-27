@@ -5,6 +5,8 @@ import SearchArea from '../components/map/searchArea';
 import MeetingPoint from '../components/map/meetingPoint';
 import { getGeoJsonLine } from '../components/map/geoJsonHelper';
 import { database } from '../firebase/config';
+import firebase from 'firebase/app';
+import { MeetingPointType, CleanupUser } from '../firebase/firebase_types';
 import { Box, Typography } from '@material-ui/core';
 import distance from '@turf/distance';
 import length from '@turf/length';
@@ -12,7 +14,7 @@ import StatisticItem from '../components/report/statisticItem';
 import WalkPath from '../components/map/walkPath';
 import { Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@material-ui/core';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { MeetingPointType } from '../firebase/firebase_types';
+import WalkPathsCleanup from '../components/map/walkPathsCleanup';
 
 const fallbackViewport = {
   latitude: 46.8131873,
@@ -41,8 +43,20 @@ function GenData() {
   const [walkTime, setWalkTime] = useState(0);
   const [userEmail, setUserEmail] = useState(users[0].email);
   const [meetingPoint, setMeetingPoint] = useState<MeetingPointType | undefined>(undefined);
-  //const [sourceId, setSourceId] = useState(0);
   const { id } = useParams<{ id: string }>();
+  const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
+
+  useEffect(() => {
+    const ref = database.ref(`cleanups/${id}`);
+    const cb = (d: firebase.database.DataSnapshot) => {
+      const cleanupData = d.val();
+      if (cleanupData) {
+        setCleanupUsers(Object.values(d.val()));
+      }
+    };
+    ref.on('value', cb);
+    return () => ref.off('value', cb);
+  }, [id]);
 
   useEffect(() => {
     if (id) {
@@ -110,11 +124,15 @@ function GenData() {
         added: Date.now() < startTime ? Date.now() : startTime,
       });
 
+      const min = 20; // Liter
+      const max = 110; // Liter
+      const collected = Math.round(Math.random() * (max - min) + min);
+
       // Write cleanup user data
       database.ref(`cleanups/${id}/${user.uid}`).update({
         end: endTime,
         distance: walkDist,
-        collected: 35,
+        collected,
       });
       database.ref(`events/${id}/cleanup/${user.uid}`).set({
         uid: user.uid,
@@ -122,7 +140,7 @@ function GenData() {
         start: startTime,
         end: endTime,
         distance: walkDist,
-        collected: 35,
+        collected,
       });
 
       // Write walk path
@@ -142,7 +160,11 @@ function GenData() {
       });
       console.log('Cleanup/event uid: ' + id);
       console.log(user.email + ' uid: ' + user.uid);
-      console.log('Route length: ' + route.length);
+      console.log('Route num points: ' + route.length);
+      console.log('Route length: ' + Math.round(walkDist * 1000) + ' m');
+      console.log('Collected: ', collected + ' l');
+
+      setRoute([]);
     }
   }
 
@@ -163,7 +185,8 @@ function GenData() {
         >
           {searchArea && <SearchArea data={searchArea} />}
           {meetingPoint && <MeetingPoint longitude={meetingPoint.longitude} latitude={meetingPoint.latitude} />}
-          {route.length > 1 && <WalkPath uid={sourceId.toString()} walkPath={getGeoJsonLine(route)} />}
+          {route.length > 1 && <WalkPath color="red" uid={sourceId.toString()} walkPath={getGeoJsonLine(route)} />}
+          <WalkPathsCleanup cleanupUsers={cleanupUsers} />
         </DynamicMap>
       </Box>
       <Box style={{ display: 'flex', flexDirection: 'row', marginTop: '5px' }}>
