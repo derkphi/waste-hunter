@@ -7,6 +7,7 @@ import StatisticGroup from './statisticGroup';
 import { database } from '../../firebase/config';
 import { CleanupUser } from '../../firebase/firebase_types';
 import firebase from 'firebase/app';
+import CleanupAttendees from './cleanupAttendees';
 
 const useStyles = makeStyles({
   card: {
@@ -50,20 +51,18 @@ function ReportCard(props: ReportCardProps) {
             </EventMap>
           </Grid>
           <Grid item sm={12} md={6}>
-            <Typography paragraph variant="h5">
-              Event in {props.event.ort}
-            </Typography>
-            <Typography paragraph variant="h6">
-              Erfolg:
-            </Typography>
             {props.event.users > 0 && (
               <StatisticGroup
-                users={props.event.users}
+                users={cleanupUsers ? cleanupUsers.length : 0}
                 duration={props.event.duration}
                 distance={props.event.distance}
                 collected={props.event.collected}
               />
             )}
+            <Typography paragraph variant="h6" style={{ marginTop: '25px' }}>
+              Teilnehmer:
+            </Typography>
+            <CleanupAttendees cleanupUsers={cleanupUsers} />
           </Grid>
         </Grid>
       </CardContent>
