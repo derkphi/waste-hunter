@@ -133,6 +133,9 @@ function GenData() {
 
       // Write cleanup user data
       database.ref(`cleanups/${id}/${user.id}`).update({
+        uid: user.id,
+        email: user.email,
+        start: startTime,
         end: endTime,
         distance: walkDist,
         collected,

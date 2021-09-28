@@ -21,7 +21,7 @@ export async function getReportEvents(): Promise<EventWithStatistic[]> {
           time: Date.parse(`${event.datum}T${event.zeit}`),
           users: event.cleanup ? Object.keys(event.cleanup).length : 0,
           duration: event.cleanup
-            ? Object.values(event.cleanup).reduce((p, c) => (p + c.end - c.start > 0 ? c.end - c.start : 0), 0)
+            ? Object.values(event.cleanup).reduce((p, c) => (c.end - c.start > 0 ? p + (c.end - c.start) : p), 0)
             : 0,
           distance: event.cleanup
             ? Object.values(event.cleanup).reduce((p, c) => p + (c.distance && c.distance > 0 ? c.distance : 0), 0)
