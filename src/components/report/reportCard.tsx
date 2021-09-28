@@ -26,7 +26,7 @@ interface ReportCardProps {
 
 function ReportCard(props: ReportCardProps) {
   const classes = useStyles();
-  const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
+  const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>([]);
 
   useEffect(() => {
     const ref = database.ref(`cleanups/${props.event.id}`);
@@ -51,18 +51,20 @@ function ReportCard(props: ReportCardProps) {
             </EventMap>
           </Grid>
           <Grid item sm={12} md={6}>
-            {props.event.users > 0 && (
-              <StatisticGroup
-                users={cleanupUsers ? cleanupUsers.length : 0}
-                duration={props.event.duration}
-                distance={props.event.distance}
-                collected={props.event.collected}
-              />
+            <StatisticGroup
+              users={cleanupUsers ? cleanupUsers.length : 0}
+              duration={props.event.duration}
+              distance={props.event.distance}
+              collected={props.event.collected}
+            />
+            {cleanupUsers.length > 0 && (
+              <>
+                <Typography paragraph variant="h6" style={{ marginTop: '25px' }}>
+                  Teilnehmer:
+                </Typography>
+                <CleanupAttendees cleanupUsers={cleanupUsers} />
+              </>
             )}
-            <Typography paragraph variant="h6" style={{ marginTop: '25px' }}>
-              Teilnehmer:
-            </Typography>
-            <CleanupAttendees cleanupUsers={cleanupUsers} />
           </Grid>
         </Grid>
       </CardContent>

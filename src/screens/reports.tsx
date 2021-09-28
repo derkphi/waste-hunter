@@ -14,9 +14,9 @@ export default function Reports() {
 
   return events.length ? (
     <>
-      {events.map((event) => (
-        <ReportCard event={event} />
-      ))}
+      {events.map((event) => {
+        return <ReportCard key={event.id} event={event} />;
+      })}
     </>
   ) : (
     <Info text="Kein Bericht vorhanden." />

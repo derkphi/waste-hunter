@@ -10,7 +10,7 @@ function CleanupAttendees(props: CleanupAttendeesProps) {
   return (
     <>
       {props.cleanupUsers?.map((cUser) => (
-        <Attendee user={cUser} />
+        <Attendee key={cUser.uid} user={cUser} />
       ))}
     </>
   );
