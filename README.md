@@ -71,10 +71,8 @@ waste-hunter/
     build/
     node_modules/
     public/
-        favicon.ico
         index.html
         manifest.json
-        robots.txt
     src/
         assets/
         components/
@@ -84,11 +82,8 @@ waste-hunter/
                 config.ts
             report/
             statistic/
-            customRoute.tsx
-            header.tsx
         firebase/
             config.tsx
-            firebase_types.ts
         hooks/
         screens/
         App.tsx
