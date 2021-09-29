@@ -18,6 +18,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { authFirebase, database } from '../../firebase/config';
+import UserGroup from '../common/userGroup';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,6 +46,7 @@ interface EventCardProps {
   joinEnabled: boolean;
   showEditDelete?: boolean;
   deleteClick?: (id: string) => void;
+  hideUsers?: boolean;
 }
 
 function EventCard(props: EventCardProps) {
@@ -126,6 +128,14 @@ function EventCard(props: EventCardProps) {
                 </Box>
               )}
             </Box>
+            {!props.hideUsers && props.event.registrations && Object.keys(props.event.registrations).length > 0 && (
+              <>
+                <Typography paragraph variant="h5" style={{ marginTop: '25px' }}>
+                  Angemeldet:
+                </Typography>
+                <UserGroup userUids={Object.keys(props.event.registrations)} />
+              </>
+            )}
           </Box>
         </CardContent>
 

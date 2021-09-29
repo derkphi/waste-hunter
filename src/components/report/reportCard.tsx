@@ -7,7 +7,7 @@ import StatisticGroup from './statisticGroup';
 import { database } from '../../firebase/config';
 import { CleanupUser } from '../../firebase/firebase_types';
 import firebase from 'firebase/app';
-import CleanupAttendees from './cleanupAttendees';
+import UserGroup from '../common/userGroup';
 
 const useStyles = makeStyles({
   card: {
@@ -43,7 +43,7 @@ function ReportCard(props: ReportCardProps) {
   return (
     <Card key={props.event.id} className={classes.card}>
       <CardHeader title={new Date(props.event.datum).toLocaleDateString('de-CH') + ' - ' + props.event.anlass} />
-      <CardContent style={{ width: '100%' }}>
+      <CardContent>
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.gridItem}>
             <EventMap event={props.event}>
@@ -59,10 +59,10 @@ function ReportCard(props: ReportCardProps) {
             />
             {cleanupUsers.length > 0 && (
               <>
-                <Typography paragraph variant="h6" style={{ marginTop: '25px' }}>
+                <Typography paragraph variant="h5" style={{ marginTop: '25px' }}>
                   Teilnehmer:
                 </Typography>
-                <CleanupAttendees cleanupUsers={cleanupUsers} />
+                <UserGroup userUids={cleanupUsers.map((user) => user.uid)} />
               </>
             )}
           </Grid>

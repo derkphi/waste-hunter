@@ -21,7 +21,7 @@ function Home() {
     return () => dbRef.off('value', cb);
   }, []);
 
-  const nextEventCard = nextEvent ? <EventCard event={nextEvent} joinEnabled={true} /> : undefined;
+  const nextEventCard = nextEvent ? <EventCard hideUsers={true} event={nextEvent} joinEnabled={true} /> : undefined;
 
   return (
     <>
