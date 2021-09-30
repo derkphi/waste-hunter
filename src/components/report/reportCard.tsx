@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardHeader, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Card, CardHeader, CardContent, Grid, Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import EventMap from '../map/eventMap';
 import WalkPathsCleanup from '../map/walkPathsCleanup';
 import { EventWithStatistic } from './reportHelper';
 import StatisticGroup from './statisticGroup';
-import { database } from '../../firebase/config';
+import { database, DataSnapshot } from '../../firebase/config';
 import { CleanupUser } from '../../firebase/firebase_types';
-import firebase from 'firebase/app';
 import UserGroup from '../common/userGroup';
 
 const useStyles = makeStyles({
@@ -30,7 +30,7 @@ function ReportCard(props: ReportCardProps) {
 
   useEffect(() => {
     const ref = database.ref(`cleanups/${props.event.id}`);
-    const cb = (d: firebase.database.DataSnapshot) => {
+    const cb = (d: DataSnapshot) => {
       const cleanupData = d.val();
       if (cleanupData) {
         setCleanupUsers(Object.values(d.val()));

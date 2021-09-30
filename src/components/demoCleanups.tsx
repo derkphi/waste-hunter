@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Chip, Dialog, DialogContent, DialogTitle, IconButton } from '@material-ui/core';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
-import PlayCircleFilledOutlinedIcon from '@material-ui/icons/PlayCircleFilledOutlined';
-import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
-import CloseIcon from '@material-ui/icons/Close';
+import { Button, Chip, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
+import { PlayCircleOutline, PlayCircleFilledOutlined, DirectionsWalk, Close } from '@mui/icons-material';
 import { database } from '../firebase/config';
 import { Event } from '../screens/cleanup';
 
@@ -91,14 +88,14 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
   return (
     <>
       <IconButton className={className} onClick={() => setShowDialog(true)}>
-        {demos.some((d) => d.play) ? <PlayCircleFilledOutlinedIcon color="primary" /> : <PlayCircleOutlineIcon />}
+        {demos.some((d) => d.play) ? <PlayCircleFilledOutlined color="primary" /> : <PlayCircleOutline />}
       </IconButton>
 
       <Dialog open={showDialog} onClose={() => setShowDialog(false)} style={{ zIndex: 3000 }}>
         <DialogTitle>
           Demo Cleanups
           <IconButton style={{ position: 'absolute', top: 8, right: 8 }} onClick={() => setShowDialog(false)}>
-            <CloseIcon />
+            <Close />
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
@@ -106,7 +103,7 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
             <Button
               fullWidth
               color="primary"
-              startIcon={demo.play ? <PlayCircleFilledOutlinedIcon /> : <PlayCircleOutlineIcon />}
+              startIcon={demo.play ? <PlayCircleFilledOutlined /> : <PlayCircleOutline />}
               onClick={() => handlePlay(demo)}
             >
               {demo.name} ({(demo.time / 1e3).toFixed()}s, {demo.distance.toPrecision(2)}km,{' '}
@@ -115,7 +112,7 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
                 <Chip
                   color="primary"
                   size="small"
-                  icon={<DirectionsWalkIcon />}
+                  icon={<DirectionsWalk />}
                   label={`${((demo.time - demo.play.time) / 1e3).toFixed()}`}
                   style={{ marginLeft: '1em' }}
                 />

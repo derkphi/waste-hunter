@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { UserWithId } from '../../firebase/firebase_types';
 import { database } from '../../firebase/config';
-import { Typography, Box, makeStyles } from '@material-ui/core';
+import { Typography, Box } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import beaver from '../../assets/beaver.png';
 import bee from '../../assets/bee.png';
 import cat from '../../assets/cat.png';

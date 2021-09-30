@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Grid } from '@material-ui/core';
+import { Typography, Box, Grid } from '@mui/material';
 import { EventWithId } from '../firebase/firebase_types';
 import Info from '../components/info';
-import { database } from '../firebase/config';
+import { database, DataSnapshot } from '../firebase/config';
 import { filterNext } from '../components/event/eventHelper';
 import EventCard from '../components/event/eventCard';
-import firebase from 'firebase/app';
 import StatisticCard from '../components/report/statisticCard';
 
 function Home() {
@@ -13,7 +12,7 @@ function Home() {
 
   useEffect(() => {
     const dbRef = database.ref('events');
-    const cb = (d: firebase.database.DataSnapshot) => {
+    const cb = (d: DataSnapshot) => {
       const events = filterNext(d.val());
       if (events.length > 0) setNextEvent(events[0]);
     };

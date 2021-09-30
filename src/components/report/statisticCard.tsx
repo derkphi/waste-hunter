@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import { Card, CardHeader, CardContent } from '@mui/material';
 import StatisticGroup from './statisticGroup';
 import { getReportEvents, EventWithStatistic } from './reportHelper';
 

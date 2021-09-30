@@ -1,4 +1,5 @@
-import { makeStyles, Box } from '@material-ui/core';
+import { Box } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import StatisticItem from './statisticItem';
 
 // red '#f6dfc6'

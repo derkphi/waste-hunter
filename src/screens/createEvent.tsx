@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Typography, makeStyles, FormLabel, Button, Box } from '@material-ui/core';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import { Grid } from '@material-ui/core';
+import { TextField, Typography, FormLabel, Button, Box, Theme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { Grid } from '@mui/material';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import CreateEventMap from '../components/map/createEventMap';
@@ -14,7 +15,7 @@ const defaultMapStyle = {
   width: '100%',
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   field: {
     marginTop: 20,
     marginBottom: 20,

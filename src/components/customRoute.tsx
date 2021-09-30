@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Redirect, RouteProps } from 'react-router-dom';
-import { authFirebase } from '../firebase/config';
+import { auth } from '../firebase/config';
 
 export enum Routes {
   login = '/login',
@@ -15,7 +15,7 @@ export enum Routes {
 }
 
 function isAuthenticated() {
-  return authFirebase.currentUser !== null;
+  return auth.currentUser !== null;
 }
 
 export function PrivateRoute(props: RouteProps): React.ReactElement {

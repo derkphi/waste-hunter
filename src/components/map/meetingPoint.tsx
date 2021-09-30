@@ -1,7 +1,7 @@
 import React from 'react';
 import { Marker } from 'react-map-gl';
-import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import { makeStyles } from '@material-ui/core/styles';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import { makeStyles } from '@mui/styles';
 
 interface MettingPointProps {
   longitude: number;

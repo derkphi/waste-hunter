@@ -1,15 +1,13 @@
 import React from 'react';
-import Alert from '@material-ui/lab/Alert';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { Alert } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      marginTop: '20px',
-      marginBottom: '20px',
-    },
-  })
-);
+const useStyles = makeStyles({
+  root: {
+    marginTop: '20px',
+    marginBottom: '20px',
+  },
+});
 
 interface InfoProps {
   text: string;

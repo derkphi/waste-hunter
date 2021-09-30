@@ -1,8 +1,7 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
-import 'firebase/firestore';
-import 'firebase/storage';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/database';
+import 'firebase/compat/storage';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCEGQ08RMHPmeMzOslHW_y4DDc3spPgm-k',
@@ -14,12 +13,11 @@ const firebaseConfig = {
   databaseURL: 'https://waste-hunter-default-rtdb.europe-west1.firebasedatabase.app',
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth(app);
+const database = firebase.database(app);
+const storage = firebase.storage(app);
 
-const authFirebase = firebase.auth();
-const database = firebase.database();
-const projectStorage = firebase.storage();
-const projectFirestore = firebase.firestore();
-const timestamp = firebase.firestore.FieldValue.serverTimestamp;
+export { auth, database, storage };
 
-export { authFirebase, database, projectStorage, projectFirestore, timestamp };
+export type DataSnapshot = firebase.database.DataSnapshot;

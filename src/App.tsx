@@ -9,7 +9,7 @@ import CreateEvent from './screens/createEvent';
 import Cleanup from './screens/cleanup';
 import CleanupData from './screens/cleanupData';
 import { PrivateRoute, RestrictedRoute, Routes } from './components/customRoute';
-import { Container, createTheme, ThemeProvider } from '@material-ui/core';
+import { Container, createTheme, ThemeProvider } from '@mui/material';
 import SignOutButton from './components/SignOutButton';
 
 const theme = createTheme({

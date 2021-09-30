@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { Routes } from '../components/customRoute';
 import { EventWithId } from '../firebase/firebase_types';
-import { database } from '../firebase/config';
+import { database, DataSnapshot } from '../firebase/config';
 import EventCard from '../components/event/eventCard';
 import Info from '../components/info';
 import { filterNext } from '../components/event/eventHelper';
-import firebase from 'firebase/app';
 
 function deleteEvent(id: string) {
   const dbRef = database.ref('events/' + id);
@@ -21,7 +20,7 @@ function Calendar() {
 
   useEffect(() => {
     const dbRef = database.ref('events');
-    const cb = (d: firebase.database.DataSnapshot) => setEvents(filterNext(d.val()));
+    const cb = (d: DataSnapshot) => setEvents(filterNext(d.val()));
     dbRef.on('value', cb);
 
     // Alert Event started +/ 5 minutes
