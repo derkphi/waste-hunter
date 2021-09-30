@@ -44,7 +44,11 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
         setDemos(
           Object.entries(ds.val() as DemoData).map(([name, cleanup]) => {
             const route = Object.values(cleanup.route);
-            const diff = [route[0][0] - event.position.longitude, route[0][1] - event.position.latitude, route[0][2]];
+            const diff = [
+              route[0][0] - event.meetingPoint.longitude,
+              route[0][1] - event.meetingPoint.latitude,
+              route[0][2],
+            ];
             return {
               ...cleanup,
               name,

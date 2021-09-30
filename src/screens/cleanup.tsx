@@ -75,6 +75,10 @@ const useStyles = makeStyles({
 export interface Event {
   id: string;
   anlass: string;
+  meetingPoint: {
+    latitude: number;
+    longitude: number;
+  };
   position: {
     latitude: number;
     longitude: number;
@@ -184,7 +188,7 @@ export default function Cleanup() {
 
           {event.searchArea && <SearchArea data={event.searchArea} opacity={0.2} />}
 
-          <Marker longitude={event.position.longitude} latitude={event.position.latitude}>
+          <Marker longitude={event.meetingPoint.longitude} latitude={event.meetingPoint.latitude}>
             <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
           </Marker>
 
