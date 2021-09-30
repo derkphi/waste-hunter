@@ -4,16 +4,14 @@ import DynamicMap from '../components/map/dynamicMap';
 import SearchArea from '../components/map/searchArea';
 import MeetingPoint from '../components/map/meetingPoint';
 import { getGeoJsonLine } from '../components/map/geoJsonHelper';
-import { database } from '../firebase/config';
-import firebase from 'firebase/app';
+import { database, DataSnapshot } from '../firebase/config';
 import { MeetingPointType, CleanupUser, UserWithId } from '../firebase/firebase_types';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
 import distance from '@turf/distance';
 import length from '@turf/length';
 import StatisticItem from '../components/report/statisticItem';
 import WalkPath from '../components/map/walkPath';
-import { Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@material-ui/core';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import WalkPathsCleanup from '../components/map/walkPathsCleanup';
 
 const fallbackViewport = {
@@ -42,7 +40,7 @@ function GenData() {
 
   useEffect(() => {
     const ref = database.ref(`cleanups/${id}`);
-    const cb = (d: firebase.database.DataSnapshot) => {
+    const cb = (d: DataSnapshot) => {
       const cleanupData = d.val();
       if (cleanupData) {
         setCleanupUsers(Object.values(d.val()));

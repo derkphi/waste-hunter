@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import { Button, IconButton, Typography} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import PhotoCameraRoundedIcon from '@material-ui/icons/PhotoCameraRounded';
-import { projectStorage, database } from '../../firebase/config';
+import { Grid, Box, Button, IconButton, Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded';
+import { storage, database } from '../../firebase/config';
 
-
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   root: {
     height: '100%',
     textAlign: 'center',
@@ -35,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     background: '#FFF',
   },
   camera: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
-}));
+});
 
 interface CameracomponentProps {
   eventId: string;
@@ -68,24 +64,22 @@ function Cameracomponent(props: CameracomponentProps) {
   const handleSave = async () => {
     if (file) {
       try {
-        const storageRef = projectStorage.ref(file.name);
+        const storageRef = storage.ref(file.name);
         await storageRef.put(file);
 
         const url = await storageRef.getDownloadURL();
         const createdAt = Date();
-        const {longitude, latitude} = position?.coords || {};
-        database.ref(`events/${props.eventId}/photos`).push({url, longitude, latitude, createdAt});
-        props.onClose()
+        const { longitude, latitude } = position?.coords || {};
+        database.ref(`events/${props.eventId}/photos`).push({ url, longitude, latitude, createdAt });
+        props.onClose();
+      } catch (error) {
+        console.log(error);
       }
-      catch(error){
-        console.log(error)
-      }
-
     }
   };
 
   return (
-    <main className={classes.main} >
+    <main className={classes.main}>
       <div className={classes.root}>
         <Grid container>
           <Grid item xs={12}>
@@ -97,8 +91,6 @@ function Cameracomponent(props: CameracomponentProps) {
                 <PhotoCameraRoundedIcon fontSize="large" color="primary" />
               </IconButton>
             </label>
-
-
 
             {source && (
               <Box display="flex" justifyContent="center" border={0} className={classes.imgBox}>
@@ -113,20 +105,20 @@ function Cameracomponent(props: CameracomponentProps) {
               capture="environment"
               onChange={(e) => handleCapture(e.target)}
             />
-              <Button color="secondary" variant="contained" onClick={() => props.onClose()}>
-                  Abbrechen
-              </Button>
+            <Button color="secondary" variant="contained" onClick={() => props.onClose()}>
+              Abbrechen
+            </Button>
 
-              <Button
-                  color="primary"
-                  variant="contained"
-                  disabled={!file}
-                  onClick={() => {
-                      handleSave();
-                  }}
-              >
-                  Speichern
-              </Button>
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={!file}
+              onClick={() => {
+                handleSave();
+              }}
+            >
+              Speichern
+            </Button>
           </Grid>
         </Grid>
       </div>

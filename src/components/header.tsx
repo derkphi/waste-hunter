@@ -1,8 +1,9 @@
-import { AppBar, Toolbar, Typography, makeStyles, Button, IconButton, Drawer, Link, MenuItem } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, Link, MenuItem, Theme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   header: {
     backgroundColor: theme.palette.primary.main,
     paddingRight: '10px',
@@ -49,7 +50,7 @@ interface HeaderProps {
 }
 
 export default function Header(props: HeaderProps) {
-  const { header, logo, menuButton, toolbar, drawerContainer,whlogo,whlogo_mobile } = useStyles();
+  const { header, logo, menuButton, toolbar, drawerContainer, whlogo, whlogo_mobile } = useStyles();
 
   const [state, setState] = useState({
     mobileView: false,
@@ -77,7 +78,6 @@ export default function Header(props: HeaderProps) {
   const displayDesktop = () => {
     return (
       <Toolbar className={toolbar}>
-
         <img src="../white_logo_transparent_background.png" alt="logo" className={whlogo} />
         {wasteHunterLogo}
         <div>{getMenuButtons()}</div>

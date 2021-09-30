@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import DynamicMap from './dynamicMap';
 import { MapViewport } from './mapTypes';
 import { getGeoJsonFromPolygon, getPolygonFromGeoJson } from './geoJsonHelper';
-import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { Popup } from 'react-map-gl';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { IconButton, Typography, Box } from '@material-ui/core';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import DoneIcon from '@material-ui/icons/Done';
-import EditIcon from '@material-ui/icons/Edit';
+import { IconButton, Typography, Box, Theme } from '@mui/material';
+import { makeStyles, createStyles } from '@mui/styles';
+import { LocationOnOutlined, DeleteForever, Done, Edit } from '@mui/icons-material';
 import SearchArea from './searchArea';
 import MeetingPoint from './meetingPoint';
 
@@ -197,7 +194,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
               onClick={handleMeetingPointButtonClick}
               className={`${classes.iconButton} ${mark && classes.markActive}`}
             >
-              {meetingPoint ? <DeleteForeverIcon color="inherit" /> : <LocationOnOutlinedIcon />}
+              {meetingPoint ? <DeleteForever color="inherit" /> : <LocationOnOutlined />}
             </IconButton>
           </Box>
           <Box className={classes.iconButtonBox}>
@@ -208,7 +205,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
               className={`${classes.iconButton} ${mark && classes.markActive}`}
               color="inherit"
             >
-              {mark ? <DoneIcon /> : area.length > 0 ? <DeleteForeverIcon /> : <EditIcon />}
+              {mark ? <Done /> : area.length > 0 ? <DeleteForever /> : <Edit />}
             </IconButton>
           </Box>
         </Box>

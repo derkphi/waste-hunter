@@ -1,45 +1,34 @@
 import React, { useState } from 'react';
 import { useMeasure } from 'react-use';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import { Badge, Typography } from '@material-ui/core';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
+import { Card, CardHeader, CardContent, Badge, Typography, Button, IconButton, Box } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, DialogActions } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { EventWithId } from '../../firebase/firebase_types';
-import EventMap from '../map/eventMap';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Routes } from '../customRoute';
 import { useHistory } from 'react-router-dom';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import EditIcon from '@material-ui/icons/Edit';
-import { IconButton, Box } from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { authFirebase, database } from '../../firebase/config';
+import EventMap from '../map/eventMap';
+import { KeyboardArrowRight, DeleteForever, Edit, Person, AddCircle, RemoveCircle } from '@mui/icons-material';
+import { auth, database } from '../../firebase/config';
 import UserGroup from '../common/userGroup';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-      marginBottom: '20px',
-    },
-    content: {
-      display: 'flex',
-      gap: '20px',
-    },
-    map: {
-      boxSizing: 'border-box',
-      height: '325px',
-    },
-    info: {
-      boxSizing: 'border-box',
-    },
-    iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
-  })
-);
+const useStyles = makeStyles({
+  root: {
+    width: '100%',
+    marginBottom: '20px',
+  },
+  content: {
+    display: 'flex',
+    gap: '20px',
+  },
+  map: {
+    boxSizing: 'border-box',
+    height: '325px',
+  },
+  info: {
+    boxSizing: 'border-box',
+  },
+  iconStart: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -100%)' },
+});
 
 interface EventCardProps {
   event: EventWithId;
@@ -56,14 +45,11 @@ function EventCard(props: EventCardProps) {
   const [ref, { width }] = useMeasure<HTMLDivElement>();
   const [showDialog, setShowDialog] = useState(false);
   const [registrated, setRegistrated] = useState(
-    props.event.registrations &&
-      authFirebase.currentUser &&
-      props.event.registrations[authFirebase.currentUser.uid] &&
-      true
+    props.event.registrations && auth.currentUser && props.event.registrations[auth.currentUser.uid] && true
   );
 
   const handleRegistration = () => {
-    const user = authFirebase.currentUser;
+    const user = auth.currentUser;
     if (!user) return;
     const ref = database.ref(`events/${props.event.id}/registrations/${user.uid}`);
     registrated ? ref.remove() : ref.set({ email: user.email, added: Date.now() });
@@ -91,18 +77,18 @@ function EventCard(props: EventCardProps) {
                 style={{ marginRight: '1em' }}
                 badgeContent={Object.keys(props.event.registrations || {}).length || '0'}
               >
-                <PersonIcon />
+                <Person />
               </Badge>
               angemeldet
               <IconButton size="small" onClick={handleRegistration}>
-                {registrated ? <RemoveCircleIcon /> : <AddCircleIcon />}
+                {registrated ? <RemoveCircle /> : <AddCircle />}
               </IconButton>
             </p>
             <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button
                 color="secondary"
                 variant="contained"
-                endIcon={<KeyboardArrowRightIcon />}
+                endIcon={<KeyboardArrowRight />}
                 disabled={!props.joinEnabled}
                 onClick={() => history.push(Routes.cleanup.replace(':id', props.event.id))}
               >
@@ -120,10 +106,10 @@ function EventCard(props: EventCardProps) {
                       }
                     }}
                   >
-                    <EditIcon />
+                    <Edit />
                   </IconButton>
                   <IconButton size="small" onClick={() => setShowDialog(true)}>
-                    <DeleteForeverIcon />
+                    <DeleteForever />
                   </IconButton>
                 </Box>
               )}

@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { GeolocateControl, Marker, Popup } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { authFirebase, database } from '../firebase/config';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  makeStyles,
-  TextField,
-} from '@material-ui/core';
+import { auth, database, DataSnapshot } from '../firebase/config';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { useHistory, useParams } from 'react-router-dom';
 import DynamicMap, { defaultViewport } from '../components/map/dynamicMap';
 import { MapViewport } from '../components/map/mapTypes';
 import { getGeoJsonLineFromRoute } from '../components/map/geoJsonHelper';
 import distance from '@turf/distance';
 import length from '@turf/length';
-// import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
-import { CameraAltRounded } from '@material-ui/icons';
-import firebase from 'firebase/app';
+// import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import { LocationOn, CameraAltRounded } from '@mui/icons-material';
 import { CleanupUser } from '../firebase/firebase_types';
 import DemoCleanups from '../components/demoCleanups';
 import SearchArea from '../components/map/searchArea';
@@ -90,7 +80,7 @@ export default function Cleanup() {
   const [showPhoto, setShowPhoto] = useState('');
   const [collected, setCollected] = useState<number>();
   const { id } = useParams<{ id: string }>();
-  const user = authFirebase.currentUser;
+  const user = auth.currentUser;
 
   useEffect(() => {
     database
@@ -98,7 +88,7 @@ export default function Cleanup() {
       .get()
       .then((d) => setEvent({ ...d.val(), id }));
     const ref = database.ref(`cleanups/${id}`);
-    const cb = (d: firebase.database.DataSnapshot) => setCleanupUsers(Object.values(d.val()));
+    const cb = (d: DataSnapshot) => setCleanupUsers(Object.values(d.val()));
     ref.on('value', cb);
     return () => ref.off('value', cb);
   }, [id]);
@@ -211,7 +201,7 @@ export default function Cleanup() {
                           offsetLeft={-17.5}
                           className={`${classes.userMarker} ${time > Date.now() - 5 * 60e3 ? 'active' : 'inactive'}`}
                         >
-                          <LocationOnIcon fontSize="large" className={classes.userIcon} />
+                          <LocationOn fontSize="large" className={classes.userIcon} />
                           <div onClick={() => setShowPopup(showPopup === uid ? '' : uid)} className={classes.userCode}>
                             {email?.replace(/\W+/g, '').slice(0, 2)}
                           </div>
