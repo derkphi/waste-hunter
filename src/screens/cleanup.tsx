@@ -32,7 +32,15 @@ import WalkPath from '../components/map/walkPath';
 
 const useStyles = makeStyles({
   header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
-  logo: { marginTop: -7, height: 44, userDrag: 'none', userSelect: 'none' },
+  logo: {
+    position: 'absolute',
+    left: '50%',
+    top: 2,
+    height: 45,
+    transform: 'translateX(-50%)',
+    userDrag: 'none',
+    userSelect: 'none',
+  },
   main: {
     position: 'absolute',
     zIndex: 2000,
@@ -156,9 +164,6 @@ export default function Cleanup() {
     setViewport(viewport);
   }
 
-  // if (!showCamera) {
-  //   <Cameracomponent />
-
   return event ? (
     showCamera ? (
       <Cameracomponent eventId={event.id} onClose={() => setShowCamera(false)} />
@@ -247,9 +252,7 @@ export default function Cleanup() {
         )} */}
         </DynamicMap>
 
-        <header className={classes.header}>
-          <img src={logo} alt="Waste Hunter" className={classes.logo} />
-        </header>
+        <img src={logo} alt="Waste Hunter" className={classes.logo} />
 
         <footer className={classes.footer}>
           <Button
