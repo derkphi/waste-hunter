@@ -101,14 +101,18 @@ export default function Cleanup() {
   const user = authFirebase.currentUser;
 
   useEffect(() => {
-    database
-      .ref(`events/${id}`)
-      .get()
-      .then((d) => setEvent({ ...d.val(), id }));
-    const ref = database.ref(`cleanups/${id}`);
-    const cb = (d: firebase.database.DataSnapshot) => setCleanupUsers(Object.values(d.val()));
-    ref.on('value', cb);
-    return () => ref.off('value', cb);
+    const eventRef = database.ref(`events/${id}`);
+    const eventCb = (d: firebase.database.DataSnapshot) => setEvent({ ...d.val(), id });
+    eventRef.on('value', eventCb);
+
+    const cleanupRef = database.ref(`cleanups/${id}`);
+    const cleanupCb = (d: firebase.database.DataSnapshot) => setCleanupUsers(Object.values(d.val()));
+    cleanupRef.on('value', cleanupCb);
+
+    return () => {
+      eventRef.off('value', eventCb);
+      cleanupRef.off('value', cleanupCb);
+    };
   }, [id]);
 
   useEffect(() => {
@@ -262,6 +266,7 @@ export default function Cleanup() {
             onClick={() => {
               setShowCamera(true);
             }}
+            style={{ marginRight: 10 }}
           >
             Markieren
           </Button>

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import { Button, IconButton, Typography} from '@material-ui/core';
+import { Button, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PhotoCameraRoundedIcon from '@material-ui/icons/PhotoCameraRounded';
 import { projectStorage, database } from '../../firebase/config';
-
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,20 +70,18 @@ function Cameracomponent(props: CameracomponentProps) {
         await storageRef.put(file);
 
         const url = await storageRef.getDownloadURL();
-        const createdAt = Date();
-        const {longitude, latitude} = position?.coords || {};
-        database.ref(`events/${props.eventId}/photos`).push({url, longitude, latitude, createdAt});
-        props.onClose()
+        const created = Date.now();
+        const { longitude, latitude } = position?.coords || {};
+        database.ref(`events/${props.eventId}/photos`).push({ url, longitude, latitude, created });
+        props.onClose();
+      } catch (error) {
+        console.log(error);
       }
-      catch(error){
-        console.log(error)
-      }
-
     }
   };
 
   return (
-    <main className={classes.main} >
+    <main className={classes.main}>
       <div className={classes.root}>
         <Grid container>
           <Grid item xs={12}>
@@ -97,8 +93,6 @@ function Cameracomponent(props: CameracomponentProps) {
                 <PhotoCameraRoundedIcon fontSize="large" color="primary" />
               </IconButton>
             </label>
-
-
 
             {source && (
               <Box display="flex" justifyContent="center" border={0} className={classes.imgBox}>
@@ -113,20 +107,20 @@ function Cameracomponent(props: CameracomponentProps) {
               capture="environment"
               onChange={(e) => handleCapture(e.target)}
             />
-              <Button color="secondary" variant="contained" onClick={() => props.onClose()}>
-                  Abbrechen
-              </Button>
+            <Button color="secondary" variant="contained" onClick={() => props.onClose()} style={{ marginRight: 10 }}>
+              Abbrechen
+            </Button>
 
-              <Button
-                  color="primary"
-                  variant="contained"
-                  disabled={!file}
-                  onClick={() => {
-                      handleSave();
-                  }}
-              >
-                  Speichern
-              </Button>
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={!file}
+              onClick={() => {
+                handleSave();
+              }}
+            >
+              Speichern
+            </Button>
           </Grid>
         </Grid>
       </div>
