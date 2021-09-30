@@ -1,6 +1,6 @@
 import { EventWithId, EventType } from '../../firebase/firebase_types';
 
-export function filterNext(events: { [id: string]: EventType }): EventWithId[] {
+export function filterNext(events: { [id: string]: EventType } = {}): EventWithId[] {
   // Get time for events
   let eventsWithIdAndTime = [];
   for (const [id, event] of Object.entries(events)) {
