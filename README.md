@@ -121,5 +121,4 @@ waste-hunter/
 ## To-Do's
 
 - Migrate Material-UI v4 to MUI v5, released on September 1st, 2021 ([Guide](https://mui.com/guides/migration-v4/))
-
 - Upgrade Firebase v8 to modular v9 Web SDK, released on August 25, 2021 ([Guide](https://firebase.google.com/docs/web/modular-upgrade#about_the_upgrade_process))
