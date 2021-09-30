@@ -125,12 +125,9 @@ function CreateEvent() {
       };
       if (searchArea) eventData.searchArea = searchArea;
       if (meetingPoint) eventData.meetingPoint = meetingPoint;
-      const updates = {
-        ['/events/' + eventKey]: eventData,
-      };
       database
-        .ref()
-        .update(updates)
+        .ref(`/events/${eventKey}`)
+        .update(eventData)
         .then(() => history.push(Routes.calendar));
     }
   };
