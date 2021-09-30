@@ -106,14 +106,20 @@ waste-hunter/
 
 ### API
 
-- [Firebase](https://firebase.google.com/) serverless backend infrastructure.
+- [Firebase (v5)](https://firebase.google.com/docs/reference/js/v8) serverless backend infrastructure.
 
 ### User Interface
 
-- [Material UI](https://mui.com) React UI framework.
+- [Material UI (v4)](https://v4.mui.com/) React UI framework.
 - [react-map-gl](https://visgl.github.io/react-map-gl/) React library for [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/guides/).
 
 ### Linting
 
 - [ESLint](https://eslint.org/) for static code analysis.
 - [Prettier](https://prettier.io/) as code formatter.
+
+## To-Do's
+
+- Migrate Material-UI v4 to MUI v5, released on September 1st, 2021 ([Guide](https://mui.com/guides/migration-v4/))
+
+- Upgrade Firebase v8 to modular v9 Web SDK, released on August 25, 2021 ([Guide](https://firebase.google.com/docs/web/modular-upgrade#about_the_upgrade_process))

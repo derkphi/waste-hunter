@@ -38,12 +38,13 @@ const useStyles = makeStyles({
     margin: '2px',
     width: '40px',
     height: '40px',
+    padding: '6px',
     //borderRadius: '20px',
   },
   avatar: {
-    padding: '6px',
-    width: '40px',
-    height: '40px',
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
   },
   name: {
     marginLeft: '5px',
