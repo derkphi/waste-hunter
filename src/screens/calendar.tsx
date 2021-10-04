@@ -6,8 +6,10 @@ import { EventWithId } from '../firebase/types';
 import { database } from '../firebase/config';
 import EventCard from '../components/event/eventCard';
 import Info from '../components/info';
-import { filterNext } from '../components/event/eventHelper';
+import { filterNext, getTimeMs } from '../components/event/eventHelper';
 import firebase from 'firebase/app';
+
+const alertWindow = 5 * 60e3; // +/- 5 minutes
 
 function deleteEvent(id: string) {
   const dbRef = database.ref('events/' + id);
@@ -24,21 +26,28 @@ function Calendar() {
     const cb = (d: firebase.database.DataSnapshot) => setEvents(filterNext(d.val()));
     dbRef.on('value', cb);
 
-    // Alert Event started +/ 5 minutes
-
-    if (-5 < 0 || 0 < 5) {
-      setHasTime(true);
-    } else {
-      setHasTime(false);
-    }
-
     return () => dbRef.off('value', cb);
   }, []);
 
-  const today = new Date(); // Get current date and time
-  today.setHours(0, 0, 0, 0); // Set time to midnight
-  const actualtime = today.getTime();
-  console.log('actualime', actualtime);
+  useEffect(() => {
+    const checkAlert = () => {
+      if (events) {
+        const currentTime = new Date().getTime();
+        for (const event of events) {
+          const eventTime = getTimeMs(event);
+          // Alert Event started +/ 5 minutes
+          if (eventTime - alertWindow < currentTime && currentTime < eventTime + alertWindow) {
+            setHasTime(true);
+            return;
+          }
+        }
+      }
+      setHasTime(false);
+    };
+    checkAlert();
+    const checkInterval = setInterval(checkAlert, 10000);
+    return () => clearInterval(checkInterval);
+  }, [events]);
 
   function handleNewEvent() {
     history.push(Routes.createEvent);
@@ -56,7 +65,7 @@ function Calendar() {
       <Button variant="contained" color="primary" onClick={handleNewEvent} style={{ marginBottom: '20px' }}>
         Event erfassen
       </Button>
-      {hasTime && <Info text={'Der Event startet: Mit Teilnehmen kannst du auf die Liveansicht wechseln.'} />}
+      {hasTime && <Info text={'Der nächste Event startet: Mit Teilnehmen kannst du auf die Liveansicht wechseln.'} />}
       {cards.length > 0 ? cards : <Info text="Kein Event geplant." />}
     </>
   );
