@@ -3,10 +3,10 @@ import { useMeasure } from 'react-use';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import { Badge, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Button, Dialog, DialogContent, DialogTitle, DialogActions } from '@material-ui/core';
-import { EventWithId } from '../../firebase/firebase_types';
+import { EventWithId } from '../../firebase/types';
 import EventMap from '../map/eventMap';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import { Routes } from '../customRoute';
@@ -14,9 +14,7 @@ import { useHistory } from 'react-router-dom';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
 import { IconButton, Box } from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+
 import { authFirebase, database } from '../../firebase/config';
 import UserGroup from '../common/userGroup';
 
@@ -46,7 +44,6 @@ interface EventCardProps {
   joinEnabled: boolean;
   showEditDelete?: boolean;
   deleteClick?: (id: string) => void;
-  hideUsers?: boolean;
 }
 
 function EventCard(props: EventCardProps) {
@@ -85,19 +82,6 @@ function EventCard(props: EventCardProps) {
             <Typography paragraph variant="h6">
               Treffpunkt bei {props.event.ort} um {props.event.zeit} Uhr
             </Typography>
-            <p>
-              <Badge
-                color="primary"
-                style={{ marginRight: '1em' }}
-                badgeContent={Object.keys(props.event.registrations || {}).length || '0'}
-              >
-                <PersonIcon />
-              </Badge>
-              angemeldet
-              <IconButton size="small" onClick={handleRegistration}>
-                {registrated ? <RemoveCircleIcon /> : <AddCircleIcon />}
-              </IconButton>
-            </p>
             <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button
                 color="secondary"
@@ -128,7 +112,8 @@ function EventCard(props: EventCardProps) {
                 </Box>
               )}
             </Box>
-            {!props.hideUsers && props.event.registrations && Object.keys(props.event.registrations).length > 0 && (
+
+            {props.event.registrations && Object.keys(props.event.registrations).length > 0 && (
               <>
                 <Typography paragraph variant="h5" style={{ marginTop: '25px' }}>
                   Angemeldet:
@@ -136,6 +121,12 @@ function EventCard(props: EventCardProps) {
                 <UserGroup userUids={Object.keys(props.event.registrations)} />
               </>
             )}
+
+            <Box style={{ marginTop: 10 }}>
+              <Button color="secondary" variant="contained" onClick={handleRegistration}>
+                {registrated ? 'abmelden' : 'anmelden'}
+              </Button>
+            </Box>
           </Box>
         </CardContent>
 

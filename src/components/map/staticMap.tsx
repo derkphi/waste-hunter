@@ -10,7 +10,14 @@ interface StaticMapProps {
 
 const StaticMap: React.FunctionComponent<StaticMapProps> = (props) => {
   return (
-    <FixedMap mapboxApiAccessToken={apiAccessToken} mapStyle={mapStyle} {...props.viewport} width="100%" height="100%">
+    <FixedMap
+      mapboxApiAccessToken={apiAccessToken}
+      mapStyle={mapStyle}
+      {...props.viewport}
+      width="100%"
+      height="100%"
+      style={{ background: '#F9F9F9' }}
+    >
       {props.children}
     </FixedMap>
   );

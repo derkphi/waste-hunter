@@ -6,7 +6,7 @@ import MeetingPoint from '../components/map/meetingPoint';
 import { getGeoJsonLine } from '../components/map/geoJsonHelper';
 import { database } from '../firebase/config';
 import firebase from 'firebase/app';
-import { MeetingPointType, CleanupUser, UserWithId } from '../firebase/firebase_types';
+import { MeetingPointType, CleanupUser, UserWithId } from '../firebase/types';
 import { Box, Typography } from '@material-ui/core';
 import distance from '@turf/distance';
 import length from '@turf/length';

@@ -5,7 +5,7 @@ import WalkPathsCleanup from '../map/walkPathsCleanup';
 import { EventWithStatistic } from './reportHelper';
 import StatisticGroup from './statisticGroup';
 import { database } from '../../firebase/config';
-import { CleanupUser } from '../../firebase/firebase_types';
+import { CleanupUser } from '../../firebase/types';
 import firebase from 'firebase/app';
 import UserGroup from '../common/userGroup';
 

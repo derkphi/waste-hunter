@@ -6,12 +6,13 @@ import StatisticGroup from './statisticGroup';
 import { getReportEvents, EventWithStatistic } from './reportHelper';
 
 interface GroupStatistic {
+  events: number;
   duration: number;
   distance: number;
   collected: number;
 }
 
-const statisticInit: GroupStatistic = { duration: 0, distance: 0, collected: 0 };
+const statisticInit: GroupStatistic = { events: 0, duration: 0, distance: 0, collected: 0 };
 
 function StatisticCard() {
   const [statistic, setStatistic] = useState(statisticInit);
@@ -21,6 +22,7 @@ function StatisticCard() {
       setStatistic(
         events.reduce((s: GroupStatistic, e: EventWithStatistic) => {
           return {
+            events: s.events + 1,
             duration: s.duration + e.duration,
             distance: s.distance + e.distance,
             collected: s.collected + e.collected,
@@ -34,7 +36,12 @@ function StatisticCard() {
     <Card>
       <CardHeader title="Gruppenerfolg seit Gründung" />
       <CardContent>
-        <StatisticGroup duration={statistic.duration} distance={statistic.distance} collected={statistic.collected} />
+        <StatisticGroup
+          events={statistic.events}
+          duration={statistic.duration}
+          distance={statistic.distance}
+          collected={statistic.collected}
+        />
       </CardContent>
     </Card>
   );

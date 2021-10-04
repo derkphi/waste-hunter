@@ -1,46 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { GeolocateControl, Marker, Popup } from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { GeolocateControl } from 'react-map-gl';
 import { authFirebase, database } from '../firebase/config';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  makeStyles,
-  TextField,
-} from '@material-ui/core';
+import { makeStyles, Button, TextField } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-import DynamicMap, { defaultViewport } from '../components/map/dynamicMap';
-import { MapViewport } from '../components/map/mapTypes';
-import { getGeoJsonLineFromRoute } from '../components/map/geoJsonHelper';
-import distance from '@turf/distance';
-import length from '@turf/length';
-// import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
+import { getCleanupRouteDistance, getGeoPositionDistance } from '../components/map/geoJsonHelper';
 import { CameraAltRounded } from '@material-ui/icons';
 import firebase from 'firebase/app';
-import { CleanupUser } from '../firebase/firebase_types';
+import { CleanupUser, EventWithId } from '../firebase/types';
 import DemoCleanups from '../components/demoCleanups';
-import SearchArea from '../components/map/searchArea';
-import logo from '../assets/logo_transparent_background.png';
-import Cameracomponent from '../components/camera/camera_component';
-import WalkPath from '../components/map/walkPath';
+import PhotoCamera from '../components/camera/photoCamera';
+import CleanupMap from '../components/map/cleanupMap';
 
 const useStyles = makeStyles({
-  header: { position: 'absolute', left: 0, top: 0, width: '100%', padding: 10, textAlign: 'center' },
-  logo: {
-    position: 'absolute',
-    left: '50%',
-    top: 2,
-    height: 45,
-    transform: 'translateX(-50%)',
-    userDrag: 'none',
-    userSelect: 'none',
-  },
   main: {
     position: 'absolute',
     zIndex: 2000,
@@ -51,57 +23,20 @@ const useStyles = makeStyles({
     background: '#FFF',
   },
   footer: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
-  iconStart: { transform: 'translate(-50%, -100%)' },
-  iconPhoto: { transform: 'translate(-75%, -75%)', cursor: 'pointer', color: 'rgb(222, 150, 27)' },
-  userMarker: { opacity: 0.8, '&.inactive': { opacity: 0.4 } },
-  userIcon: { color: 'rgb(66, 100, 251)' },
-  userPopup: { '& .mapboxgl-popup-content': { padding: '5px 10px' } },
-  userCode: {
-    position: 'absolute',
-    top: 8,
-    left: '50%',
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
-    fontSize: 10,
-    lineHeight: 1,
-    color: '#FFF',
-    transform: 'translateX(-50%)',
-    background: 'rgb(66, 100, 251)',
-    cursor: 'pointer',
-  },
   demoCleanups: { position: 'absolute', bottom: 25, right: 0 },
 });
 
-export interface Event {
-  id: string;
-  anlass: string;
-  meetingPoint: {
-    latitude: number;
-    longitude: number;
-  };
-  position: {
-    latitude: number;
-    longitude: number;
-    zoom: number;
-  };
-  searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
-  photos?: { [id: string]: { url: string; longitude?: number; latitude?: number } };
-}
-
 export default function Cleanup() {
+  const { id } = useParams<{ id: string }>();
   const classes = useStyles();
   const history = useHistory();
-  const [event, setEvent] = useState<Event>();
-  const [viewport, setViewport] = useState<MapViewport>(event ? event.position : defaultViewport);
-  const [cleanupUsers, setCleanupUsers] = useState<CleanupUser[]>();
+  const [event, setEvent] = useState<EventWithId>();
+  const [cleanups, setCleanups] = useState<CleanupUser[]>();
   const [position, setPosition] = useState<GeolocationPosition>();
   const [lastPosition, setLastPosition] = useState<GeolocationPosition>();
-  const [showPopup, setShowPopup] = useState('');
-  const [showDialog, setShowDialog] = useState(false);
+  const [showClose, setShowClose] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [showPhoto, setShowPhoto] = useState('');
   const [collected, setCollected] = useState<number>();
-  const { id } = useParams<{ id: string }>();
   const user = authFirebase.currentUser;
 
   useEffect(() => {
@@ -110,7 +45,7 @@ export default function Cleanup() {
     eventRef.on('value', eventCb);
 
     const cleanupRef = database.ref(`cleanups/${id}`);
-    const cleanupCb = (d: firebase.database.DataSnapshot) => setCleanupUsers(Object.values(d.val()));
+    const cleanupCb = (d: firebase.database.DataSnapshot) => setCleanups(Object.values(d.val()));
     cleanupRef.on('value', cleanupCb);
 
     return () => {
@@ -134,11 +69,7 @@ export default function Cleanup() {
     // push position max. all 5 seconds and 5 meters
     if (
       !lastPosition ||
-      (Date.now() > lastPosition.timestamp + 5e3 &&
-        distance(
-          [position.coords.longitude, position.coords.latitude],
-          [lastPosition.coords.longitude, lastPosition.coords.latitude]
-        ) > 5e-3)
+      (Date.now() > lastPosition.timestamp + 5e3 && getGeoPositionDistance(position, lastPosition) > 5e-3)
     ) {
       setLastPosition(position);
       database
@@ -147,10 +78,10 @@ export default function Cleanup() {
     }
   }, [user, id, position, lastPosition]);
 
-  const handleDialogClose = () => {
-    const cleanup = cleanupUsers?.find((u) => u.uid === user?.uid);
+  const handleClose = () => {
+    const cleanup = cleanups?.find((u) => u.uid === user?.uid);
     if (cleanup) {
-      const distance = cleanup.route ? length(getGeoJsonLineFromRoute(cleanup.route)) : 0;
+      const distance = getCleanupRouteDistance(cleanup.route);
       database.ref(`cleanups/${id}/${cleanup.uid}`).update({
         end: Date.now(),
         distance,
@@ -168,16 +99,12 @@ export default function Cleanup() {
     history.push('/');
   };
 
-  function handleViewport(viewport: MapViewport) {
-    setViewport(viewport);
-  }
-
   return event ? (
     showCamera ? (
-      <Cameracomponent eventId={event.id} onClose={() => setShowCamera(false)} />
+      <PhotoCamera eventId={event.id} onClose={() => setShowCamera(false)} />
     ) : (
       <main className={classes.main} style={{ background: 'rgba(82, 135, 119, .1)' }}>
-        <DynamicMap viewport={viewport} onViewportChange={handleViewport}>
+        <CleanupMap event={event} cleanups={cleanups}>
           <GeolocateControl
             style={{ right: 10, top: 10 }}
             positionOptions={{ enableHighAccuracy: true }}
@@ -186,81 +113,13 @@ export default function Cleanup() {
             auto
           />
 
-          {event.searchArea && <SearchArea data={event.searchArea} opacity={0.2} />}
-
-          <Marker longitude={event.meetingPoint.longitude} latitude={event.meetingPoint.latitude}>
-            <LocationOnOutlinedIcon fontSize="large" color="primary" className={classes.iconStart} />
-          </Marker>
-
-          {event.photos &&
-            Object.values(event.photos).map((photo, i) => (
-              <>
-                {photo.longitude && photo.latitude && (
-                  <Marker key={i} longitude={photo.longitude} latitude={photo.latitude}>
-                    <CameraAltRounded
-                      fontSize="large"
-                      className={classes.iconPhoto}
-                      onClick={() => setShowPhoto(photo.url)}
-                    />
-                  </Marker>
-                )}
-              </>
-            ))}
-
-          {cleanupUsers?.map(
-            ({ uid, route, email }) =>
-              route && (
-                <div key={uid}>
-                  <WalkPath uid={uid} walkPath={getGeoJsonLineFromRoute(route)} />
-                  {Object.values(route)
-                    .slice(-1)
-                    .map(([lng, lat, time]) => (
-                      <>
-                        <Marker
-                          key={time}
-                          longitude={lng}
-                          latitude={lat}
-                          offsetTop={-32}
-                          offsetLeft={-17.5}
-                          className={`${classes.userMarker} ${time > Date.now() - 5 * 60e3 ? 'active' : 'inactive'}`}
-                        >
-                          <LocationOnIcon fontSize="large" className={classes.userIcon} />
-                          <div onClick={() => setShowPopup(showPopup === uid ? '' : uid)} className={classes.userCode}>
-                            {email?.replace(/\W+/g, '').slice(0, 2)}
-                          </div>
-                        </Marker>
-                        {showPopup === uid && (
-                          <Popup
-                            longitude={lng}
-                            latitude={lat}
-                            closeButton={false}
-                            closeOnClick={true}
-                            onClose={() => setShowPopup('')}
-                            anchor="bottom"
-                            offsetTop={-25}
-                            className={classes.userPopup}
-                          >
-                            {email
-                              ?.replace(/@.*/g, '')
-                              .replace(/[._]+/g, ' ')
-                              .replace(/((^|\s)\S)/g, (m) => m.toUpperCase())}
-                          </Popup>
-                        )}
-                      </>
-                    ))}
-                </div>
-              )
-          )}
-
           {/* {position && (
           <div style={{ position: 'absolute', top: 10, right: 50 }}>
             {position.coords.longitude.toFixed(6)} / {position.coords.latitude.toFixed(6)} / {position.coords.accuracy}{' '}
             / {position.timestamp}
           </div>
         )} */}
-        </DynamicMap>
-
-        <img src={logo} alt="Waste Hunter" className={classes.logo} />
+        </CleanupMap>
 
         <footer className={classes.footer}>
           <Button
@@ -280,14 +139,14 @@ export default function Cleanup() {
             variant="contained"
             onClick={() => {
               setCollected(undefined);
-              setShowDialog(true);
+              setShowClose(true);
             }}
           >
             Beenden
           </Button>
         </footer>
 
-        <Dialog open={showDialog} onClose={() => setShowDialog(false)} style={{ zIndex: 3000 }}>
+        <Dialog open={showClose} onClose={() => setShowClose(false)} style={{ zIndex: 3000 }}>
           <DialogTitle>Event beenden</DialogTitle>
           <DialogContent>
             <DialogContentText>Vielen Dank für die Teilnahme beim "{event.anlass}" Event.</DialogContentText>
@@ -305,29 +164,16 @@ export default function Cleanup() {
             />
           </DialogContent>
           <DialogActions>
-            <Button color="secondary" onClick={() => setShowDialog(false)}>
+            <Button color="secondary" onClick={() => setShowClose(false)}>
               Abbrechen
             </Button>
             <Button
               variant="contained"
               color="primary"
               disabled={!(collected !== undefined && collected >= 0)}
-              onClick={handleDialogClose}
+              onClick={handleClose}
             >
               Beenden
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        <Dialog open={!!showPhoto} onClose={() => setShowPhoto('')} style={{ zIndex: 3000 }}>
-          <DialogContent>
-            <DialogContentText>
-              <img src={showPhoto} alt="" width="95%" />
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button color="secondary" onClick={() => setShowPhoto('')}>
-              Abbrechen
             </Button>
           </DialogActions>
         </Dialog>

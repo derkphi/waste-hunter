@@ -6,7 +6,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
 import CreateEventMap from '../components/map/createEventMap';
 import { database } from '../firebase/config';
-import { EventType, MeetingPointType } from '../firebase/firebase_types';
+import { EventType, MeetingPointType } from '../firebase/types';
 
 const defaultMapStyle = {
   marginTop: 20,

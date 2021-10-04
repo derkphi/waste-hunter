@@ -35,12 +35,12 @@ const useStyles = makeStyles((theme) => ({
   camera: { position: 'absolute', left: 0, bottom: 0, width: '100%', padding: 10, textAlign: 'center' },
 }));
 
-interface CameracomponentProps {
+interface PhotoCameraProps {
   eventId: string;
   onClose: () => void;
 }
 
-function Cameracomponent(props: CameracomponentProps) {
+function PhotoCamera(props: PhotoCameraProps) {
   const classes = useStyles();
   const [source, setSource] = useState('');
   const [file, setFile] = useState<File>();
@@ -107,6 +107,7 @@ function Cameracomponent(props: CameracomponentProps) {
               capture="environment"
               onChange={(e) => handleCapture(e.target)}
             />
+
             <Button color="secondary" variant="contained" onClick={() => props.onClose()} style={{ marginRight: 10 }}>
               Abbrechen
             </Button>
@@ -127,4 +128,4 @@ function Cameracomponent(props: CameracomponentProps) {
     </main>
   );
 }
-export default Cameracomponent;
+export default PhotoCamera;

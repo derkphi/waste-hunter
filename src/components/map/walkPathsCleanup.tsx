@@ -1,5 +1,5 @@
 import React from 'react';
-import { CleanupUser } from '../../firebase/firebase_types';
+import { CleanupUser } from '../../firebase/types';
 import { getGeoJsonLineFromRoute } from './geoJsonHelper';
 import WalkPath from './walkPath';
 

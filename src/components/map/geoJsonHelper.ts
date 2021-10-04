@@ -1,3 +1,6 @@
+import length from '@turf/length';
+import distance from '@turf/distance';
+
 export function getGeoJsonFromPolygon(points: Array<[number, number]>): GeoJSON.Feature<GeoJSON.Polygon> {
   return {
     type: 'Feature',
@@ -41,4 +44,12 @@ export function getGeoJsonLine(points: Array<[number, number]>): GeoJSON.Feature
       coordinates: points,
     },
   };
+}
+
+export function getCleanupRouteDistance(route?: { [key: string]: number[] }): number {
+  return route ? length(getGeoJsonLineFromRoute(route)) : 0;
+}
+
+export function getGeoPositionDistance(from: GeolocationPosition, to: GeolocationPosition): number {
+  return distance([from.coords.longitude, from.coords.latitude], [to.coords.longitude, to.coords.latitude]);
 }

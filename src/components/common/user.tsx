@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { UserWithId } from '../../firebase/firebase_types';
+import { UserWithId } from '../../firebase/types';
 import { database } from '../../firebase/config';
 import { Typography, Box, makeStyles } from '@material-ui/core';
 import beaver from '../../assets/beaver.png';

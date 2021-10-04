@@ -49,7 +49,7 @@ interface HeaderProps {
 }
 
 export default function Header(props: HeaderProps) {
-  const { header, logo, menuButton, toolbar, drawerContainer,whlogo,whlogo_mobile } = useStyles();
+  const { header, logo, menuButton, toolbar, drawerContainer, whlogo, whlogo_mobile } = useStyles();
 
   const [state, setState] = useState({
     mobileView: false,
@@ -77,7 +77,6 @@ export default function Header(props: HeaderProps) {
   const displayDesktop = () => {
     return (
       <Toolbar className={toolbar}>
-
         <img src="../white_logo_transparent_background.png" alt="logo" className={whlogo} />
         {wasteHunterLogo}
         <div>{getMenuButtons()}</div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { Routes } from '../components/customRoute';
-import { EventWithId } from '../firebase/firebase_types';
+import { EventWithId } from '../firebase/types';
 import { database } from '../firebase/config';
 import EventCard from '../components/event/eventCard';
 import Info from '../components/info';

@@ -12,6 +12,7 @@ const useStyles = makeStyles({
 
 interface StatisticGroupProps {
   users?: number;
+  events?: number;
   duration: number;
   distance: number;
   collected: number;
@@ -29,6 +30,7 @@ function StatisticGroup(props: StatisticGroupProps) {
   return (
     <Box className={classes.statsticContainer}>
       {props.users !== undefined && <StatisticItem label={'Personen'} value={props.users} color="#d9b3d9" />}
+      {props.events !== undefined && <StatisticItem label={'Events'} value={props.events} color="#d9b3d9" />}
       <StatisticItem label={'Suchzeit'} value={duration} unit={useHour ? 'Stunden' : 'Minuten'} color="#f7eeb3" />
       <StatisticItem label={'Strecke'} value={distance} unit={useKm ? 'Kilometer' : 'Meter'} color="#bbdeeb" />
       <StatisticItem label={'Abfall'} value={Math.round(props.collected * 1e2) / 1e2} unit={'Liter'} color="#c8e9d4" />

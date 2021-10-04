@@ -51,8 +51,9 @@ const DynamicMap: React.FunctionComponent<BasicMapProps> = (props) => {
       onClick={(e) => props.onClick && props.onClick(e.lngLat[0], e.lngLat[1])}
       onMouseMove={(e) => props.onMove && props.onMove(e.lngLat[0], e.lngLat[1])}
       onDblClick={(e) => props.onDoubleClick && props.onDoubleClick(e.lngLat[0], e.lngLat[1])}
+      style={{ background: '#F9F9F9' }}
     >
-      <NavigationControl style={{ left: 10, top: 10 }} />
+      <NavigationControl style={{ left: 10, top: 10 }} showCompass={false} />
       {props.children}
     </ReactMapGL>
   );

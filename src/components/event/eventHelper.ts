@@ -1,4 +1,4 @@
-import { EventWithId, EventType } from '../../firebase/firebase_types';
+import { EventWithId, EventType } from '../../firebase/types';
 
 export function filterNext(events: { [id: string]: EventType } = {}): EventWithId[] {
   // Get time for events

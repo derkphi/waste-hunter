@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Box, Grid } from '@material-ui/core';
-import { EventWithId } from '../firebase/firebase_types';
+import { EventWithId } from '../firebase/types';
 import Info from '../components/info';
 import { database } from '../firebase/config';
 import { filterNext } from '../components/event/eventHelper';
@@ -21,7 +21,7 @@ function Home() {
     return () => dbRef.off('value', cb);
   }, []);
 
-  const nextEventCard = nextEvent ? <EventCard hideUsers={true} event={nextEvent} joinEnabled={true} /> : undefined;
+  const nextEventCard = nextEvent ? <EventCard event={nextEvent} joinEnabled={true} /> : undefined;
 
   return (
     <>

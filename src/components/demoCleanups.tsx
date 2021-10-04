@@ -5,7 +5,7 @@ import PlayCircleFilledOutlinedIcon from '@material-ui/icons/PlayCircleFilledOut
 import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
 import CloseIcon from '@material-ui/icons/Close';
 import { database } from '../firebase/config';
-import { Event } from '../screens/cleanup';
+import { EventWithId } from '../firebase/types';
 
 interface DemoValue {
   collected: number;
@@ -26,7 +26,7 @@ interface Demo extends DemoValue {
 }
 
 interface DemoCleanupsProps {
-  event: Event;
+  event: EventWithId;
   className?: string;
 }
 
@@ -44,11 +44,9 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
         setDemos(
           Object.entries(ds.val() as DemoData).map(([name, cleanup]) => {
             const route = Object.values(cleanup.route);
-            const diff = [
-              route[0][0] - event.meetingPoint.longitude,
-              route[0][1] - event.meetingPoint.latitude,
-              route[0][2],
-            ];
+            const diff = event.meetingPoint
+              ? [route[0][0] - event.meetingPoint.longitude, route[0][1] - event.meetingPoint.latitude, route[0][2]]
+              : [0, 0, route[0][2]];
             return {
               ...cleanup,
               name,
@@ -113,8 +111,7 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
               startIcon={demo.play ? <PlayCircleFilledOutlinedIcon /> : <PlayCircleOutlineIcon />}
               onClick={() => handlePlay(demo)}
             >
-              {demo.name} ({(demo.time / 1e3).toFixed()}s, {demo.distance.toPrecision(2)}km,{' '}
-              {demo.collected.toPrecision(2)}l)
+              {demo.name} ({(demo.time / 1e3).toFixed()}s, {demo.distance.toFixed(3)}km, {demo.collected.toFixed()}l)
               {demo.play && (
                 <Chip
                   color="primary"

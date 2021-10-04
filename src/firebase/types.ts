@@ -18,6 +18,7 @@ export interface EventType {
   searchArea?: GeoJSON.Feature<GeoJSON.Geometry>;
   meetingPoint?: MeetingPointType;
   registrations?: { [uid: string]: { email: string; added: number } };
+  photos?: { [id: string]: { url: string; longitude?: number; latitude?: number } };
   cleanup?: {
     [uid: string]: {
       uid: string;
@@ -36,9 +37,9 @@ export interface EventWithId extends EventType {
 
 export interface CleanupUser {
   uid: string;
-  email: string | null;
+  email: string;
   start: number;
-  route?: { [key: string]: number[] }; // [longitude, latitude, timestamp]
+  route?: { [key: string]: [longitude: number, latitude: number, timestamp: number] };
   end?: number;
   collected?: number;
   distance?: number;
