@@ -2,7 +2,15 @@ import React, { useState } from 'react';
 import ReactMapGL, { NavigationControl, Marker, Popup, ViewportProps } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import logo from '../../assets/logo_transparent_background.png';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, makeStyles } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  IconButton,
+  makeStyles,
+} from '@material-ui/core';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import { CameraAltRounded } from '@material-ui/icons';
 import SearchArea from './searchArea';
@@ -10,8 +18,9 @@ import WalkPath from './walkPath';
 import MeetingPoint from './meetingPoint';
 import { CleanupUser, EventWithId } from '../../firebase/types';
 import { getGeoJsonLineFromRoute } from './geoJsonHelper';
-import { apiAccessToken, mapStyle } from './config';
+import { apiAccessToken, mapStyle, mapStyleImagery } from './config';
 import { defaultViewport } from './dynamicMap';
+import ImageIcon from '@material-ui/icons/Image';
 
 const useStyles = makeStyles({
   logo: {
@@ -41,6 +50,19 @@ const useStyles = makeStyles({
     background: 'rgb(66, 100, 251)',
     cursor: 'pointer',
   },
+  imageryButton: {
+    position: 'absolute',
+    left: -1,
+    top: 98,
+    '& svg': {
+      borderRadius: 3,
+      width: 28,
+      height: 28,
+      padding: 5,
+      background: '#FFF',
+      boxShadow: '0 0 0 2px rgb(0 0 0 / 10%)',
+    },
+  },
 });
 
 interface CleanupMapProps {
@@ -54,11 +76,12 @@ export default function CleanupMap({ event, cleanups = [], children }: CleanupMa
   const [viewport, setViewport] = useState<ViewportProps>(event ? event.position : defaultViewport);
   const [showUser, setShowUser] = useState('');
   const [showPhoto, setShowPhoto] = useState('');
+  const [imagery, setImagery] = useState(false);
 
   return (
     <ReactMapGL
       mapboxApiAccessToken={apiAccessToken}
-      mapStyle={mapStyle}
+      mapStyle={imagery ? mapStyleImagery : mapStyle}
       {...viewport}
       onViewportChange={setViewport}
       width="100%"
@@ -67,6 +90,10 @@ export default function CleanupMap({ event, cleanups = [], children }: CleanupMa
       style={{ background: '#F9F9F9' }}
     >
       <NavigationControl style={{ left: 10, top: 10 }} />
+
+      <IconButton onClick={() => setImagery(!imagery)} className={classes.imageryButton}>
+        <ImageIcon style={{ color: imagery ? '#333' : '#CCC' }} />
+      </IconButton>
 
       <img src={logo} alt="Waste Hunter" className={classes.logo} />
 

@@ -34,8 +34,18 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({ event, children }) =
         )}
         {event.searchArea && <SearchArea data={event.searchArea} />}
         {children}
-        <IconButton color="primary" onClick={handleShowMap} style={{ position: 'absolute', top: 10, right: 10 }}>
-          <ZoomOutMapIcon />
+        <IconButton onClick={handleShowMap} style={{ position: 'absolute', top: -1, right: -1 }}>
+          <ZoomOutMapIcon
+            style={{
+              borderRadius: 3,
+              width: 28,
+              height: 28,
+              padding: 5,
+              color: '#000',
+              background: '#FFF',
+              boxShadow: '0 0 0 2px rgb(0 0 0 / 10%)',
+            }}
+          />
         </IconButton>
       </StaticMap>
       {showMap && (
