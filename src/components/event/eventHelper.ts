@@ -4,8 +4,10 @@ export function filterNext(events: { [id: string]: EventType } = {}): EventWithI
   // Get time for events
   let eventsWithIdAndTime = [];
   for (const [id, event] of Object.entries(events)) {
-    const time = Date.parse(event.datum + 'T' + event.zeit);
-    eventsWithIdAndTime.push({ id, time, event });
+    if (event) {
+      const time = getTimeMs(event);
+      eventsWithIdAndTime.push({ id, time, event });
+    }
   }
 
   // Sort by time
@@ -20,4 +22,8 @@ export function filterNext(events: { [id: string]: EventType } = {}): EventWithI
   });
 
   return eventsWithIdAndTime.map((item) => ({ ...item.event, id: item.id }));
+}
+
+export function getTimeMs(event: EventType): number {
+  return Date.parse(event.datum + 'T' + event.zeit);
 }
