@@ -52,7 +52,7 @@ export default function DemoCleanups({ event, className }: DemoCleanupsProps) {
               name,
               route: [...route.map((r) => [r[0] - diff[0], r[1] - diff[1], r[2] - diff[2]])],
               time: route.pop()![2] - route[0][2],
-              uid: `demo-cleanups-${name.replace(/\W+/g, '')}`,
+              // uid: `demo-cleanups-${name.replace(/\W+/g, '')}`,
             };
           })
         );
