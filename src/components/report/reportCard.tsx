@@ -46,9 +46,7 @@ function ReportCard(props: ReportCardProps) {
       <CardContent>
         <Grid container spacing={3}>
           <Grid item sm={12} md={6} className={classes.gridItem}>
-            <EventMap event={props.event}>
-              <WalkPathsCleanup cleanupUsers={cleanupUsers} />
-            </EventMap>
+            <EventMap event={props.event} cleanups={cleanupUsers}></EventMap>
           </Grid>
           <Grid item sm={12} md={6}>
             <StatisticGroup

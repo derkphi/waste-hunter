@@ -6,25 +6,16 @@ import CleanupMap from './cleanupMap';
 import { useState } from 'react';
 import { Button, Dialog, IconButton } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
-import { database } from '../../firebase/config';
+import WalkPathsCleanup from './walkPathsCleanup';
 
 interface EventMapProps {
   event: EventWithId;
+  cleanups?: CleanupUser[];
   children?: React.ReactNode;
 }
 
-const EventMap: React.FunctionComponent<EventMapProps> = ({ event, children }) => {
+const EventMap: React.FunctionComponent<EventMapProps> = ({ event, cleanups, children }) => {
   const [showMap, setShowMap] = useState(false);
-  const [cleanups, setCleanups] = useState<CleanupUser[]>();
-
-  const handleShowMap = () => {
-    if (Date.parse(`${event.datum}T${event.zeit}`) < Date.now())
-      database
-        .ref(`cleanups/${event.id}`)
-        .get()
-        .then((d) => d.exists() && setCleanups(Object.values(d.val())));
-    setShowMap(true);
-  };
 
   return (
     <>
@@ -33,8 +24,9 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({ event, children }) =
           <MeetingPoint longitude={event.meetingPoint.longitude} latitude={event.meetingPoint.latitude} />
         )}
         {event.searchArea && <SearchArea data={event.searchArea} />}
+        {cleanups && <WalkPathsCleanup cleanupUsers={cleanups} />}
         {children}
-        <IconButton onClick={handleShowMap} style={{ position: 'absolute', top: -1, right: -1 }}>
+        <IconButton onClick={() => setShowMap(true)} style={{ position: 'absolute', top: -1, right: -1 }}>
           <ZoomOutMapIcon
             style={{
               borderRadius: 3,
