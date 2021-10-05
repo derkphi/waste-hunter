@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardContent, Grid, Typography, makeStyles } from '@material-ui/core';
 import EventMap from '../map/eventMap';
-import WalkPathsCleanup from '../map/walkPathsCleanup';
 import { EventWithStatistic } from './reportHelper';
 import StatisticGroup from './statisticGroup';
 import { database } from '../../firebase/config';
