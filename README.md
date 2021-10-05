@@ -24,13 +24,13 @@ npm install
 Firebase configuration:
 
 ```
-/src/components/maps/config.ts
+/src/firebase/config.tsx
 ```
 
 Mapbox configuration:
 
 ```
-/src/firebase/config.tsx
+/src/components/maps/config.ts
 ```
 
 ## Available Scripts
