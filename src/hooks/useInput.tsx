@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { SetStateAction, useState} from 'react';
 
-const useInput = (initialValue: any) => {
+const useInput = (initialValue: string) => {
   const [value, setValue] = useState(initialValue);
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setValue(event.target.value);
   };
   return {

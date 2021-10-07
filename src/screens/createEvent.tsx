@@ -90,7 +90,7 @@ function CreateEvent() {
     }
   }, [id]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setEventerror(false);
     setPlaceerror(false);
