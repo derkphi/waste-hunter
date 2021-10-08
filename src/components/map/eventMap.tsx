@@ -4,9 +4,20 @@ import MeetingPoint from './meetingPoint';
 import { CleanupUser, EventWithId } from '../../firebase/types';
 import CleanupMap from './cleanupMap';
 import { useState } from 'react';
-import { Button, Dialog, IconButton } from '@material-ui/core';
+import { Button, Dialog, makeStyles } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+import CloseIcon from '@material-ui/icons/Close';
 import WalkPathsCleanup from './walkPathsCleanup';
+
+const useStyles = makeStyles({
+  zoomButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 6,
+    minWidth: 0,
+  },
+});
 
 interface EventMapProps {
   event: EventWithId;
@@ -15,6 +26,7 @@ interface EventMapProps {
 }
 
 const EventMap: React.FunctionComponent<EventMapProps> = ({ event, cleanups, children }) => {
+  const classes = useStyles();
   const [showMap, setShowMap] = useState(false);
 
   return (
@@ -26,46 +38,27 @@ const EventMap: React.FunctionComponent<EventMapProps> = ({ event, cleanups, chi
         {event.searchArea && <SearchArea data={event.searchArea} />}
         {cleanups && <WalkPathsCleanup cleanupUsers={cleanups} />}
         {children}
-        <IconButton onClick={() => setShowMap(true)} style={{ position: 'absolute', top: -1, right: -1 }}>
-          <ZoomOutMapIcon
-            style={{
-              borderRadius: 3,
-              width: 28,
-              height: 28,
-              padding: 5,
-              color: '#000',
-              background: '#FFF',
-              boxShadow: '0 0 0 2px rgb(0 0 0 / 10%)',
-            }}
-          />
-        </IconButton>
+        <Button
+          onClick={() => setShowMap(!showMap)}
+          color="secondary"
+          variant="contained"
+          className={classes.zoomButton}
+        >
+          <ZoomOutMapIcon />
+        </Button>
       </StaticMap>
-      {showMap && (
-        <Dialog open={showMap} fullScreen onClose={() => setShowMap(false)}>
-          <CleanupMap event={cleanups ? event : { ...event, photos: undefined }} cleanups={cleanups}>
-            <footer
-              style={{
-                position: 'absolute',
-                left: 0,
-                bottom: 0,
-                width: '100%',
-                padding: 10,
-                textAlign: 'center',
-              }}
-            >
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={() => {
-                  setShowMap(false);
-                }}
-              >
-                Beenden
-              </Button>
-            </footer>
-          </CleanupMap>
-        </Dialog>
-      )}
+      <Dialog open={showMap} fullScreen onClose={() => setShowMap(!showMap)}>
+        <CleanupMap event={cleanups ? event : { ...event, photos: undefined }} cleanups={cleanups}>
+          <Button
+            onClick={() => setShowMap(!showMap)}
+            color="primary"
+            variant="contained"
+            className={classes.zoomButton}
+          >
+            <CloseIcon />
+          </Button>
+        </CleanupMap>
+      </Dialog>
     </>
   );
 };

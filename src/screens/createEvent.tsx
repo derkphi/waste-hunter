@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Typography, makeStyles, FormLabel, Button, Box } from '@material-ui/core';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+import CloseIcon from '@material-ui/icons/Close';
 import { Grid } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { Routes } from '../components/customRoute';
@@ -8,35 +10,28 @@ import CreateEventMap from '../components/map/createEventMap';
 import { database } from '../firebase/config';
 import { EventType, MeetingPointType } from '../firebase/types';
 
-const defaultMapStyle = {
-  marginTop: 20,
-  height: '50vh',
-  width: '100%',
-};
-
 const useStyles = makeStyles((theme) => ({
   field: {
     marginTop: 20,
     marginBottom: 20,
   },
-  map: defaultMapStyle,
-  [theme.breakpoints.down('sm')]: {
-    mapFull: {
-      position: 'fixed',
-      boxSizing: 'border-box',
-      paddingLeft: '5px',
-      paddingRight: '5px',
-      paddingBottom: '5px',
-      zIndex: 2000,
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      background: '#FFF',
-    },
+  map: {
+    marginTop: 20,
+    height: '50vh',
+    width: '100%',
   },
-  [theme.breakpoints.up('md')]: {
-    mapFull: defaultMapStyle,
+  mapFull: {
+    position: 'fixed',
+    boxSizing: 'border-box',
+    paddingLeft: '5px',
+    paddingRight: '5px',
+    paddingBottom: '5px',
+    zIndex: 2000,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: '#FFF',
   },
   mapGridItem: {
     width: '100%',
@@ -44,6 +39,13 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  zoomButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 6,
+    minWidth: 0,
   },
 }));
 
@@ -90,12 +92,8 @@ function CreateEvent() {
     }
   }, [id]);
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setEventerror(false);
-    setPlaceerror(false);
-    setdateerror(false);
-    settimeerror(false);
 
     if (event === '') {
       setEventerror(true);
@@ -131,10 +129,6 @@ function CreateEvent() {
         .then(() => history.push(Routes.calendar));
     }
   };
-
-  function handleMapDoubleClick() {
-    setMapFull(!mapFull);
-  }
 
   return (
     <form noValidate autoComplete="off" onSubmit={handleSubmit}>
@@ -209,19 +203,35 @@ function CreateEvent() {
                   setMeetingPoint(undefined);
                 }
               }}
-              onDoubleClick={handleMapDoubleClick}
-            />
+            >
+              <Button
+                onClick={() => setMapFull(!mapFull)}
+                color={mapFull ? 'primary' : 'secondary'}
+                variant="contained"
+                className={classes.zoomButton}
+              >
+                {mapFull ? <CloseIcon /> : <ZoomOutMapIcon />}
+              </Button>
+            </CreateEventMap>
           </Box>
         </Grid>
       </Grid>
       <Button
         className={classes.button}
         type="submit"
-        color="secondary"
+        color="primary"
         variant="contained"
         endIcon={<KeyboardArrowRightIcon />}
       >
         Abschliessen
+      </Button>
+      <Button
+        className={classes.button}
+        color="secondary"
+        style={{ marginLeft: 10 }}
+        onClick={() => history.push(Routes.calendar)}
+      >
+        Abbrechen
       </Button>
     </form>
   );

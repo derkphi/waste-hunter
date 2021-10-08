@@ -74,7 +74,8 @@ interface CreateEventMapProps {
   onSearchAreaChange: (area: GeoJSON.Feature<GeoJSON.Polygon> | undefined) => void;
   meetingPoint: Coordinate | undefined;
   onMeetingPointChange: (c: Coordinate | undefined) => void;
-  onDoubleClick: () => void;
+  onDoubleClick?: () => void;
+  children?: React.ReactElement;
 }
 
 const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
@@ -86,6 +87,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
   meetingPoint,
   onMeetingPointChange,
   onDoubleClick,
+  children,
 }) => {
   const classes = useStyles();
   const [ready, setReady] = useState(false);
@@ -157,7 +159,7 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
     if (mark) {
       handleMapClick(longitude, latitude);
       handleMarkButtonClick();
-    } else {
+    } else if (onDoubleClick) {
       onDoubleClick();
     }
   }
@@ -241,6 +243,8 @@ const CreateEventMap: React.FunctionComponent<CreateEventMapProps> = ({
               />
             </>
           )}
+
+          {children}
         </DynamicMap>
       </Box>
     );
